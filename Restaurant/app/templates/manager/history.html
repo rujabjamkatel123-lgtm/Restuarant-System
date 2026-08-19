@@ -1,18 +1,16 @@
 <!--
 =============================================================
-  Manager Order History
-=============================================================
-  This page is used by the manager to view previous orders.
+    Manager Order History
+    File: templates/manager/orderhistory.html
 
-  Manager can:
-    - View past orders
-    - See order ID
-    - See table number
-    - See ordered items
-    - See order date/time
-    - See total amount
-    - Filter history by date
-    - Filter history by order status
+    Same layout as Manager Dashboard:
+      - Fixed 245px green sidebar
+      - 82px top header
+      - White main content
+      - Same colors
+      - Same spacing
+      - Same card design
+      - Same typography
 =============================================================
 -->
 
@@ -25,383 +23,1420 @@ Order History
 
 {% block content %}
 
-<!-- Manager Navigation -->
-{% include "partials/manager_navbar.html" %}
+<!-- =========================================================
+     TAILWIND CSS
+========================================================= -->
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    restaurant: {
+                        green: '#176B4D',
+                        greenDark: '#105239',
+                        greenLight: '#21825E',
+                        greenSoft: '#EAF5EF',
+                        greenPale: '#F5FAF7',
+                        text: '#26352F',
+                        muted: '#718078'
+                    }
+                }
+            }
+        }
+    }
+</script>
 
 
-<div class="manager-history">
+<!-- =========================================================
+     PAGE WRAPPER
+========================================================= -->
+
+<div class="min-h-screen bg-white text-[#26352F]">
+
 
     <!-- =====================================================
-         PAGE HEADER
+         LEFT SIDEBAR
     ====================================================== -->
 
-    <div class="history-header">
+    <aside
+        class="fixed left-0 top-0 z-40 flex h-screen w-[245px] flex-col bg-[#176B4D] text-white shadow-xl"
+    >
 
-        <h1>
-            Order History
-        </h1>
+        <!-- =================================================
+             LOGO
+        ================================================== -->
 
-        <p>
-            View previous restaurant orders and revenue.
-        </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         FILTER
-    ====================================================== -->
-
-    <section class="history-filter">
-
-        <form
-            method="GET"
-            action="{{ url_for('auth.manager_order_history') }}"
+        <div
+            class="flex h-[82px] items-center gap-3 border-b border-white/10 px-6"
         >
 
-            <!-- From Date -->
+            <div
+                class="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#176B4D] shadow-sm"
+            >
 
-            <div class="form-group">
-
-                <label for="start_date">
-                    From Date
-                </label>
-
-                <input
-                    type="date"
-                    id="start_date"
-                    name="start_date"
-                    value="{{ start_date }}"
+                <svg
+                    class="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
                 >
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M7 3v7M5 3v4M9 3v4M7 10v11"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 3c2.2 1.5 3 4.3 2 6.7-.5 1.2-1.3 2-2.5 2.4V21"
+                    />
+
+                </svg>
 
             </div>
 
 
-            <!-- To Date -->
+            <div>
 
-            <div class="form-group">
+                <h1 class="text-base font-bold tracking-wide">
+                    Restaurant
+                </h1>
 
-                <label for="end_date">
-                    To Date
-                </label>
-
-                <input
-                    type="date"
-                    id="end_date"
-                    name="end_date"
-                    value="{{ end_date }}"
-                >
+                <p class="text-xs text-white/65">
+                    Management System
+                </p>
 
             </div>
 
-
-            <!-- Status -->
-
-            <div class="form-group">
-
-                <label for="status">
-                    Status
-                </label>
-
-                <select
-                    id="status"
-                    name="status"
-                >
-
-                    <option value="">
-                        All Orders
-                    </option>
-
-                    <option
-                        value="served"
-                        {% if selected_status == "served" %}
-                            selected
-                        {% endif %}
-                    >
-                        Served
-                    </option>
-
-                    <option
-                        value="ready"
-                        {% if selected_status == "ready" %}
-                            selected
-                        {% endif %}
-                    >
-                        Ready
-                    </option>
-
-                    <option
-                        value="preparing"
-                        {% if selected_status == "preparing" %}
-                            selected
-                        {% endif %}
-                    >
-                        Preparing
-                    </option>
-
-                    <option
-                        value="pending"
-                        {% if selected_status == "pending" %}
-                            selected
-                        {% endif %}
-                    >
-                        Pending
-                    </option>
-
-                </select>
-
-            </div>
+        </div>
 
 
-            <button type="submit">
-                Apply Filter
-            </button>
+        <!-- =================================================
+             NAVIGATION
+        ================================================== -->
 
+        <nav class="flex-1 px-4 py-6">
+
+            <p
+                class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+            >
+                Main Menu
+            </p>
+
+
+            <!-- Dashboard -->
 
             <a
-                href="{{ url_for('auth.manager_order_history') }}"
+                href="{{ url_for('manager.dashboard') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
             >
-                Clear Filter
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <rect
+                            x="3"
+                            y="3"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                        <rect
+                            x="14"
+                            y="3"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                        <rect
+                            x="3"
+                            y="14"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                        <rect
+                            x="14"
+                            y="14"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Dashboard
+
             </a>
 
-        </form>
 
-    </section>
+            <!-- Menu -->
+
+            <a
+                href="{{ url_for('manager.menu') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 5h16M4 12h16M4 19h16"
+                        />
+
+                        <circle cx="8" cy="5" r="1" />
+                        <circle cx="16" cy="12" r="1" />
+                        <circle cx="10" cy="19" r="1" />
+
+                    </svg>
+
+                </span>
+
+                Menu Management
+
+            </a>
 
 
-    <!-- =====================================================
-         HISTORY SUMMARY
-    ====================================================== -->
+            <!-- Order History - ACTIVE -->
 
-    <section class="history-summary">
+            <a
+                href="{{ url_for('manager.history') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#176B4D] shadow-sm"
+            >
 
-        <div class="history-summary-card">
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EAF5EF]"
+                >
 
-            <h3>
-                Total Orders
-            </h3>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
 
-            <p>
-                {{ total_orders }}
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 3h12v18H6z"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            d="M9 7h6M9 11h6M9 15h4"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Order History
+
+            </a>
+
+
+            <!-- Reports -->
+
+            <a
+                href="{{ url_for('manager.reports') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 19V5"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 19h17"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M7 15l4-4 3 2 5-6"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Reports
+
+            </a>
+
+
+            <!-- Sales -->
+
+            <a
+                href="{{ url_for('manager.sales') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 3v18"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M17 7c0-2-2-3-5-3s-5 1-5 3 2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Sales
+
+            </a>
+
+
+            <!-- Divider -->
+
+            <div class="my-6 border-t border-white/10"></div>
+
+
+            <p
+                class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+            >
+                Account
             </p>
 
-        </div>
+
+            <!-- Logout -->
+
+            <a
+                href="{{ url_for('auth.logout') }}"
+                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-red-500/20 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M10 17l5-5-5-5"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 12H3"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M21 19V5a2 2 0 00-2-2h-6"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Logout
+
+            </a>
+
+        </nav>
 
 
-        <div class="history-summary-card">
+        <!-- =================================================
+             MANAGER PROFILE
+        ================================================== -->
 
-            <h3>
-                Total Revenue
-            </h3>
+        <div class="border-t border-white/10 p-4">
 
-            <p>
-                Rs. {{ total_revenue }}
-            </p>
+            <div
+                class="flex items-center gap-3 rounded-xl bg-white/10 p-3"
+            >
 
-        </div>
-
-
-        <div class="history-summary-card">
-
-            <h3>
-                Items Sold
-            </h3>
-
-            <p>
-                {{ total_items_sold }}
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         ORDER HISTORY
-    ====================================================== -->
-
-    <section class="history-orders">
-
-        <div class="section-header">
-
-            <h2>
-                Previous Orders
-            </h2>
-
-        </div>
-
-
-        {% for order in orders %}
-
-            <div class="history-order-card">
-
-                <!-- =========================================
-                     ORDER HEADER
-                ========================================== -->
-
-                <div class="history-order-header">
-
-                    <div>
-
-                        <h2>
-                            Order #{{ order.id }}
-                        </h2>
-
-                        <p>
-                            Table:
-                            <strong>
-                                {{ order.table_name }}
-                            </strong>
-                        </p>
-
-                    </div>
-
-
-                    <div class="history-order-status">
-
-                        {% if order.status == "served" %}
-
-                            <span class="status served">
-                                Served
-                            </span>
-
-                        {% elif order.status == "ready" %}
-
-                            <span class="status ready">
-                                Ready
-                            </span>
-
-                        {% elif order.status == "preparing" %}
-
-                            <span class="status preparing">
-                                Preparing
-                            </span>
-
-                        {% else %}
-
-                            <span class="status pending">
-                                {{ order.status }}
-                            </span>
-
-                        {% endif %}
-
-                    </div>
-
+                <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-[#176B4D]"
+                >
+                    M
                 </div>
 
 
-                <!-- =========================================
-                     ORDER DATE
-                ========================================== -->
+                <div class="min-w-0">
 
-                <div class="history-order-date">
+                    <p class="truncate text-sm font-semibold">
+                        Manager
+                    </p>
 
-                    <p>
-                        Date:
-                        {{ order.created_at }}
+                    <p class="truncate text-xs text-white/55">
+                        Restaurant Manager
                     </p>
 
                 </div>
 
 
-                <!-- =========================================
-                     ORDER ITEMS
-                ========================================== -->
+                <span
+                    class="ml-auto h-2.5 w-2.5 rounded-full bg-emerald-300 ring-4 ring-white/10"
+                ></span>
 
-                <div class="history-order-items">
+            </div>
 
-                    <h3>
-                        Ordered Items
-                    </h3>
+        </div>
+
+    </aside>
 
 
-                    {% for item in order.items %}
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
-                        <div class="history-item">
+    <main class="ml-[245px] min-h-screen bg-[#FFFFFF]">
 
-                            <div>
 
-                                <strong>
-                                    {{ item.name }}
-                                </strong>
+        <!-- =================================================
+             TOP HEADER
+        ================================================== -->
+
+        <header
+            class="flex h-[82px] items-center justify-between border-b border-gray-100 bg-white px-8"
+        >
+
+            <div>
+
+                <p
+                    class="text-xs font-semibold uppercase tracking-wider text-[#718078]"
+                >
+                    Restaurant Management
+                </p>
+
+                <h2
+                    class="mt-1 text-xl font-bold text-[#26352F]"
+                >
+                    Order History
+                </h2>
+
+            </div>
+
+
+            <div class="flex items-center gap-5">
+
+                <!-- Notification -->
+
+                <button
+                    type="button"
+                    class="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-100 bg-white text-[#718078] shadow-sm transition hover:bg-[#F5FAF7] hover:text-[#176B4D]"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            d="M10 21h4"
+                        />
+
+                    </svg>
+
+                    <span
+                        class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"
+                    ></span>
+
+                </button>
+
+
+                <!-- Manager -->
+
+                <div
+                    class="flex items-center gap-3 border-l border-gray-100 pl-5"
+                >
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#176B4D] text-sm font-bold text-white shadow-sm"
+                    >
+                        M
+                    </div>
+
+                    <div class="hidden md:block">
+
+                        <p
+                            class="text-sm font-bold text-[#26352F]"
+                        >
+                            Manager
+                        </p>
+
+                        <p
+                            class="text-xs text-[#718078]"
+                        >
+                            Administrator
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             PAGE CONTENT
+        ================================================== -->
+
+        <div class="p-8">
+
+
+            <!-- =================================================
+                 PAGE INTRO
+            ================================================== -->
+
+            <section
+                class="relative mb-7 overflow-hidden rounded-2xl bg-[#176B4D] p-7 text-white shadow-lg"
+            >
+
+                <div
+                    class="absolute -right-12 -top-16 h-48 w-48 rounded-full bg-white/5"
+                ></div>
+
+                <div
+                    class="absolute -bottom-20 right-32 h-40 w-40 rounded-full bg-white/5"
+                ></div>
+
+
+                <div class="relative z-10 flex items-center justify-between">
+
+                    <div>
+
+                        <div
+                            class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/90"
+                        >
+
+                            <span
+                                class="h-2 w-2 rounded-full bg-emerald-300"
+                            ></span>
+
+                            Restaurant Orders
+
+                        </div>
+
+
+                        <h1 class="text-2xl font-bold md:text-3xl">
+                            Order History
+                        </h1>
+
+
+                        <p
+                            class="mt-2 max-w-xl text-sm leading-6 text-white/70"
+                        >
+                            View previous orders, order details,
+                            status and restaurant revenue.
+                        </p>
+
+                    </div>
+
+
+                    <!-- Icon -->
+
+                    <div
+                        class="hidden h-24 w-24 items-center justify-center rounded-2xl bg-white/10 md:flex"
+                    >
+
+                        <svg
+                            class="h-12 w-12 text-white/90"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.3"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 3h12v18H6z"
+                            />
+
+                            <path
+                                stroke-linecap="round"
+                                d="M9 8h6M9 12h6M9 16h4"
+                            />
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 FILTER CARD
+            ================================================== -->
+
+            <section
+                class="mb-7 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+            >
+
+                <div class="mb-5">
+
+                    <h2
+                        class="text-lg font-bold text-[#26352F]"
+                    >
+                        Filter Orders
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm text-[#718078]"
+                    >
+                        Search previous orders by date and status.
+                    </p>
+
+                </div>
+
+
+                <form
+                    method="GET"
+                    action="{{ url_for('auth.manager_order_history') }}"
+                    class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5"
+                >
+
+                    <!-- From -->
+
+                    <div>
+
+                        <label
+                            for="start_date"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            From Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="start_date"
+                            name="start_date"
+                            value="{{ start_date }}"
+                            class="h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                    </div>
+
+
+                    <!-- To -->
+
+                    <div>
+
+                        <label
+                            for="end_date"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            To Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="end_date"
+                            name="end_date"
+                            value="{{ end_date }}"
+                            class="h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                    </div>
+
+
+                    <!-- Status -->
+
+                    <div>
+
+                        <label
+                            for="status"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            Status
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                            class="h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                            <option value="">
+                                All Orders
+                            </option>
+
+                            <option
+                                value="served"
+                                {% if selected_status == "served" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Served
+                            </option>
+
+                            <option
+                                value="ready"
+                                {% if selected_status == "ready" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Ready
+                            </option>
+
+                            <option
+                                value="preparing"
+                                {% if selected_status == "preparing" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Preparing
+                            </option>
+
+                            <option
+                                value="pending"
+                                {% if selected_status == "pending" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Pending
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Apply -->
+
+                    <div class="flex items-end">
+
+                        <button
+                            type="submit"
+                            class="h-11 w-full rounded-xl bg-[#176B4D] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#105239] hover:shadow-md"
+                        >
+                            Apply Filter
+                        </button>
+
+                    </div>
+
+
+                    <!-- Clear -->
+
+                    <div class="flex items-end">
+
+                        <a
+                            href="{{ url_for('auth.manager_order_history') }}"
+                            class="flex h-11 w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 text-sm font-semibold text-[#718078] transition hover:border-[#176B4D]/30 hover:bg-[#F5FAF7] hover:text-[#176B4D]"
+                        >
+                            Clear Filter
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- =================================================
+                 SUMMARY CARDS
+            ================================================== -->
+
+            <section
+                class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"
+            >
+
+                <!-- Total Orders -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Total Orders
+                            </p>
+
+                            <h3
+                                class="mt-2 text-2xl font-bold text-[#26352F]"
+                            >
+                                {{ total_orders }}
+                            </h3>
+
+                        </div>
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EAF5EF] text-[#176B4D]"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 3h12v18H6z"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    d="M9 8h6M9 12h6M9 16h4"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-5 flex items-center gap-2">
+
+                        <span
+                            class="rounded-full bg-[#EAF5EF] px-2 py-1 text-xs font-semibold text-[#176B4D]"
+                        >
+                            Orders
+                        </span>
+
+                        <span class="text-xs text-[#718078]">
+                            Orders matching your filter
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Revenue -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Total Revenue
+                            </p>
+
+                            <h3
+                                class="mt-2 text-2xl font-bold text-[#26352F]"
+                            >
+                                Rs. {{ total_revenue }}
+                            </h3>
+
+                        </div>
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-500"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    d="M12 3v18"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    d="M17 7c0-2-2-3-5-3S7 5 7 7s2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-5 flex items-center gap-2">
+
+                        <span
+                            class="rounded-full bg-orange-50 px-2 py-1 text-xs font-semibold text-orange-600"
+                        >
+                            Revenue
+                        </span>
+
+                        <span class="text-xs text-[#718078]">
+                            Revenue from selected orders
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Items Sold -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Items Sold
+                            </p>
+
+                            <h3
+                                class="mt-2 text-2xl font-bold text-[#26352F]"
+                            >
+                                {{ total_items_sold }}
+                            </h3>
+
+                        </div>
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M5 11h14M6 11l1 8h10l1-8"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9 11V7a3 3 0 016 0v4"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-5 flex items-center gap-2">
+
+                        <span
+                            class="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+                        >
+                            Food
+                        </span>
+
+                        <span class="text-xs text-[#718078]">
+                            Total items sold
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PREVIOUS ORDERS
+            ================================================== -->
+
+            <section
+                class="mt-7"
+            >
+
+                <div class="mb-5">
+
+                    <h2
+                        class="text-lg font-bold text-[#26352F]"
+                    >
+                        Previous Orders
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm text-[#718078]"
+                    >
+                        Recently completed and previous restaurant orders.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     ORDERS
+                ================================================== -->
+
+                <div class="space-y-5">
+
+                    {% for order in orders %}
+
+                    <article
+                        class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:shadow-md"
+                    >
+
+                        <!-- Order Header -->
+
+                        <div
+                            class="flex flex-col gap-4 border-b border-gray-100 p-6 md:flex-row md:items-center md:justify-between"
+                        >
+
+                            <div class="flex items-center gap-4">
+
+                                <div
+                                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EAF5EF] text-sm font-bold text-[#176B4D]"
+                                >
+                                    #
+                                </div>
+
+
+                                <div>
+
+                                    <h3
+                                        class="text-base font-bold text-[#26352F]"
+                                    >
+                                        Order #{{ order.id }}
+                                    </h3>
+
+                                    <p
+                                        class="mt-1 text-xs text-[#718078]"
+                                    >
+                                        Table:
+                                        <span class="font-semibold text-[#26352F]">
+                                            {{ order.table_name or "Takeaway" }}
+                                        </span>
+                                    </p>
+
+                                </div>
 
                             </div>
 
 
-                            <div>
-
-                                Quantity:
-                                {{ item.quantity }}
-
-                            </div>
-
+                            <!-- Status -->
 
                             <div>
 
-                                Price:
-                                Rs. {{ item.price_at_order }}
+                                {% if order.status == "served" %}
 
-                            </div>
+                                <span
+                                    class="inline-flex rounded-full bg-[#EAF5EF] px-3 py-1.5 text-xs font-semibold text-[#176B4D]"
+                                >
+                                    Served
+                                </span>
 
+                                {% elif order.status == "ready" %}
 
-                            <div>
+                                <span
+                                    class="inline-flex rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600"
+                                >
+                                    Ready
+                                </span>
 
-                                Subtotal:
-                                Rs.
-                                {{
-                                    item.price_at_order
-                                    * item.quantity
-                                }}
+                                {% elif order.status == "preparing" %}
+
+                                <span
+                                    class="inline-flex rounded-full bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600"
+                                >
+                                    Preparing
+                                </span>
+
+                                {% elif order.status == "cancelled" %}
+
+                                <span
+                                    class="inline-flex rounded-full bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600"
+                                >
+                                    Cancelled
+                                </span>
+
+                                {% else %}
+
+                                <span
+                                    class="inline-flex rounded-full bg-yellow-50 px-3 py-1.5 text-xs font-semibold text-yellow-600"
+                                >
+                                    {{ order.status|capitalize }}
+                                </span>
+
+                                {% endif %}
 
                             </div>
 
                         </div>
 
+
+                        <!-- Order Date -->
+
+                        <div
+                            class="border-b border-gray-50 bg-[#F8FBF9] px-6 py-3"
+                        >
+
+                            <p class="text-xs text-[#718078]">
+
+                                <span class="font-semibold text-[#26352F]">
+                                    Order Date:
+                                </span>
+
+                                {{ order.created_at }}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             ORDER ITEMS
+                        ================================================== -->
+
+                        <div class="p-6">
+
+                            <div
+                                class="mb-4 flex items-center justify-between"
+                            >
+
+                                <h4
+                                    class="text-sm font-bold text-[#26352F]"
+                                >
+                                    Ordered Items
+                                </h4>
+
+                                <span
+                                    class="text-xs font-medium text-[#718078]"
+                                >
+                                    {{ order.items|length }} item(s)
+                                </span>
+
+                            </div>
+
+
+                            <div class="overflow-hidden rounded-xl border border-gray-100">
+
+                                {% for item in order.items %}
+
+                                <div
+                                    class="flex flex-col gap-3 border-b border-gray-100 p-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
+                                >
+
+                                    <!-- Item -->
+
+                                    <div class="flex items-center gap-3">
+
+                                        <div
+                                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#EAF5EF] text-[#176B4D]"
+                                        >
+
+                                            <svg
+                                                class="h-5 w-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                viewBox="0 0 24 24"
+                                            >
+
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M5 11h14M6 11l1 8h10l1-8"
+                                                />
+
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M9 11V7a3 3 0 016 0v4"
+                                                />
+
+                                            </svg>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <p
+                                                class="text-sm font-semibold text-[#26352F]"
+                                            >
+                                                {{ item.name }}
+                                            </p>
+
+                                            <p
+                                                class="mt-1 text-xs text-[#718078]"
+                                            >
+                                                Quantity:
+                                                {{ item.quantity }}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Price -->
+
+                                    <div
+                                        class="flex items-center justify-between gap-8 sm:justify-end"
+                                    >
+
+                                        <div class="text-right">
+
+                                            <p
+                                                class="text-xs text-[#718078]"
+                                            >
+                                                Unit Price
+                                            </p>
+
+                                            <p
+                                                class="mt-1 text-sm font-semibold text-[#26352F]"
+                                            >
+                                                Rs. {{ item.price_at_order }}
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="min-w-[90px] text-right">
+
+                                            <p
+                                                class="text-xs text-[#718078]"
+                                            >
+                                                Subtotal
+                                            </p>
+
+                                            <p
+                                                class="mt-1 text-sm font-bold text-[#176B4D]"
+                                            >
+                                                Rs.
+                                                {{
+                                                    item.price_at_order
+                                                    * item.quantity
+                                                }}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             ORDER TOTAL
+                        ================================================== -->
+
+                        <div
+                            class="flex items-center justify-between border-t border-gray-100 bg-[#F8FBF9] px-6 py-5"
+                        >
+
+                            <div>
+
+                                <p
+                                    class="text-xs font-medium text-[#718078]"
+                                >
+                                    Order Total
+                                </p>
+
+                                <p
+                                    class="mt-1 text-sm font-semibold text-[#26352F]"
+                                >
+                                    Restaurant Order
+                                </p>
+
+                            </div>
+
+
+                            <strong
+                                class="text-xl font-bold text-[#176B4D]"
+                            >
+                                Rs. {{ order.total }}
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    {% else %}
+
+                    <!-- =================================================
+                         NO ORDERS
+                    ================================================== -->
+
+                    <div
+                        class="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm"
+                    >
+
+                        <div
+                            class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EAF5EF] text-[#176B4D]"
+                        >
+
+                            <svg
+                                class="h-8 w-8"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 3h12v18H6z"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    d="M9 8h6M9 12h6M9 16h3"
+                                />
+
+                            </svg>
+
+                        </div>
+
+
+                        <h2
+                            class="mt-5 text-lg font-bold text-[#26352F]"
+                        >
+                            No Orders Found
+                        </h2>
+
+
+                        <p
+                            class="mx-auto mt-2 max-w-md text-sm text-[#718078]"
+                        >
+                            There are no orders matching the selected
+                            filters. Try changing the date or order status.
+                        </p>
+
+                    </div>
+
                     {% endfor %}
 
                 </div>
 
+            </section>
 
-                <!-- =========================================
-                     ORDER TOTAL
-                ========================================== -->
 
-                <div class="history-order-total">
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
 
-                    <span>
-                        Order Total
+            <footer
+                class="mt-8 border-t border-gray-100 pt-5 text-center"
+            >
+
+                <p class="text-xs text-[#718078]">
+
+                    Restaurant Management System
+
+                    <span class="mx-1">
+                        •
                     </span>
 
-                    <strong>
-                        Rs. {{ order.total }}
-                    </strong>
+                    Manager Order History
 
-                </div>
-
-            </div>
-
-        {% else %}
-
-            <!-- =============================================
-                 NO HISTORY
-            ============================================== -->
-
-            <div class="no-history">
-
-                <h2>
-                    No Orders Found
-                </h2>
-
-                <p>
-                    There are no orders matching the
-                    selected filters.
                 </p>
 
-            </div>
+            </footer>
 
-        {% endfor %}
+        </div>
 
-    </section>
+    </main>
 
 </div>
 

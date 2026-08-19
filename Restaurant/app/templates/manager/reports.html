@@ -1,437 +1,894 @@
 <!--
 =============================================================
   Manager Reports
-=============================================================
-  This page provides detailed restaurant sales reports.
-
-  Manager can:
-    - Filter reports by date range
-    - View total sales
-    - View total orders
-    - View total items sold
-    - View estimated profit
-    - View sales by period
-    - View sales by category
-    - View best-selling menu items
-
-  The controller performs the calculations.
-  This template only displays the results.
+  File: templates/manager/reports.html
 =============================================================
 -->
 
 {% extends "base.html" %}
 
 {% block title %}
-Reports
+    Reports
 {% endblock %}
-
 
 {% block content %}
 
-<!-- Manager Navigation -->
-{% include "partials/manager_navbar.html" %}
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    restaurant: {
+                        green: '#176B4D',
+                        greenDark: '#105239',
+                        greenLight: '#21825E',
+                        greenSoft: '#EAF5EF',
+                        greenPale: '#F5FAF7',
+                        text: '#26352F',
+                        muted: '#718078'
+                    }
+                }
+            }
+        }
+    }
+</script>
 
 
-<div class="manager-reports">
+<div class="min-h-screen bg-white text-[#26352F]">
 
     <!-- =====================================================
-         PAGE HEADER
+         MANAGER SIDEBAR
     ====================================================== -->
 
-    <div class="reports-header">
-
-        <h1>
-            Sales Reports
-        </h1>
-
-        <p>
-            Analyze restaurant sales and performance.
-        </p>
-
-    </div>
+    {% include "partials/manager_navbar.html" %}
 
 
     <!-- =====================================================
-         DATE FILTER
+         MAIN CONTENT
     ====================================================== -->
 
-    <section class="report-filter">
+    <main class="ml-[245px] min-h-screen bg-white">
 
-        <form
-            method="GET"
-            action="{{ url_for('auth.sales_report') }}"
+        <!-- =================================================
+             TOP HEADER
+        ================================================== -->
+
+        <header
+            class="flex h-[82px] items-center justify-between border-b border-gray-100 bg-white px-8"
         >
 
-            <div class="form-group">
+            <div>
 
-                <label for="start_date">
-                    From Date
-                </label>
-
-                <input
-                    type="date"
-                    id="start_date"
-                    name="start_date"
-                    value="{{ start_date }}"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="end_date">
-                    To Date
-                </label>
-
-                <input
-                    type="date"
-                    id="end_date"
-                    name="end_date"
-                    value="{{ end_date }}"
-                    required
-                >
-
-            </div>
-
-
-            <button type="submit">
-                Generate Report
-            </button>
-
-
-            <a
-                href="{{ url_for('auth.sales_report') }}"
-            >
-                Clear
-            </a>
-
-        </form>
-
-    </section>
-
-
-    <!-- =====================================================
-         REPORT SUMMARY
-    ====================================================== -->
-
-    <section class="report-summary">
-
-        <!-- Total Sales -->
-
-        <div class="report-card">
-
-            <h3>
-                Total Sales
-            </h3>
-
-            <p>
-                Rs. {{ total_sales }}
-            </p>
-
-        </div>
-
-
-        <!-- Total Orders -->
-
-        <div class="report-card">
-
-            <h3>
-                Total Orders
-            </h3>
-
-            <p>
-                {{ total_orders }}
-            </p>
-
-        </div>
-
-
-        <!-- Items Sold -->
-
-        <div class="report-card">
-
-            <h3>
-                Items Sold
-            </h3>
-
-            <p>
-                {{ total_items_sold }}
-            </p>
-
-        </div>
-
-
-        <!-- Profit -->
-
-        <div class="report-card">
-
-            <h3>
-                Estimated Profit
-            </h3>
-
-            <p>
-                Rs. {{ total_profit }}
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         SALES BY PERIOD
-    ====================================================== -->
-
-    <section class="sales-report-section">
-
-        <div class="section-header">
-
-            <h2>
-                Sales by Period
-            </h2>
-
-            <p>
-                Revenue generated during the selected period.
-            </p>
-
-        </div>
-
-
-        <div class="sales-chart">
-
-            {% if sales_data %}
-
-                <!--
-                    Text-based chart for MVP.
-
-                    Later this can be replaced with
-                    Chart.js or another chart library.
-                -->
-
-                {% for data in sales_data %}
-
-                    <div class="sales-row">
-
-                        <div class="sales-period">
-
-                            <strong>
-                                {{ data.period }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="sales-value">
-
-                            Rs. {{ data.sales }}
-
-                        </div>
-
-                    </div>
-
-                {% endfor %}
-
-            {% else %}
-
-                <p>
-                    No sales data available.
+                <p class="text-xs font-semibold uppercase tracking-wider text-[#718078]">
+                    Restaurant Management
                 </p>
 
-            {% endif %}
+                <h2 class="mt-1 text-xl font-bold text-[#26352F]">
+                    Sales Reports
+                </h2>
 
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         SALES BY CATEGORY
-    ====================================================== -->
-
-    <section class="category-report-section">
-
-        <div class="section-header">
-
-            <h2>
-                Sales by Category
-            </h2>
-
-            <p>
-                Compare revenue generated by menu categories.
-            </p>
-
-        </div>
+            </div>
 
 
-        <div class="category-list">
+            <!-- Manager Profile -->
 
-            {% for category in category_sales %}
+            <div class="flex items-center gap-5">
 
-                <div class="category-row">
+                <button
+                    type="button"
+                    class="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-100 bg-white text-[#718078] shadow-sm"
+                    aria-label="Notifications"
+                >
 
-                    <div>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
 
-                        <strong>
-                            {{ category.category }}
-                        </strong>
+                        <path
+                            d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                        />
 
+                        <path d="M10 21h4"/>
+
+                    </svg>
+
+                    <span
+                        class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"
+                    ></span>
+
+                </button>
+
+
+                <div
+                    class="flex items-center gap-3 border-l border-gray-100 pl-5"
+                >
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#176B4D] text-sm font-bold text-white shadow-sm"
+                    >
+                        M
                     </div>
 
+                    <div class="hidden md:block">
 
-                    <div>
+                        <p class="text-sm font-bold text-[#26352F]">
+                            Manager
+                        </p>
 
-                        {{ category.quantity }}
-                        items sold
-
-                    </div>
-
-
-                    <div>
-
-                        Rs. {{ category.sales }}
+                        <p class="text-xs text-[#718078]">
+                            Administrator
+                        </p>
 
                     </div>
 
                 </div>
 
-            {% else %}
+            </div>
 
-                <p>
-                    No category sales data available.
-                </p>
-
-            {% endfor %}
-
-        </div>
-
-    </section>
+        </header>
 
 
-    <!-- =====================================================
-         BEST SELLING ITEMS
-    ====================================================== -->
+        <!-- =================================================
+             PAGE CONTENT
+        ================================================== -->
 
-    <section class="best-selling-section">
+        <div class="p-8">
 
-        <div class="section-header">
+            <!-- =================================================
+                 PAGE TITLE
+            ================================================== -->
 
-            <h2>
-                Best-Selling Items
-            </h2>
+            <section class="mb-7">
 
-            <p>
-                Menu items with the highest number of sales.
-            </p>
+                <div class="flex flex-col justify-between gap-4 md:flex-row md:items-end">
 
-        </div>
+                    <div>
+
+                        <div
+                            class="mb-3 inline-flex items-center gap-2 rounded-full bg-[#EAF5EF] px-3 py-1.5 text-xs font-semibold text-[#176B4D]"
+                        >
+
+                            <span
+                                class="h-2 w-2 rounded-full bg-[#176B4D]"
+                            ></span>
+
+                            Performance Analytics
+
+                        </div>
 
 
-        <div class="best-selling-list">
+                        <h1 class="text-3xl font-bold text-[#26352F]">
+                            Sales Reports
+                        </h1>
 
-            {% for item in best_selling_items %}
 
-                <div class="best-selling-item">
+                        <p class="mt-2 text-sm text-[#718078]">
+                            Analyze restaurant sales and performance.
+                        </p>
 
-                    <!-- Rank -->
+                    </div>
 
-                    <div class="item-rank">
+                </div>
 
-                        #{{ loop.index }}
+            </section>
+
+
+            <!-- =================================================
+                 DATE FILTER
+            ================================================== -->
+
+            <section
+                class="mb-7 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+            >
+
+                <div class="mb-5">
+
+                    <h2 class="text-lg font-bold text-[#26352F]">
+                        Date Range
+                    </h2>
+
+                    <p class="mt-1 text-sm text-[#718078]">
+                        Select the period you want to analyze.
+                    </p>
+
+                </div>
+
+
+                <form
+                    method="GET"
+                    action="{{ url_for('manager.reports') }}"
+                    class="grid grid-cols-1 gap-4 md:grid-cols-4"
+                >
+
+                    <!-- From Date -->
+
+                    <div>
+
+                        <label
+                            for="start_date"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            From Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="start_date"
+                            name="start_date"
+                            value="{{ start_date|default('', true) }}"
+                            required
+                            class="h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
 
                     </div>
 
 
-                    <!-- Item Name -->
+                    <!-- To Date -->
 
-                    <div class="item-details">
+                    <div>
 
-                        <h3>
-                            {{ item.name }}
-                        </h3>
+                        <label
+                            for="end_date"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            To Date
+                        </label>
 
-                        <p>
-                            {{ item.category }}
+                        <input
+                            type="date"
+                            id="end_date"
+                            name="end_date"
+                            value="{{ end_date|default('', true) }}"
+                            required
+                            class="h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                    </div>
+
+
+                    <!-- Generate -->
+
+                    <div class="flex items-end">
+
+                        <button
+                            type="submit"
+                            class="h-11 w-full rounded-xl bg-[#176B4D] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#105239]"
+                        >
+                            Generate Report
+                        </button>
+
+                    </div>
+
+
+                    <!-- Clear -->
+
+                    <div class="flex items-end">
+
+                        <a
+                            href="{{ url_for('manager.reports') }}"
+                            class="flex h-11 w-full items-center justify-center rounded-xl border border-gray-200 px-5 text-sm font-semibold text-[#26352F] transition hover:border-[#176B4D] hover:bg-[#F5FAF7] hover:text-[#176B4D]"
+                        >
+                            Clear
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- =================================================
+                 SUMMARY CARDS
+            ================================================== -->
+
+            <section class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+
+                <!-- Total Revenue -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Total Revenue
+                            </p>
+
+                            <h3 class="mt-2 text-2xl font-bold text-[#26352F]">
+                                Rs. {{ total_sales|default(0, true) }}
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EAF5EF] text-[#176B4D]"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path d="M12 3v18"/>
+
+                                <path
+                                    d="M17 7c0-2-2-3-5-3S7 5 7 7s2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5">
+
+                        <span
+                            class="rounded-full bg-[#EAF5EF] px-2 py-1 text-xs font-semibold text-[#176B4D]"
+                        >
+                            Revenue
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Total Orders -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Total Orders
+                            </p>
+
+                            <h3 class="mt-2 text-2xl font-bold text-[#26352F]">
+                                {{ total_orders|default(0, true) }}
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path d="M6 3h12v18H6z"/>
+
+                                <path d="M9 7h6M9 11h6M9 15h4"/>
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5">
+
+                        <span
+                            class="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+                        >
+                            Orders
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Items Sold -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Items Sold
+                            </p>
+
+                            <h3 class="mt-2 text-2xl font-bold text-[#26352F]">
+                                {{ total_items_sold|default(0, true) }}
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-500"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path d="M5 11h14M6 11l1 8h10l1-8"/>
+
+                                <path d="M9 11V7a3 3 0 016 0v4"/>
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5">
+
+                        <span
+                            class="rounded-full bg-orange-50 px-2 py-1 text-xs font-semibold text-orange-600"
+                        >
+                            Items
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Estimated Profit -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Estimated Profit
+                            </p>
+
+                            <h3 class="mt-2 text-2xl font-bold text-[#26352F]">
+                                Rs. {{ total_profit|default(0, true) }}
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path d="M4 19V5"/>
+
+                                <path d="M4 19h17"/>
+
+                                <path d="M7 15l4-4 3 2 5-6"/>
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5">
+
+                        <span
+                            class="rounded-full bg-purple-50 px-2 py-1 text-xs font-semibold text-purple-600"
+                        >
+                            Profit
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SALES BY PERIOD
+            ================================================== -->
+
+            <section
+                class="mt-7 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+            >
+
+                <div
+                    class="flex flex-col justify-between gap-3 md:flex-row md:items-center"
+                >
+
+                    <div>
+
+                        <h2 class="text-lg font-bold text-[#26352F]">
+                            Sales by Period
+                        </h2>
+
+                        <p class="mt-1 text-sm text-[#718078]">
+                            Revenue generated during the selected period.
                         </p>
 
                     </div>
 
 
-                    <!-- Quantity -->
+                    <span
+                        class="rounded-full bg-[#EAF5EF] px-3 py-1.5 text-xs font-semibold text-[#176B4D]"
+                    >
+                        {{ start_date|default('', true) }}
+                        -
+                        {{ end_date|default('', true) }}
+                    </span>
 
-                    <div class="item-quantity">
+                </div>
 
-                        <strong>
-                            {{ item.quantity }}
-                        </strong>
 
-                        <span>
-                            sold
-                        </span>
+                <div class="mt-6">
+
+                    {% if sales_data %}
+
+                        <div class="space-y-3">
+
+                            {% for data in sales_data %}
+
+                                <div
+                                    class="rounded-xl border border-gray-100 bg-[#F8FBF9] p-4"
+                                >
+
+                                    <div
+                                        class="flex items-center justify-between gap-4"
+                                    >
+
+                                        <p
+                                            class="min-w-0 truncate text-sm font-semibold text-[#26352F]"
+                                        >
+                                            {{ data.period }}
+                                        </p>
+
+
+                                        <strong
+                                            class="whitespace-nowrap text-sm text-[#176B4D]"
+                                        >
+                                            Rs. {{ data.sales }}
+                                        </strong>
+
+                                    </div>
+
+
+                                    <!-- Simple visual bar -->
+
+                                    <div
+                                        class="mt-3 h-2 w-full overflow-hidden rounded-full bg-gray-200"
+                                    >
+
+                                        <div
+                                            class="h-full w-1/2 rounded-full bg-[#176B4D]"
+                                        ></div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div
+                            class="rounded-xl bg-[#F8FBF9] p-10 text-center"
+                        >
+
+                            <p
+                                class="text-sm font-semibold text-[#26352F]"
+                            >
+                                No sales data available.
+                            </p>
+
+                            <p
+                                class="mt-1 text-xs text-[#718078]"
+                            >
+                                Try selecting a different date range.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CATEGORY SALES + BEST SELLING
+            ================================================== -->
+
+            <section
+                class="mt-7 grid grid-cols-1 gap-6 xl:grid-cols-2"
+            >
+
+                <!-- Sales By Category -->
+
+                <div
+                    class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+                >
+
+                    <div>
+
+                        <h2 class="text-lg font-bold text-[#26352F]">
+                            Sales by Category
+                        </h2>
+
+                        <p class="mt-1 text-sm text-[#718078]">
+                            Revenue generated by menu categories.
+                        </p>
 
                     </div>
 
 
-                    <!-- Revenue -->
+                    <div class="mt-6 space-y-3">
 
-                    <div class="item-revenue">
+                        {% for category in category_sales %}
 
-                        <strong>
-                            Rs. {{ item.sales }}
-                        </strong>
+                            <div
+                                class="flex items-center justify-between rounded-xl border border-gray-100 p-4"
+                            >
+
+                                <div>
+
+                                    <p
+                                        class="text-sm font-semibold text-[#26352F]"
+                                    >
+                                        {{ category.category }}
+                                    </p>
+
+                                    <p
+                                        class="mt-1 text-xs text-[#718078]"
+                                    >
+                                        {{ category.quantity }}
+                                        items sold
+                                    </p>
+
+                                </div>
+
+
+                                <p
+                                    class="text-sm font-bold text-[#176B4D]"
+                                >
+                                    Rs. {{ category.sales }}
+                                </p>
+
+                            </div>
+
+                        {% else %}
+
+                            <div
+                                class="rounded-xl bg-[#F8FBF9] p-8 text-center"
+                            >
+
+                                <p class="text-sm text-[#718078]">
+                                    No category sales data available.
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
 
                     </div>
 
                 </div>
 
-            {% else %}
 
-                <p>
-                    No item sales data available.
+                <!-- Best Selling -->
+
+                <div
+                    class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+                >
+
+                    <div>
+
+                        <h2 class="text-lg font-bold text-[#26352F]">
+                            Best-Selling Items
+                        </h2>
+
+                        <p class="mt-1 text-sm text-[#718078]">
+                            Menu items with the highest sales.
+                        </p>
+
+                    </div>
+
+
+                    <div class="mt-6 space-y-3">
+
+                        {% for item in best_selling_items %}
+
+                            <div
+                                class="flex items-center gap-4 rounded-xl border border-gray-100 p-4"
+                            >
+
+                                <div
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EAF5EF] text-xs font-bold text-[#176B4D]"
+                                >
+                                    #{{ loop.index }}
+                                </div>
+
+
+                                <div class="min-w-0 flex-1">
+
+                                    <p
+                                        class="truncate text-sm font-semibold text-[#26352F]"
+                                    >
+                                        {{ item.name }}
+                                    </p>
+
+                                    <p
+                                        class="mt-1 text-xs text-[#718078]"
+                                    >
+                                        {{ item.category }}
+                                    </p>
+
+                                </div>
+
+
+                                <div class="text-right">
+
+                                    <p
+                                        class="text-sm font-bold text-[#26352F]"
+                                    >
+                                        {{ item.quantity }}
+                                    </p>
+
+                                    <p
+                                        class="text-[11px] text-[#718078]"
+                                    >
+                                        sold
+                                    </p>
+
+                                </div>
+
+
+                                <div class="text-right">
+
+                                    <p
+                                        class="text-sm font-bold text-[#176B4D]"
+                                    >
+                                        Rs. {{ item.sales }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <div
+                                class="rounded-xl bg-[#F8FBF9] p-8 text-center"
+                            >
+
+                                <p class="text-sm text-[#718078]">
+                                    No item sales data available.
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 REPORT TOTAL
+            ================================================== -->
+
+            <section
+                class="mt-7 overflow-hidden rounded-2xl bg-[#176B4D] p-6 text-white shadow-lg"
+            >
+
+                <div
+                    class="flex flex-col justify-between gap-5 md:flex-row md:items-center"
+                >
+
+                    <div>
+
+                        <p
+                            class="text-xs font-semibold uppercase tracking-wider text-white/60"
+                        >
+                            Report Period
+                        </p>
+
+                        <p class="mt-2 text-sm font-semibold">
+
+                            {{ start_date|default('', true) }}
+
+                            -
+
+                            {{ end_date|default('', true) }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="md:text-right">
+
+                        <p
+                            class="text-xs font-semibold uppercase tracking-wider text-white/60"
+                        >
+                            Total Revenue
+                        </p>
+
+                        <p class="mt-1 text-3xl font-bold">
+                            Rs. {{ total_sales|default(0, true) }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer
+                class="mt-8 border-t border-gray-100 pt-5 text-center"
+            >
+
+                <p class="text-xs text-[#718078]">
+                    Restaurant Management System
+                    <span class="mx-1">•</span>
+                    Manager Reports
                 </p>
 
-            {% endfor %}
+            </footer>
 
         </div>
 
-    </section>
-
-
-    <!-- =====================================================
-         REPORT TOTAL
-    ====================================================== -->
-
-    <section class="report-total">
-
-        <div>
-
-            <span>
-                Report Period:
-            </span>
-
-            <strong>
-                {{ start_date }}
-                -
-                {{ end_date }}
-            </strong>
-
-        </div>
-
-
-        <div>
-
-            <span>
-                Total Revenue:
-            </span>
-
-            <strong>
-                Rs. {{ total_sales }}
-            </strong>
-
-        </div>
-
-    </section>
+    </main>
 
 </div>
 

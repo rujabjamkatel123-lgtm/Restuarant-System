@@ -1,192 +1,342 @@
-<aside class="fixed left-0 top-0 z-50 flex h-screen w-[245px] flex-col bg-[#1d314f] text-white">
+<!-- =========================================================
+     Manager Sidebar Navigation
+     File: templates/partials/manager_navbar.html
+========================================================= -->
 
-    <!-- Logo -->
-    <div class="flex items-center gap-3 px-6 py-7">
+<script src="https://cdn.tailwindcss.com"></script>
 
-        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#d47d4f]">
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    restaurant: {
+                        green: '#176B4D',
+                        greenDark: '#105239',
+                        greenLight: '#21825E',
+                        greenSoft: '#EAF5EF',
+                        greenPale: '#F5FAF7',
+                        text: '#26352F',
+                        muted: '#718078'
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside
+    class="fixed left-0 top-0 z-40 flex h-screen w-[245px] flex-col bg-[#176B4D] text-white shadow-xl"
+>
+
+    <!-- =====================================================
+         LOGO
+    ====================================================== -->
+
+    <div
+        class="flex h-[82px] shrink-0 items-center gap-3 border-b border-white/10 px-6"
+    >
+
+        <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#176B4D] shadow-sm"
+        >
+
             <svg
                 class="h-6 w-6"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
+                stroke-width="1.8"
                 viewBox="0 0 24 24"
             >
                 <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M8 10h8M7 14h10M5 20h14a2 2 0 002-2V9a2 2 0 00-2-2h-1.5a5.5 5.5 0 00-11 0H5a2 2 0 00-2 2v9a2 2 0 002 2z"
+                    d="M7 3v7M5 3v4M9 3v4M7 10v11"
+                />
+
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 3c2.2 1.5 3 4.3 2 6.7-.5 1.2-1.3 2-2.5 2.4V21"
                 />
             </svg>
+
         </div>
 
-        <div>
-            <h1 class="text-lg font-bold">
-                FoodHub
+
+        <div class="min-w-0">
+
+            <h1 class="truncate text-base font-bold tracking-wide">
+                Restaurant
             </h1>
 
-            <p class="text-xs text-[#9db2d0]">
-                MANAGER
+            <p class="truncate text-xs text-white/65">
+                Management System
             </p>
+
         </div>
 
     </div>
 
 
-    <!-- Navigation -->
-    <nav class="flex-1 px-4">
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <nav class="flex-1 overflow-y-auto px-4 py-6">
+
+        <p
+            class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+        >
+            Main Menu
+        </p>
 
 
-        <!-- Dashboard -->
+        <!-- =================================================
+             DASHBOARD
+        ================================================== -->
+
         <a
             href="{{ url_for('manager.dashboard') }}"
-            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
-            {% if request.endpoint == 'manager.dashboard' %}
-                bg-[#d47d4f] text-white
-            {% else %}
-                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
-            {% endif %}"
+            class="mb-2 flex h-[58px] items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
         >
 
-            <svg
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
             >
-                <rect x="3" y="3" width="7" height="7" rx="1"/>
-                <rect x="14" y="3" width="7" height="7" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" rx="1"/>
-                <rect x="14" y="14" width="7" height="7" rx="1"/>
-            </svg>
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+
+            </span>
 
             Dashboard
 
         </a>
 
 
-        <!-- Menu Management -->
+        <!-- =================================================
+             MENU MANAGEMENT
+        ================================================== -->
+
         <a
             href="{{ url_for('manager.menu') }}"
-            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
-            {% if request.endpoint == 'manager.menu' %}
-                bg-[#d47d4f] text-white
-            {% else %}
-                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
-            {% endif %}"
+            class="mb-2 flex h-[58px] items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
         >
 
-            <svg
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h4"
-                />
-            </svg>
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        d="M4 5h16M4 12h16M4 19h16"
+                    />
+
+                    <circle cx="8" cy="5" r="1"/>
+                    <circle cx="16" cy="12" r="1"/>
+                    <circle cx="10" cy="19" r="1"/>
+
+                </svg>
+
+            </span>
 
             Menu Management
 
         </a>
 
 
-        <!-- Order History -->
+        <!-- =================================================
+             ORDER HISTORY
+        ================================================== -->
+
         <a
             href="{{ url_for('manager.history') }}"
-            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
-            {% if request.endpoint == 'manager.history' %}
-                bg-[#d47d4f] text-white
-            {% else %}
-                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
-            {% endif %}"
+            class="mb-2 flex h-[58px] items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
         >
 
-            <svg
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 7h12l1 13H5L6 7zM9 7a3 3 0 016 0"
-                />
-            </svg>
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path d="M6 3h12v18H6z"/>
+
+                    <path
+                        stroke-linecap="round"
+                        d="M9 7h6M9 11h6M9 15h4"
+                    />
+
+                </svg>
+
+            </span>
 
             Order History
 
         </a>
 
 
-        <!-- Reports -->
+        <!-- =================================================
+             REPORTS
+             
+             IMPORTANT:
+             There is NO separate Sales option.
+             Sales information is included inside Reports.
+        ================================================== -->
+
         <a
             href="{{ url_for('manager.reports') }}"
-            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
-            {% if request.endpoint == 'manager.reports' %}
-                bg-[#d47d4f] text-white
-            {% else %}
-                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
-            {% endif %}"
+            class="mb-2 flex h-[58px] items-center gap-3 rounded-xl px-4 py-2 text-sm font-semibold {% if request.endpoint == 'manager.reports' %}bg-white text-[#176B4D] shadow-sm{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}"
         >
 
-            <svg
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg {% if request.endpoint == 'manager.reports' %}bg-[#EAF5EF]{% else %}bg-white/10{% endif %}"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 4h14v16H5zM8 8h8M8 12h6M8 16h8"
-                />
-            </svg>
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path d="M4 19V5"/>
+
+                    <path d="M4 19h17"/>
+
+                    <path d="M7 15l4-4 3 2 5-6"/>
+
+                </svg>
+
+            </span>
 
             Reports
+
+        </a>
+
+
+        <!-- =================================================
+             DIVIDER
+        ================================================== -->
+
+        <div class="my-6 border-t border-white/10"></div>
+
+
+        <!-- =================================================
+             ACCOUNT
+        ================================================== -->
+
+        <p
+            class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+        >
+            Account
+        </p>
+
+
+        <!-- =================================================
+             LOGOUT
+        ================================================== -->
+
+        <a
+            href="{{ url_for('auth.logout') }}"
+            class="flex h-[58px] items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-red-500/20 hover:text-white"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path d="M10 17l5-5-5-5"/>
+
+                    <path d="M15 12H3"/>
+
+                    <path d="M21 19V5a2 2 0 00-2-2h-6"/>
+
+                </svg>
+
+            </span>
+
+            Logout
 
         </a>
 
     </nav>
 
 
-    <!-- Logout -->
-    <div class="border-t border-[#304361] px-6 py-5">
+    <!-- =====================================================
+         MANAGER PROFILE
+    ====================================================== -->
 
-        <a
-            href="{{ url_for('auth.logout') }}"
-            class="flex items-center gap-4 text-sm text-[#9db2d0] transition hover:text-white"
+    <div class="shrink-0 border-t border-white/10 p-4">
+
+        <div
+            class="flex items-center gap-3 rounded-xl bg-white/10 p-3"
         >
 
-            <svg
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+            <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-[#176B4D]"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10 17l5-5-5-5M15 12H3"
-                />
+                M
+            </div>
 
-                <path
-                    stroke-linecap="round"
-                    d="M21 19V5a2 2 0 00-2-2h-5"
-                />
-            </svg>
 
-            Logout
+            <div class="min-w-0">
 
-        </a>
+                <p class="truncate text-sm font-semibold">
+                    Manager
+                </p>
+
+                <p class="truncate text-xs text-white/55">
+                    Restaurant Manager
+                </p>
+
+            </div>
+
+
+            <span
+                class="ml-auto h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-300 ring-4 ring-white/10"
+            ></span>
+
+        </div>
 
     </div>
 

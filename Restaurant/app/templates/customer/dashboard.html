@@ -13,14 +13,14 @@ tailwind.config = {
     theme: {
         extend: {
             colors: {
-                darkbg: "#15130f",
-                darkpanel: "#1b1812",
-                darkcard: "#282116",
-                darkborder: "#40321e",
-                gold: "#e7a83f",
-                gold2: "#f0b54c",
-                cream: "#f2e5cc",
-                muted: "#9c8968"
+                slatebg: "#f1efe8",
+                slatepanel: "#ffffff",
+                slatepanelsoft: "#f7f5ef",
+                slateborder: "#ddd9cc",
+                sage: "#3f4f43",
+                sage2: "#52685a",
+                charcoal: "#232620",
+                muted: "#8b8a7e"
             }
         }
     }
@@ -45,8 +45,8 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background: #15130f;
-    color: #f2e5cc;
+    background: #f1efe8;
+    color: #232620;
     font-family: Georgia, "Times New Roman", serif;
 }
 
@@ -57,7 +57,7 @@ a {
 
 .restaurant-app {
     min-height: 100vh;
-    background: #15130f;
+    background: #f1efe8;
 }
 
 
@@ -74,11 +74,11 @@ a {
 
     background: linear-gradient(
         180deg,
-        #1b1812,
-        #17140f
+        #ffffff,
+        #f7f5ef
     );
 
-    border-bottom: 1px solid #3b2d1b;
+    border-bottom: 1px solid #ddd9cc;
 
     display: flex;
     align-items: center;
@@ -115,20 +115,20 @@ a {
 
     border-radius: 50%;
 
-    border: 1px solid #a87525;
+    border: 1px solid #3f4f43;
 
     background: radial-gradient(
         circle at 35% 30%,
-        #5b401d,
-        #211a11 65%
+        #dbe6da,
+        #eef2ea 65%
     );
 
-    color: #e7a83f;
+    color: #3f4f43;
     font-size: 20px;
 }
 
 .brand-name {
-    color: #f2e5cc;
+    color: #232620;
     font-size: 21px;
     font-weight: 800;
 }
@@ -136,7 +136,7 @@ a {
 .brand-subtitle {
     margin-top: 4px;
 
-    color: #8f7959;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -160,11 +160,11 @@ a {
 
     padding: 6px 11px;
 
-    border: 1px solid #9d7027;
+    border: 1px solid #c7c2b0;
 
     border-radius: 8px;
 
-    background: #211a11;
+    background: #f7f5ef;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -172,13 +172,13 @@ a {
 }
 
 .top-table-label {
-    color: #806b4d;
+    color: #8b8a7e;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .top-table-number {
-    color: #e7a83f;
+    color: #3f4f43;
     font-weight: 800;
 }
 
@@ -193,13 +193,13 @@ a {
     width: 38px;
     height: 38px;
 
-    border: 1px solid #765823;
+    border: 1px solid #c7c2b0;
 
     border-radius: 8px;
 
-    background: #292116;
+    background: #f7f5ef;
 
-    color: #e7a83f;
+    color: #3f4f43;
 
     cursor: pointer;
 
@@ -220,9 +220,9 @@ a {
 
     width: 235px;
 
-    background: #171510;
+    background: #ffffff;
 
-    border-right: 1px solid #352b1d;
+    border-right: 1px solid #ddd9cc;
 
     z-index: 1500;
 
@@ -233,13 +233,13 @@ a {
 .sidebar-brand {
     padding: 21px 16px 18px;
 
-    border-bottom: 1px solid #352b1d;
+    border-bottom: 1px solid #ddd9cc;
 }
 
 .sidebar-brand h2 {
     margin: 0;
 
-    color: #f2e5cc;
+    color: #232620;
 
     font-size: 20px;
 
@@ -249,7 +249,7 @@ a {
 .sidebar-brand p {
     margin: 6px 0 0;
 
-    color: #806e51;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -286,7 +286,7 @@ a {
 
     text-decoration: none;
 
-    color: #bba681;
+    color: #6b6a60;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -300,14 +300,14 @@ a {
 }
 
 .sidebar-link:hover {
-    background: #292117;
-    color: #f2e5cc;
+    background: #f7f5ef;
+    color: #232620;
     transform: translateX(2px);
 }
 
 .sidebar-link.active {
-    background: #3a2d1c;
-    color: #e7a83f;
+    background: #e3ead9;
+    color: #2c3a31;
 }
 
 .sidebar-link.active::before {
@@ -323,7 +323,7 @@ a {
 
     border-radius: 0 4px 4px 0;
 
-    background: #e7a83f;
+    background: #3f4f43;
 }
 
 .sidebar-icon {
@@ -331,7 +331,7 @@ a {
 
     text-align: center;
 
-    color: #95805e;
+    color: #a5a397;
 
     font-size: 16px;
 
@@ -339,13 +339,13 @@ a {
 }
 
 .sidebar-link.active .sidebar-icon {
-    color: #e7a83f;
+    color: #3f4f43;
 }
 
 .sidebar-bottom {
     padding: 11px 8px;
 
-    border-top: 1px solid #352b1d;
+    border-top: 1px solid #ddd9cc;
 }
 
 
@@ -362,7 +362,7 @@ a {
 
     min-height: 100vh;
 
-    background: #15130f;
+    background: #f1efe8;
 }
 
 .content-inner {
@@ -387,18 +387,18 @@ a {
 
     border-radius: 18px;
 
-    border: 1px solid #59431f;
+    border: 1px solid #ddd9cc;
 
     background:
         radial-gradient(
             circle at 90% 15%,
-            rgba(231,168,63,0.13),
+            rgba(63,79,67,0.08),
             transparent 28%
         ),
         linear-gradient(
             135deg,
-            #2b2116,
-            #211b14
+            #ffffff,
+            #f7f5ef
         );
 
     position: relative;
@@ -407,7 +407,7 @@ a {
 }
 
 .welcome-label {
-    color: #e7a83f;
+    color: #3f4f43;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -423,7 +423,7 @@ a {
 .welcome-card h1 {
     margin: 16px 0 8px;
 
-    color: #f2e5cc;
+    color: #232620;
 
     font-size: clamp(38px, 4vw, 54px);
 
@@ -439,7 +439,7 @@ a {
 .table-message {
     margin-top: 15px;
 
-    color: #a99169;
+    color: #6b6a60;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -447,7 +447,7 @@ a {
 }
 
 .table-message strong {
-    color: #e7a83f;
+    color: #3f4f43;
 }
 
 .browse-button {
@@ -463,9 +463,9 @@ a {
 
     border-radius: 10px;
 
-    background: #efad43;
+    background: #3f4f43;
 
-    color: #1c150c;
+    color: #f4f7f0;
 
     text-decoration: none;
 
@@ -477,7 +477,7 @@ a {
 }
 
 .browse-button:hover {
-    background: #f4bb59;
+    background: #52685a;
 }
 
 
@@ -490,9 +490,9 @@ a {
 
     padding: 20px;
 
-    background: #211c15;
+    background: #ffffff;
 
-    border: 1px solid #3f321f;
+    border: 1px solid #ddd9cc;
 
     border-radius: 15px;
 
@@ -500,7 +500,7 @@ a {
 }
 
 .table-section-title {
-    color: #f2e5cc;
+    color: #232620;
 
     font-size: 20px;
 
@@ -511,7 +511,7 @@ a {
     margin-top: 4px;
     margin-bottom: 16px;
 
-    color: #897658;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -536,9 +536,9 @@ a {
 .table-button {
     width: 100%;
 
-    border: 1px solid #4b3b25;
+    border: 1px solid #ddd9cc;
 
-    background: #292217;
+    background: #f7f5ef;
 
     border-radius: 10px;
 
@@ -546,23 +546,23 @@ a {
 
     cursor: pointer;
 
-    color: #d8c5a1;
+    color: #4a4d45;
 
     transition: 0.2s;
 }
 
 .table-button:hover {
-    border-color: #d09b3a;
+    border-color: #9db597;
 
-    background: #332817;
+    background: #eef2ea;
 
     transform: translateY(-2px);
 }
 
 .table-button.selected {
-    border-color: #e7a83f;
+    border-color: #3f4f43;
 
-    background: #3b2d1b;
+    background: #e3ead9;
 }
 
 .table-icon {
@@ -578,7 +578,7 @@ a {
 .table-status {
     margin-top: 4px;
 
-    color: #8e7c60;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -609,7 +609,7 @@ a {
 .section-header h2 {
     margin: 0;
 
-    color: #f2e5cc;
+    color: #232620;
 
     font-size: 23px;
 
@@ -619,11 +619,11 @@ a {
 .section-badge {
     padding: 4px 8px;
 
-    border: 1px solid #61491f;
+    border: 1px solid #cddbc8;
 
     border-radius: 999px;
 
-    color: #e7a83f;
+    color: #3f4f43;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -644,9 +644,9 @@ a {
 }
 
 .food-card {
-    background: #282116;
+    background: #ffffff;
 
-    border: 1px solid #49371f;
+    border: 1px solid #ddd9cc;
 
     border-radius: 13px;
 
@@ -658,10 +658,10 @@ a {
 .food-card:hover {
     transform: translateY(-4px);
 
-    border-color: #806029;
+    border-color: #9db597;
 
     box-shadow:
-        0 14px 30px rgba(0,0,0,0.28);
+        0 14px 30px rgba(35,38,32,0.10);
 }
 
 .food-image {
@@ -680,8 +680,8 @@ a {
     background:
         linear-gradient(
             135deg,
-            #50402c,
-            #251f16
+            #eef2ea,
+            #dde5d6
         );
 }
 
@@ -696,7 +696,7 @@ a {
 
 .food-placeholder {
     font-size: 50px;
-    opacity: 0.75;
+    opacity: 0.5;
 }
 
 .popular-badge {
@@ -709,9 +709,9 @@ a {
 
     border-radius: 999px;
 
-    background: #e7a83f;
+    background: #3f4f43;
 
-    color: #20170c;
+    color: #f4f7f0;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -725,7 +725,7 @@ a {
 }
 
 .food-name {
-    color: #f2e5cc;
+    color: #232620;
 
     font-size: 15px;
 
@@ -737,7 +737,7 @@ a {
 
     min-height: 42px;
 
-    color: #8f7b5d;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -759,7 +759,7 @@ a {
 }
 
 .food-price {
-    color: #e7a83f;
+    color: #3f4f43;
 
     font-size: 14px;
 
@@ -769,9 +769,9 @@ a {
 .add-button {
     border: none;
 
-    background: #efad43;
+    background: #3f4f43;
 
-    color: #17130d;
+    color: #f4f7f0;
 
     padding: 8px 12px;
 
@@ -787,7 +787,7 @@ a {
 }
 
 .add-button:hover {
-    background: #f6bd5b;
+    background: #52685a;
 }
 
 
@@ -800,9 +800,9 @@ a {
 
     padding: 22px;
 
-    background: #211c15;
+    background: #ffffff;
 
-    border: 1px solid #3f321f;
+    border: 1px solid #ddd9cc;
 
     border-radius: 15px;
 
@@ -824,7 +824,7 @@ a {
 .dashboard-section-header h2 {
     margin: 0;
 
-    color: #f2e5cc;
+    color: #232620;
 
     font-size: 21px;
 
@@ -834,7 +834,7 @@ a {
 .dashboard-section-header p {
     margin: 5px 0 0;
 
-    color: #887456;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -851,9 +851,9 @@ a {
 
     padding: 19px;
 
-    background: #292218;
+    background: #f7f5ef;
 
-    border: 1px solid #443520;
+    border: 1px solid #ddd9cc;
 
     border-radius: 12px;
 }
@@ -872,9 +872,9 @@ a {
 
     border-radius: 11px;
 
-    background: #3a2b19;
+    background: #e3ead9;
 
-    color: #e7a83f;
+    color: #3f4f43;
 
     font-size: 22px;
 }
@@ -883,7 +883,7 @@ a {
 .profile-details h3 {
     margin: 0;
 
-    color: #e5d6bb;
+    color: #232620;
 
     font-size: 15px;
 }
@@ -892,7 +892,7 @@ a {
 .profile-details p {
     margin: 5px 0 0;
 
-    color: #806d52;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -911,9 +911,9 @@ a {
 .help-card {
     padding: 17px;
 
-    background: #292218;
+    background: #f7f5ef;
 
-    border: 1px solid #443520;
+    border: 1px solid #ddd9cc;
 
     border-radius: 12px;
 }
@@ -925,7 +925,7 @@ a {
 .help-card h3 {
     margin: 9px 0 0;
 
-    color: #e7d8bd;
+    color: #232620;
 
     font-size: 13px;
 }
@@ -933,7 +933,7 @@ a {
 .help-card p {
     margin: 5px 0 0;
 
-    color: #806d52;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -956,9 +956,9 @@ a {
 
     width: 300px;
 
-    background: #171510;
+    background: #ffffff;
 
-    border-left: 1px solid #40321f;
+    border-left: 1px solid #ddd9cc;
 
     z-index: 1400;
 
@@ -970,13 +970,13 @@ a {
 .order-header {
     padding: 18px;
 
-    border-bottom: 1px solid #352b1d;
+    border-bottom: 1px solid #ddd9cc;
 }
 
 .order-header h2 {
     margin: 0;
 
-    color: #f2e5cc;
+    color: #232620;
 
     font-size: 18px;
 
@@ -986,7 +986,7 @@ a {
 .order-header p {
     margin: 4px 0 0;
 
-    color: #8e7959;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -1000,9 +1000,9 @@ a {
 
     border-radius: 9px;
 
-    background: #272419;
+    background: #eef2ea;
 
-    color: #a9916c;
+    color: #4a4d45;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -1010,7 +1010,7 @@ a {
 }
 
 .selected-table strong {
-    color: #e7a83f;
+    color: #3f4f43;
 }
 
 .order-items {
@@ -1030,7 +1030,7 @@ a {
 
     padding: 11px 0;
 
-    border-bottom: 1px solid #30271c;
+    border-bottom: 1px solid #ece9de;
 }
 
 .order-food-icon {
@@ -1046,7 +1046,7 @@ a {
 
     border-radius: 8px;
 
-    background: #292319;
+    background: #f1efe8;
 
     font-size: 17px;
 }
@@ -1058,7 +1058,7 @@ a {
 }
 
 .order-item-name {
-    color: #e7d8bd;
+    color: #232620;
 
     font-size: 11px;
 
@@ -1074,7 +1074,7 @@ a {
 .order-item-details {
     margin-top: 3px;
 
-    color: #806e52;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -1086,7 +1086,7 @@ a {
 
     background: transparent;
 
-    color: #936b51;
+    color: #a5a397;
 
     cursor: pointer;
 
@@ -1094,11 +1094,11 @@ a {
 }
 
 .remove-button:hover {
-    color: #e7a83f;
+    color: #3f4f43;
 }
 
 .order-item-total {
-    color: #e7a83f;
+    color: #3f4f43;
 
     font-size: 10px;
 
@@ -1110,13 +1110,13 @@ a {
 
     padding: 65px 15px;
 
-    color: #806f54;
+    color: #8b8a7e;
 }
 
 .empty-order-icon {
     font-size: 45px;
 
-    opacity: 0.45;
+    opacity: 0.35;
 
     margin-bottom: 13px;
 }
@@ -1124,7 +1124,7 @@ a {
 .empty-order h3 {
     margin: 0;
 
-    color: #a88f6b;
+    color: #6b6a60;
 
     font-size: 13px;
 }
@@ -1132,7 +1132,7 @@ a {
 .empty-order p {
     margin-top: 6px;
 
-    color: #665843;
+    color: #a5a397;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -1140,11 +1140,11 @@ a {
 }
 
 .order-footer {
-    border-top: 1px solid #352b1d;
+    border-top: 1px solid #ddd9cc;
 
     padding: 15px 16px;
 
-    background: #1b1812;
+    background: #f7f5ef;
 }
 
 .bill-row {
@@ -1152,7 +1152,7 @@ a {
 
     justify-content: space-between;
 
-    color: #9c8969;
+    color: #8b8a7e;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -1170,9 +1170,9 @@ a {
 
     padding-top: 11px;
 
-    border-top: 1px solid #3a2e20;
+    border-top: 1px solid #ddd9cc;
 
-    color: #f2e5cc;
+    color: #232620;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -1182,7 +1182,7 @@ a {
 }
 
 .total-price {
-    color: #e7a83f;
+    color: #3f4f43;
 
     font-size: 17px;
 }
@@ -1206,17 +1206,21 @@ a {
 }
 
 .place-order.enabled {
-    background: #e7a83f;
+    background: #3f4f43;
 
-    color: #1d160b;
+    color: #f4f7f0;
 
     cursor: pointer;
 }
 
-.place-order.disabled {
-    background: #3a352c;
+.place-order.enabled:hover {
+    background: #52685a;
+}
 
-    color: #716a5c;
+.place-order.disabled {
+    background: #e2e0d6;
+
+    color: #a5a397;
 
     cursor: not-allowed;
 }
@@ -1288,7 +1292,7 @@ a {
 
         border-left: none;
 
-        border-top: 1px solid #40321f;
+        border-top: 1px solid #ddd9cc;
     }
 
     .help-grid {
@@ -1725,7 +1729,7 @@ a {
                                 grid-column:1/-1;
                                 text-align:center;
                                 padding:25px;
-                                color:#806f54;
+                                color:#8b8a7e;
                             "
                         >
                             No tables available.
@@ -1851,7 +1855,7 @@ a {
                                 grid-column:1/-1;
                                 text-align:center;
                                 padding:50px;
-                                color:#806f54;
+                                color:#8b8a7e;
                             "
                         >
 

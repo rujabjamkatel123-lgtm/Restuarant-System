@@ -1,0 +1,51 @@
+<!--
+=============================================================
+  Receptionist Navigation Bar
+=============================================================
+  This navigation bar is used by receptionists in the
+  Restaurant Management System.
+
+  Receptionist can access:
+    - Home
+    - Order Management
+    - Incoming Orders
+    - Logout
+=============================================================
+-->
+
+<nav class="receptionist-navbar">
+
+    <!-- Restaurant Logo / Name -->
+    <div class="navbar-brand">
+        <a href="{{ url_for('auth.receptionist_dashboard') }}">
+            Restaurant Management System
+        </a>
+    </div>
+
+
+    <!-- Navigation Links -->
+    <div class="navbar-links">
+
+        <!-- Home -->
+        <a href="{{ url_for('auth.receptionist_dashboard') }}">
+            Home
+        </a>
+
+        <!-- Order Management -->
+        <a href="{{ url_for('auth.order_management') }}">
+            Order Management
+        </a>
+
+        <!-- Incoming Orders -->
+        <a href="{{ url_for('auth.order_management') }}">
+            Incoming Orders
+        </a>
+
+        <!-- Logout -->
+        <a href="{{ url_for('auth.logout') }}">
+            Logout
+        </a>
+
+    </div>
+
+</nav>

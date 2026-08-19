@@ -1,0 +1,2474 @@
+{% extends "base.html" %}
+
+{% block title %}
+Menu Management
+{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                restaurant: {
+                    green: '#176B4D',
+                    greenDark: '#105239',
+                    greenLight: '#21825E',
+                    greenSoft: '#EAF5EF',
+                    greenPale: '#F5FAF7',
+                    text: '#26352F',
+                    muted: '#718078'
+                }
+            }
+        }
+    }
+}
+</script>
+
+<style>
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.manager-sidebar {
+    width: 245px !important;
+    min-width: 245px !important;
+    max-width: 245px !important;
+    flex-shrink: 0 !important;
+}
+
+.manager-main {
+    margin-left: 245px !important;
+    width: calc(100% - 245px) !important;
+    min-width: 0 !important;
+}
+
+/* =========================================================
+   EDIT MODAL ANIMATION
+========================================================= */
+
+#editModalBox {
+    transform: scale(0.95);
+    opacity: 0;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+#editMenuModal.modal-open #editModalBox {
+    transform: scale(1);
+    opacity: 1;
+}
+
+</style>
+
+
+<div class="min-h-screen w-full bg-white text-[#26352F]">
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside
+    class="manager-sidebar fixed left-0 top-0 z-40 flex h-screen flex-col bg-[#176B4D] text-white shadow-xl"
+>
+
+    <!-- LOGO -->
+
+    <div
+        class="flex h-[82px] shrink-0 items-center gap-3 border-b border-white/10 px-6"
+    >
+
+        <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#176B4D] shadow-sm"
+        >
+
+            <svg
+                class="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                viewBox="0 0 24 24"
+            >
+
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M7 3v7M5 3v4M9 3v4M7 10v11"
+                />
+
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 3c2.2 1.5 3 4.3 2 6.7-.5 1.2-1.3 2-2.5 2.4V21"
+                />
+
+            </svg>
+
+        </div>
+
+        <div class="min-w-0">
+
+            <h1 class="text-base font-bold tracking-wide">
+                Restaurant
+            </h1>
+
+            <p class="text-xs text-white/65">
+                Management System
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+
+    <nav class="flex-1 overflow-y-auto px-4 py-6">
+
+        <p
+            class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+        >
+            Main Menu
+        </p>
+
+
+        <!-- DASHBOARD -->
+
+        <a
+            href="{{ url_for('manager.dashboard') }}"
+            class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <rect
+                        x="3"
+                        y="3"
+                        width="7"
+                        height="7"
+                        rx="1"
+                    />
+
+                    <rect
+                        x="14"
+                        y="3"
+                        width="7"
+                        height="7"
+                        rx="1"
+                    />
+
+                    <rect
+                        x="3"
+                        y="14"
+                        width="7"
+                        height="7"
+                        rx="1"
+                    />
+
+                    <rect
+                        x="14"
+                        y="14"
+                        width="7"
+                        height="7"
+                        rx="1"
+                    />
+
+                </svg>
+
+            </span>
+
+            Dashboard
+
+        </a>
+
+
+        <!-- MENU ACTIVE -->
+
+        <a
+            href="{{ url_for('manager.menu') }}"
+            class="mb-2 flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#176B4D] shadow-sm"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EAF5EF]"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M4 5h16M4 12h16M4 19h16"
+                    />
+
+                    <circle cx="8" cy="5" r="1"/>
+
+                    <circle cx="16" cy="12" r="1"/>
+
+                    <circle cx="10" cy="19" r="1"/>
+
+                </svg>
+
+            </span>
+
+            Menu Management
+
+        </a>
+
+
+        <!-- HISTORY -->
+
+        <a
+            href="{{ url_for('manager.history') }}"
+            class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 3h12v18H6z"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M9 7h6M9 11h6M9 15h4"
+                    />
+
+                </svg>
+
+            </span>
+
+            Order History
+
+        </a>
+
+
+        <!-- REPORTS -->
+
+        <a
+            href="{{ url_for('manager.reports') }}"
+            class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        d="M4 19V5"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M4 19h17"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M7 15l4-4 3 2 5-6"
+                    />
+
+                </svg>
+
+            </span>
+
+            Reports
+
+        </a>
+
+
+        <!-- SALES -->
+
+        <a
+            href="{{ url_for('manager.sales') }}"
+            class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        d="M12 3v18"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M17 7c0-2-2-3-5-3s-5 1-5 3 2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3"
+                    />
+
+                </svg>
+
+            </span>
+
+            Sales
+
+        </a>
+
+
+        <div class="my-6 border-t border-white/10"></div>
+
+
+        <p
+            class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+        >
+            Account
+        </p>
+
+
+        <!-- LOGOUT -->
+
+        <a
+            href="{{ url_for('auth.logout') }}"
+            class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-red-500/20 hover:text-white"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10 17l5-5-5-5"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M15 12H3"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M21 19V5a2 2 0 00-2-2h-6"
+                    />
+
+                </svg>
+
+            </span>
+
+            Logout
+
+        </a>
+
+    </nav>
+
+
+    <!-- PROFILE -->
+
+    <div class="shrink-0 border-t border-white/10 p-4">
+
+        <div
+            class="flex items-center gap-3 rounded-xl bg-white/10 p-3"
+        >
+
+            <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-[#176B4D]"
+            >
+                M
+            </div>
+
+            <div class="min-w-0">
+
+                <p class="truncate text-sm font-semibold">
+                    Manager
+                </p>
+
+                <p class="truncate text-xs text-white/55">
+                    Restaurant Manager
+                </p>
+
+            </div>
+
+            <span
+                class="ml-auto h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-300 ring-4 ring-white/10"
+            ></span>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main
+    class="manager-main min-h-screen bg-white"
+>
+
+
+    <!-- HEADER -->
+
+    <header
+        class="flex h-[82px] shrink-0 items-center justify-between border-b border-gray-100 bg-white px-8"
+    >
+
+        <div>
+
+            <p
+                class="text-xs font-semibold uppercase tracking-wider text-[#718078]"
+            >
+                Restaurant Management
+            </p>
+
+            <h2
+                class="mt-1 text-xl font-bold text-[#26352F]"
+            >
+                Menu Management
+            </h2>
+
+        </div>
+
+
+        <div class="flex items-center gap-5">
+
+            <button
+                type="button"
+                class="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-100 bg-white text-[#718078] shadow-sm hover:bg-[#F5FAF7] hover:text-[#176B4D]"
+            >
+
+                <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M10 21h4"
+                    />
+
+                </svg>
+
+                <span
+                    class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"
+                ></span>
+
+            </button>
+
+
+            <div
+                class="flex items-center gap-3 border-l border-gray-100 pl-5"
+            >
+
+                <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#176B4D] text-sm font-bold text-white shadow-sm"
+                >
+                    M
+                </div>
+
+                <div class="hidden md:block">
+
+                    <p
+                        class="text-sm font-bold text-[#26352F]"
+                    >
+                        Manager
+                    </p>
+
+                    <p
+                        class="text-xs text-[#718078]"
+                    >
+                        Administrator
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- PAGE -->
+
+    <div class="p-8">
+
+
+        <!-- =====================================================
+             FLASH MESSAGES
+        ====================================================== -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="mb-6 space-y-3">
+
+                    {% for category, message in messages %}
+
+                        <div
+                            class="
+                                rounded-xl
+                                border
+                                px-4
+                                py-3
+                                text-sm
+                                font-medium
+
+                                {% if category == 'success' %}
+                                    border-green-200
+                                    bg-green-50
+                                    text-green-700
+                                {% elif category == 'danger' %}
+                                    border-red-200
+                                    bg-red-50
+                                    text-red-700
+                                {% else %}
+                                    border-blue-200
+                                    bg-blue-50
+                                    text-blue-700
+                                {% endif %}
+                            "
+                        >
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =====================================================
+             INTRO
+        ====================================================== -->
+
+        <div
+            class="mb-7 flex items-start justify-between gap-6"
+        >
+
+            <div>
+
+                <p
+                    class="text-xs font-semibold uppercase tracking-wider text-[#718078]"
+                >
+                    Restaurant Management
+                </p>
+
+                <h1
+                    class="mt-1 text-2xl font-bold text-[#26352F]"
+                >
+                    Menu Management
+                </h1>
+
+                <p
+                    class="mt-1 text-sm text-[#718078]"
+                >
+                    Manage your restaurant menu, prices and food availability.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                onclick="document.getElementById('add-menu-form').scrollIntoView({behavior:'smooth'})"
+                class="shrink-0 inline-flex items-center gap-2 rounded-xl bg-[#176B4D] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#105239] hover:shadow-md"
+            >
+
+                <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                >
+
+                    <path
+                        stroke-linecap="round"
+                        d="M12 5v14M5 12h14"
+                    />
+
+                </svg>
+
+                Add Menu Item
+
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
+
+        <section
+            class="relative mb-7 overflow-hidden rounded-2xl bg-[#176B4D] p-7 text-white shadow-lg"
+        >
+
+            <div
+                class="absolute -right-12 -top-16 h-48 w-48 rounded-full bg-white/5"
+            ></div>
+
+            <div
+                class="absolute -bottom-20 right-32 h-40 w-40 rounded-full bg-white/5"
+            ></div>
+
+            <div
+                class="relative z-10 flex items-center justify-between"
+            >
+
+                <div>
+
+                    <div
+                        class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/90"
+                    >
+
+                        <span
+                            class="h-2 w-2 rounded-full bg-emerald-300"
+                        ></span>
+
+                        Restaurant Menu
+
+                    </div>
+
+                    <h1
+                        class="text-2xl font-bold md:text-3xl"
+                    >
+                        Manage Your Menu 🍽️
+                    </h1>
+
+                    <p
+                        class="mt-2 max-w-2xl text-sm leading-6 text-white/70"
+                    >
+                        Add new dishes, update prices, organize categories
+                        and control which food items are available to your customers.
+                    </p>
+
+                </div>
+
+                <div
+                    class="hidden h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-white/10 md:flex"
+                >
+
+                    <svg
+                        class="h-12 w-12 text-white/90"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M5 4h14v16H5z"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            d="M8 8h8M8 12h8M8 16h5"
+                        />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             STATISTICS
+        ====================================================== -->
+
+        <section
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"
+        >
+
+            <!-- TOTAL -->
+
+            <div
+                class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm font-medium text-[#718078]">
+                            Total Menu Items
+                        </p>
+
+                        <h3 class="mt-2 text-2xl font-bold text-[#26352F]">
+                            {{ menu_items|length }}
+                        </h3>
+
+                    </div>
+
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EAF5EF] text-[#176B4D]"
+                    >
+
+                        <svg
+                            class="h-6 w-6"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                d="M4 6h16M4 12h16M4 18h16"
+                            />
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-5 flex items-center gap-2">
+
+                    <span
+                        class="rounded-full bg-[#EAF5EF] px-2 py-1 text-xs font-semibold text-[#176B4D]"
+                    >
+                        Items
+                    </span>
+
+                    <span class="text-xs text-[#718078]">
+                        Items in your menu
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- CATEGORIES -->
+
+            <div
+                class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm font-medium text-[#718078]">
+                            Categories
+                        </p>
+
+                        <h3 class="mt-2 text-2xl font-bold text-[#26352F]">
+                            {{ categories|length }}
+                        </h3>
+
+                    </div>
+
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600"
+                    >
+
+                        <svg
+                            class="h-6 w-6"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                d="M4 6h16M4 12h16M4 18h16"
+                            />
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-5 flex items-center gap-2">
+
+                    <span
+                        class="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+                    >
+                        Food
+                    </span>
+
+                    <span class="text-xs text-[#718078]">
+                        Food categories
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div
+                class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+
+                <div class="flex items-start justify-between">
+
+                    <div>
+
+                        <p class="text-sm font-medium text-[#718078]">
+                            Menu Status
+                        </p>
+
+                        <h3 class="mt-2 text-2xl font-bold text-[#26352F]">
+                            Active
+                        </h3>
+
+                    </div>
+
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EAF5EF]"
+                    >
+
+                        <span
+                            class="h-3 w-3 rounded-full bg-emerald-500"
+                        ></span>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-5 flex items-center gap-2">
+
+                    <span
+                        class="rounded-full bg-[#EAF5EF] px-2 py-1 text-xs font-semibold text-[#176B4D]"
+                    >
+                        Active
+                    </span>
+
+                    <span class="text-xs text-[#718078]">
+                        Restaurant menu is active
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ADD MENU ITEM
+        ====================================================== -->
+
+        <section
+            id="add-menu-form"
+            class="mt-7 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+        >
+
+            <div
+                class="flex items-center justify-between border-b border-gray-100 px-6 py-5"
+            >
+
+                <div>
+
+                    <h2 class="text-lg font-bold text-[#26352F]">
+                        Add New Menu Item
+                    </h2>
+
+                    <p class="mt-1 text-sm text-[#718078]">
+                        Add a new food item to your restaurant menu.
+                    </p>
+
+                </div>
+
+                <div
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EAF5EF] text-[#176B4D]"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            d="M12 5v14M5 12h14"
+                        />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="{{ url_for('manager.add_menu_item') }}"
+                enctype="multipart/form-data"
+                class="p-6"
+            >
+
+                <div
+                    class="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-5"
+                >
+
+                    <!-- FOOD NAME -->
+
+                    <div>
+
+                        <label
+                            for="name"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            Food Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="e.g. Chicken Momo"
+                            required
+                            class="h-11 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] px-4 text-sm text-[#26352F] outline-none transition placeholder:text-gray-400 focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div>
+
+                        <label
+                            for="category_id"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            Category
+                        </label>
+
+                        <select
+                            id="category_id"
+                            name="category_id"
+                            required
+                            class="h-11 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] px-4 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                            <option value="">
+                                Select category
+                            </option>
+
+                            {% for category in categories %}
+
+                                <option value="{{ category.id }}">
+                                    {{ category.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FULL PLATE -->
+
+                    <div>
+
+                        <label
+                            for="price"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            Full Plate Price
+                        </label>
+
+                        <div class="relative">
+
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#718078]"
+                            >
+                                Rs.
+                            </span>
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                                required
+                                class="h-11 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] pl-12 pr-4 text-sm text-[#26352F] outline-none transition placeholder:text-gray-400 focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HALF PLATE -->
+
+                    <div>
+
+                        <label
+                            for="half_plate_price"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            Half Plate Price
+                        </label>
+
+                        <div class="relative">
+
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#718078]"
+                            >
+                                Rs.
+                            </span>
+
+                            <input
+                                type="number"
+                                id="half_plate_price"
+                                name="half_plate_price"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                                class="h-11 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] pl-12 pr-4 text-sm text-[#26352F] outline-none transition placeholder:text-gray-400 focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- IMAGE -->
+
+                    <div>
+
+                        <label
+                            for="image"
+                            class="mb-2 block text-xs font-semibold text-[#26352F]"
+                        >
+                            Food Image
+                        </label>
+
+                        <input
+                            type="file"
+                            id="image"
+                            name="image"
+                            accept="image/*"
+                            class="block h-11 w-full cursor-pointer rounded-xl border border-gray-200 bg-[#F8FBF9] text-xs text-[#718078] file:mr-3 file:border-0 file:bg-[#EAF5EF] file:px-3 file:py-2.5 file:text-xs file:font-semibold file:text-[#176B4D]"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="mt-6 flex flex-col gap-5 border-t border-gray-100 pt-6 sm:flex-row sm:items-center sm:justify-between"
+                >
+
+                    <label
+                        class="flex cursor-pointer items-center gap-3"
+                    >
+
+                        <input
+                            type="checkbox"
+                            name="available"
+                            value="1"
+                            checked
+                            class="h-4 w-4 rounded border-gray-300 text-[#176B4D] focus:ring-[#176B4D]"
+                        >
+
+                        <span>
+
+                            <span
+                                class="block text-sm font-semibold text-[#26352F]"
+                            >
+                                Available for customers
+                            </span>
+
+                            <span
+                                class="block text-xs text-[#718078]"
+                            >
+                                Customers can order this item.
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <button
+                        type="submit"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#176B4D] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#105239] hover:shadow-md"
+                    >
+
+                        <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                d="M12 5v14M5 12h14"
+                            />
+
+                        </svg>
+
+                        Add Menu Item
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =====================================================
+             CURRENT MENU
+        ====================================================== -->
+
+        <section
+            class="mt-7 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+        >
+
+            <div
+                class="flex items-center justify-between border-b border-gray-100 px-6 py-5"
+            >
+
+                <div>
+
+                    <h2 class="text-lg font-bold text-[#26352F]">
+                        Current Menu
+                    </h2>
+
+                    <p class="mt-1 text-sm text-[#718078]">
+                        View and manage all food items in your restaurant.
+                    </p>
+
+                </div>
+
+                <span
+                    class="rounded-full bg-[#EAF5EF] px-3 py-1.5 text-xs font-semibold text-[#176B4D]"
+                >
+                    ● {{ menu_items|length }} Items
+                </span>
+
+            </div>
+
+
+            <div class="p-6">
+
+                {% if menu_items %}
+
+                    <div
+                        class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
+                    >
+
+                        {% for item in menu_items %}
+
+                            <div
+                                class="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+                            >
+
+                                <!-- IMAGE -->
+
+                                <div
+                                    class="h-40 overflow-hidden bg-[#F5FAF7]"
+                                >
+
+                                    {% if item.image %}
+
+                                        <img
+                                            src="{{ url_for('static', filename='uploads/' ~ item.image) }}"
+                                            alt="{{ item.name }}"
+                                            class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                        >
+
+                                    {% else %}
+
+                                        <div
+                                            class="flex h-full items-center justify-center"
+                                        >
+
+                                            <svg
+                                                class="h-14 w-14 text-[#176B4D]"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                viewBox="0 0 24 24"
+                                            >
+
+                                                <rect
+                                                    x="3"
+                                                    y="3"
+                                                    width="18"
+                                                    height="18"
+                                                    rx="2"
+                                                />
+
+                                                <circle
+                                                    cx="8.5"
+                                                    cy="8.5"
+                                                    r="1.5"
+                                                />
+
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M21 15l-5-5L5 21"
+                                                />
+
+                                            </svg>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- DETAILS -->
+
+                                <div class="p-5">
+
+                                    <div
+                                        class="flex items-start justify-between gap-4"
+                                    >
+
+                                        <div class="min-w-0">
+
+                                            <h3
+                                                class="truncate text-base font-bold text-[#26352F]"
+                                            >
+                                                {{ item.name }}
+                                            </h3>
+
+                                            <p
+                                                class="mt-1 text-xs text-[#718078]"
+                                            >
+                                                {{ item.category or 'Food' }}
+                                            </p>
+
+                                        </div>
+
+
+                                        {% if item.available %}
+
+                                            <span
+                                                class="shrink-0 rounded-full bg-[#EAF5EF] px-2.5 py-1 text-[10px] font-semibold text-[#176B4D]"
+                                            >
+                                                Available
+                                            </span>
+
+                                        {% else %}
+
+                                            <span
+                                                class="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-semibold text-red-600"
+                                            >
+                                                Unavailable
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <!-- PRICES -->
+
+                                    <div
+                                        class="mt-5 grid grid-cols-2 gap-3"
+                                    >
+
+                                        <div
+                                            class="rounded-xl bg-[#F5FAF7] p-3"
+                                        >
+
+                                            <p
+                                                class="text-[10px] font-semibold uppercase tracking-wide text-[#718078]"
+                                            >
+                                                Full Plate
+                                            </p>
+
+                                            <p
+                                                class="mt-1 text-base font-bold text-[#176B4D]"
+                                            >
+                                                Rs. {{ item.price }}
+                                            </p>
+
+                                        </div>
+
+
+                                        <div
+                                            class="rounded-xl bg-[#F5FAF7] p-3"
+                                        >
+
+                                            <p
+                                                class="text-[10px] font-semibold uppercase tracking-wide text-[#718078]"
+                                            >
+                                                Half Plate
+                                            </p>
+
+                                            <p
+                                                class="mt-1 text-base font-bold text-[#176B4D]"
+                                            >
+
+                                                {% if item.half_plate_price %}
+                                                    Rs. {{ item.half_plate_price }}
+                                                {% else %}
+                                                    —
+                                                {% endif %}
+
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- ACTIONS -->
+
+                                    <div class="mt-5 flex gap-2">
+
+                                        <!-- EDIT -->
+
+                                        <button
+                                            type="button"
+                                            class="edit-menu-btn flex-1 rounded-xl border border-gray-200 px-3 py-2 text-center text-xs font-semibold text-[#26352F] transition hover:border-[#176B4D] hover:bg-[#F5FAF7] hover:text-[#176B4D]"
+                                            data-id="{{ item.id }}"
+                                            data-name="{{ item.name|e }}"
+                                            data-category-id="{{ item.category_id|default('', true) }}"
+                                            data-price="{{ item.price }}"
+                                            data-half-price="{{ item.half_plate_price|default('', true) }}"
+                                            data-available="{{ 'true' if item.available else 'false' }}"
+                                            data-image="{% if item.image %}{{ url_for('static', filename='uploads/' ~ item.image) }}{% endif %}"
+                                        >
+                                            Edit
+                                        </button>
+
+
+                                        <!-- DELETE -->
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('manager.delete_menu_item', item_id=item.id) }}"
+                                            class="flex-1"
+                                            onsubmit="return confirm('Are you sure you want to delete this menu item?');"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="w-full rounded-xl border border-red-100 px-3 py-2 text-center text-xs font-semibold text-red-500 transition hover:bg-red-50"
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <!-- EMPTY -->
+
+                    <div
+                        class="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-[#F8FBF9] px-6 text-center"
+                    >
+
+                        <div
+                            class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EAF5EF] text-[#176B4D]"
+                        >
+
+                            <svg
+                                class="h-7 w-7"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <rect
+                                    x="3"
+                                    y="3"
+                                    width="18"
+                                    height="18"
+                                    rx="2"
+                                />
+
+                                <circle
+                                    cx="8.5"
+                                    cy="8.5"
+                                    r="1.5"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M21 15l-5-5L5 21"
+                                />
+
+                            </svg>
+
+                        </div>
+
+
+                        <h3
+                            class="mt-4 text-base font-bold text-[#26352F]"
+                        >
+                            No Menu Items
+                        </h3>
+
+
+                        <p
+                            class="mt-1 max-w-md text-xs leading-5 text-[#718078]"
+                        >
+                            Your restaurant does not have any menu items yet.
+                            Add your first food item to get started.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            onclick="document.getElementById('add-menu-form').scrollIntoView({behavior:'smooth'})"
+                            class="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#176B4D] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#105239]"
+                        >
+
+                            Add Your First Item
+
+                        </button>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer
+            class="mt-8 border-t border-gray-100 pt-5 text-center"
+        >
+
+            <p class="text-xs text-[#718078]">
+                Restaurant Management System
+                <span class="mx-1">•</span>
+                Manager Menu Management
+            </p>
+
+        </footer>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     EDIT MENU ITEM MODAL
+========================================================= -->
+
+<div
+    id="editMenuModal"
+    class="fixed inset-0 z-[100] hidden"
+>
+
+    <!-- BACKDROP -->
+
+    <div
+        class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onclick="closeEditModal()"
+    ></div>
+
+
+    <!-- MODAL WRAPPER -->
+
+    <div
+        class="relative flex min-h-screen items-center justify-center overflow-y-auto p-4 sm:p-6"
+    >
+
+        <!-- MODAL -->
+
+        <div
+            id="editModalBox"
+            class="relative my-8 w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        >
+
+            <!-- HEADER -->
+
+            <div
+                class="flex items-center justify-between border-b border-gray-100 bg-white px-6 py-5 sm:px-8"
+            >
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-wider text-[#718078]"
+                    >
+                        Menu Management
+                    </p>
+
+                    <h2
+                        class="mt-1 text-xl font-bold text-[#26352F]"
+                    >
+                        Edit Menu Item
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm text-[#718078]"
+                    >
+                        Update food information and replace the image if needed.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    onclick="closeEditModal()"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-500"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 6l12 12M18 6L6 18"
+                        />
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 EDIT FORM
+            ================================================== -->
+
+            <form
+                id="editMenuForm"
+                method="POST"
+                enctype="multipart/form-data"
+                class="p-6 sm:p-8"
+            >
+
+                <div
+                    class="grid grid-cols-1 gap-6 md:grid-cols-2"
+                >
+
+
+                    <!-- =================================================
+                         IMAGE
+                    ================================================== -->
+
+                    <div class="md:col-span-2">
+
+                        <label
+                            class="mb-2 block text-sm font-semibold text-[#26352F]"
+                        >
+                            Food Image
+                        </label>
+
+
+                        <div
+                            class="rounded-2xl border border-gray-200 bg-[#F8FBF9] p-4"
+                        >
+
+                            <div
+                                class="flex flex-col gap-5 sm:flex-row sm:items-center"
+                            >
+
+                                <!-- IMAGE PREVIEW -->
+
+                                <div
+                                    class="relative h-36 w-full shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-[#F5FAF7] sm:w-44"
+                                >
+
+                                    <img
+                                        id="edit_image_preview"
+                                        src=""
+                                        alt="Food image preview"
+                                        class="hidden h-full w-full object-cover"
+                                    >
+
+
+                                    <!-- PLACEHOLDER -->
+
+                                    <div
+                                        id="edit_image_placeholder"
+                                        class="flex h-full w-full flex-col items-center justify-center text-[#176B4D]"
+                                    >
+
+                                        <svg
+                                            class="h-10 w-10"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.5"
+                                            viewBox="0 0 24 24"
+                                        >
+
+                                            <rect
+                                                x="3"
+                                                y="3"
+                                                width="18"
+                                                height="18"
+                                                rx="2"
+                                            />
+
+                                            <circle
+                                                cx="8.5"
+                                                cy="8.5"
+                                                r="1.5"
+                                            />
+
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M21 15l-5-5L5 21"
+                                            />
+
+                                        </svg>
+
+                                        <span
+                                            class="mt-2 text-xs font-medium"
+                                        >
+                                            No image
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- IMAGE UPLOAD -->
+
+                                <div class="min-w-0 flex-1">
+
+                                    <label
+                                        for="edit_image"
+                                        class="mb-2 block text-xs font-semibold text-[#26352F]"
+                                    >
+                                        Replace Image
+                                    </label>
+
+                                    <input
+                                        type="file"
+                                        id="edit_image"
+                                        name="image"
+                                        accept="image/*"
+                                        class="block w-full cursor-pointer rounded-xl border border-gray-200 bg-white text-xs text-[#718078] file:mr-3 file:border-0 file:bg-[#EAF5EF] file:px-4 file:py-3 file:text-xs file:font-semibold file:text-[#176B4D]"
+                                    >
+
+                                    <p
+                                        class="mt-2 text-xs leading-5 text-[#718078]"
+                                    >
+                                        Select a new image if you want to
+                                        replace the current food image.
+                                        Leave this empty to keep the existing image.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FOOD NAME -->
+
+                    <div class="md:col-span-2">
+
+                        <label
+                            for="edit_name"
+                            class="mb-2 block text-sm font-semibold text-[#26352F]"
+                        >
+                            Food Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="edit_name"
+                            name="name"
+                            required
+                            placeholder="Enter food name"
+                            class="h-12 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] px-4 text-sm text-[#26352F] outline-none transition placeholder:text-gray-400 focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div>
+
+                        <label
+                            for="edit_category_id"
+                            class="mb-2 block text-sm font-semibold text-[#26352F]"
+                        >
+                            Category
+                        </label>
+
+                        <select
+                            id="edit_category_id"
+                            name="category_id"
+                            required
+                            class="h-12 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] px-4 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                        >
+
+                            <option value="">
+                                Select category
+                            </option>
+
+                            {% for category in categories %}
+
+                                <option value="{{ category.id }}">
+                                    {{ category.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- AVAILABILITY -->
+
+                    <div>
+
+                        <label
+                            class="mb-2 block text-sm font-semibold text-[#26352F]"
+                        >
+                            Availability
+                        </label>
+
+                        <label
+                            class="flex h-12 cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-[#F8FBF9] px-4"
+                        >
+
+                            <input
+                                type="checkbox"
+                                id="edit_available"
+                                name="available"
+                                value="1"
+                                class="h-4 w-4 rounded border-gray-300 text-[#176B4D] focus:ring-[#176B4D]"
+                            >
+
+                            <span
+                                class="text-sm font-medium text-[#26352F]"
+                            >
+                                Available for customers
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- FULL PLATE PRICE -->
+
+                    <div>
+
+                        <label
+                            for="edit_price"
+                            class="mb-2 block text-sm font-semibold text-[#26352F]"
+                        >
+                            Full Plate Price
+                        </label>
+
+                        <div class="relative">
+
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#718078]"
+                            >
+                                Rs.
+                            </span>
+
+                            <input
+                                type="number"
+                                id="edit_price"
+                                name="price"
+                                step="0.01"
+                                min="0"
+                                required
+                                class="h-12 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] pl-12 pr-4 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HALF PLATE PRICE -->
+
+                    <div>
+
+                        <label
+                            for="edit_half_plate_price"
+                            class="mb-2 block text-sm font-semibold text-[#26352F]"
+                        >
+                            Half Plate Price
+                        </label>
+
+                        <div class="relative">
+
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#718078]"
+                            >
+                                Rs.
+                            </span>
+
+                            <input
+                                type="number"
+                                id="edit_half_plate_price"
+                                name="half_plate_price"
+                                step="0.01"
+                                min="0"
+                                placeholder="Optional"
+                                class="h-12 w-full rounded-xl border border-gray-200 bg-[#F8FBF9] pl-12 pr-4 text-sm text-[#26352F] outline-none transition focus:border-[#176B4D] focus:bg-white focus:ring-2 focus:ring-[#176B4D]/10"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ITEM PREVIEW -->
+
+                <div
+                    class="mt-6 rounded-xl border border-[#EAF5EF] bg-[#F5FAF7] p-4"
+                >
+
+                    <div class="flex items-center gap-3">
+
+                        <div
+                            class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EAF5EF] text-[#176B4D]"
+                        >
+
+                            <svg
+                                class="h-5 w-5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M5 4h14v16H5z"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    d="M8 8h8M8 12h8M8 16h5"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <p
+                                class="text-xs font-medium text-[#718078]"
+                            >
+                                Editing item
+                            </p>
+
+                            <p
+                                id="editItemPreview"
+                                class="text-sm font-bold text-[#26352F]"
+                            >
+                                Menu Item
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div
+                    class="mt-7 flex flex-col-reverse gap-3 border-t border-gray-100 pt-6 sm:flex-row sm:justify-end"
+                >
+
+                    <button
+                        type="button"
+                        onclick="closeEditModal()"
+                        class="rounded-xl border border-gray-200 px-6 py-3 text-sm font-semibold text-[#26352F] transition hover:bg-gray-50"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#176B4D] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#105239] hover:shadow-md"
+                    >
+
+                        <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                d="M5 12l4 4L19 6"
+                            />
+
+                        </svg>
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+/* =========================================================
+   EDIT BUTTONS
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const editButtons =
+        document.querySelectorAll(".edit-menu-btn");
+
+
+    editButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const id =
+                this.dataset.id;
+
+            const name =
+                this.dataset.name || "";
+
+            const categoryId =
+                this.dataset.categoryId || "";
+
+            const price =
+                this.dataset.price || "";
+
+            const halfPrice =
+                this.dataset.halfPrice || "";
+
+            const available =
+                this.dataset.available === "true";
+
+            const image =
+                this.dataset.image || "";
+
+
+            openEditModal(
+                id,
+                name,
+                categoryId,
+                price,
+                halfPrice,
+                available,
+                image
+            );
+
+        });
+
+    });
+
+
+    /* =====================================================
+       NEW IMAGE PREVIEW
+    ===================================================== */
+
+    const imageInput =
+        document.getElementById("edit_image");
+
+    const imagePreview =
+        document.getElementById("edit_image_preview");
+
+    const imagePlaceholder =
+        document.getElementById("edit_image_placeholder");
+
+
+    if (imageInput) {
+
+        imageInput.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    this.files[0];
+
+
+                if (!file) {
+                    return;
+                }
+
+
+                /* Check image */
+
+                if (!file.type.startsWith("image/")) {
+
+                    alert("Please select a valid image file.");
+
+                    this.value = "";
+
+                    return;
+
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function (event) {
+
+                        imagePreview.src =
+                            event.target.result;
+
+                        imagePreview.classList.remove(
+                            "hidden"
+                        );
+
+                        imagePlaceholder.classList.add(
+                            "hidden"
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+
+    }
+
+});
+
+
+/* =========================================================
+   OPEN EDIT MODAL
+========================================================= */
+
+function openEditModal(
+    id,
+    name,
+    categoryId,
+    price,
+    halfPrice,
+    available,
+    image
+) {
+
+    const modal =
+        document.getElementById("editMenuModal");
+
+    const form =
+        document.getElementById("editMenuForm");
+
+    const nameInput =
+        document.getElementById("edit_name");
+
+    const categoryInput =
+        document.getElementById("edit_category_id");
+
+    const priceInput =
+        document.getElementById("edit_price");
+
+    const halfPriceInput =
+        document.getElementById("edit_half_plate_price");
+
+    const availableInput =
+        document.getElementById("edit_available");
+
+    const imageInput =
+        document.getElementById("edit_image");
+
+    const imagePreview =
+        document.getElementById("edit_image_preview");
+
+    const imagePlaceholder =
+        document.getElementById("edit_image_placeholder");
+
+    const preview =
+        document.getElementById("editItemPreview");
+
+
+    if (!modal || !form) {
+
+        console.error(
+            "Edit modal was not found."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       FORM ACTION
+    ===================================================== */
+
+    form.action =
+        "{{ url_for('manager.edit_menu_item', item_id=0) }}"
+        .replace(
+            "/0",
+            "/" + encodeURIComponent(id)
+        );
+
+
+    /* =====================================================
+       SET VALUES
+    ===================================================== */
+
+    nameInput.value =
+        name;
+
+    categoryInput.value =
+        categoryId;
+
+    priceInput.value =
+        price;
+
+    halfPriceInput.value =
+        halfPrice;
+
+
+    /* =====================================================
+       AVAILABILITY
+    ===================================================== */
+
+    availableInput.checked =
+        available === true;
+
+
+    /* =====================================================
+       RESET IMAGE INPUT
+    ===================================================== */
+
+    imageInput.value = "";
+
+
+    /* =====================================================
+       SHOW CURRENT IMAGE
+    ===================================================== */
+
+    if (image) {
+
+        imagePreview.src =
+            image;
+
+        imagePreview.classList.remove(
+            "hidden"
+        );
+
+        imagePlaceholder.classList.add(
+            "hidden"
+        );
+
+    } else {
+
+        imagePreview.src = "";
+
+        imagePreview.classList.add(
+            "hidden"
+        );
+
+        imagePlaceholder.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    /* =====================================================
+       ITEM PREVIEW
+    ===================================================== */
+
+    preview.textContent =
+        name || "Menu Item";
+
+
+    /* =====================================================
+       SHOW MODAL
+    ===================================================== */
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    document.body.classList.add(
+        "overflow-hidden"
+    );
+
+
+    /* =====================================================
+       ANIMATION
+    ===================================================== */
+
+    requestAnimationFrame(function () {
+
+        modal.classList.add(
+            "modal-open"
+        );
+
+    });
+
+
+    /* =====================================================
+       FOCUS
+    ===================================================== */
+
+    setTimeout(function () {
+
+        nameInput.focus();
+
+    }, 200);
+
+}
+
+
+/* =========================================================
+   CLOSE EDIT MODAL
+========================================================= */
+
+function closeEditModal() {
+
+    const modal =
+        document.getElementById(
+            "editMenuModal"
+        );
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "modal-open"
+    );
+
+
+    setTimeout(function () {
+
+        modal.classList.add(
+            "hidden"
+        );
+
+    }, 200);
+
+
+    document.body.classList.remove(
+        "overflow-hidden"
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+
+        const modal =
+            document.getElementById(
+                "editMenuModal"
+            );
+
+
+        if (
+            modal &&
+            !modal.classList.contains("hidden")
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   UPDATE ITEM NAME PREVIEW
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const nameInput =
+            document.getElementById(
+                "edit_name"
+            );
+
+        const preview =
+            document.getElementById(
+                "editItemPreview"
+            );
+
+
+        if (
+            nameInput &&
+            preview
+        ) {
+
+            nameInput.addEventListener(
+                "input",
+                function () {
+
+                    preview.textContent =
+                        this.value.trim() ||
+                        "Menu Item";
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

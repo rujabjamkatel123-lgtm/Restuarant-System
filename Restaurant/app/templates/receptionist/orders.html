@@ -1,0 +1,385 @@
+<!--
+=============================================================
+  Receptionist Order Management
+=============================================================
+  This page is used by the receptionist to manage
+  customer orders.
+
+  Receptionist can:
+    - View all incoming orders
+    - See order ID
+    - See table number
+    - See ordered food items
+    - See quantity
+    - See order total
+    - See order status
+    - Change order status
+=============================================================
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+Order Management
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Receptionist Navigation -->
+{% include "partials/receptionist_navbar.html" %}
+
+
+<div class="receptionist-orders">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="orders-header">
+
+        <h1>Order Management</h1>
+
+        <p>
+            View and manage all restaurant orders.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         ORDER FILTER
+    ====================================================== -->
+
+    <div class="order-filter">
+
+        <form
+            method="GET"
+            action="{{ url_for('auth.order_management') }}"
+        >
+
+            <label for="status">
+                Filter by Status:
+            </label>
+
+            <select
+                id="status"
+                name="status"
+            >
+
+                <option value="">
+                    All Orders
+                </option>
+
+                <option value="pending"
+                    {% if selected_status == "pending" %}
+                        selected
+                    {% endif %}
+                >
+                    Pending
+                </option>
+
+                <option value="preparing"
+                    {% if selected_status == "preparing" %}
+                        selected
+                    {% endif %}
+                >
+                    Preparing
+                </option>
+
+                <option value="ready"
+                    {% if selected_status == "ready" %}
+                        selected
+                    {% endif %}
+                >
+                    Ready
+                </option>
+
+                <option value="served"
+                    {% if selected_status == "served" %}
+                        selected
+                    {% endif %}
+                >
+                    Served
+                </option>
+
+            </select>
+
+
+            <button type="submit">
+                Filter
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         ORDERS
+    ====================================================== -->
+
+    <div class="orders-list">
+
+        {% for order in orders %}
+
+            <div class="order-card">
+
+                <!-- =========================================
+                     ORDER HEADER
+                ========================================== -->
+
+                <div class="order-card-header">
+
+                    <div>
+
+                        <h2>
+                            Order #{{ order.id }}
+                        </h2>
+
+                        <p>
+                            Table:
+                            <strong>
+                                {{ order.table_name }}
+                            </strong>
+                        </p>
+
+                    </div>
+
+
+                    <!-- Order Status -->
+
+                    <div class="order-status">
+
+                        {% if order.status == "pending" %}
+
+                            <span class="status pending">
+                                Pending
+                            </span>
+
+                        {% elif order.status == "preparing" %}
+
+                            <span class="status preparing">
+                                Preparing
+                            </span>
+
+                        {% elif order.status == "ready" %}
+
+                            <span class="status ready">
+                                Ready
+                            </span>
+
+                        {% elif order.status == "served" %}
+
+                            <span class="status served">
+                                Served
+                            </span>
+
+                        {% else %}
+
+                            <span class="status">
+                                {{ order.status }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     ORDER INFORMATION
+                ========================================== -->
+
+                <div class="order-information">
+
+                    <p>
+                        Order Date:
+                        {{ order.created_at }}
+                    </p>
+
+                    <p>
+                        Total:
+                        <strong>
+                            Rs. {{ order.total }}
+                        </strong>
+                    </p>
+
+                </div>
+
+
+                <!-- =========================================
+                     ORDER ITEMS
+                ========================================== -->
+
+                <div class="order-items">
+
+                    <h3>
+                        Ordered Items
+                    </h3>
+
+
+                    {% for item in order.items %}
+
+                        <div class="order-item">
+
+                            <div class="item-name">
+
+                                <strong>
+                                    {{ item.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="item-quantity">
+
+                                Quantity:
+                                {{ item.quantity }}
+
+                            </div>
+
+
+                            <div class="item-price">
+
+                                Price:
+                                Rs. {{ item.price_at_order }}
+
+                            </div>
+
+
+                            <div class="item-total">
+
+                                Total:
+                                Rs.
+                                {{
+                                    item.price_at_order
+                                    * item.quantity
+                                }}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- =========================================
+                     STATUS ACTIONS
+                ========================================== -->
+
+                <div class="order-actions">
+
+                    <h3>
+                        Update Order Status
+                    </h3>
+
+
+                    <form
+                        action="{{ url_for(
+                            'auth.update_order_status',
+                            order_id=order.id
+                        ) }}"
+                        method="POST"
+                    >
+
+                        <select
+                            name="status"
+                            required
+                        >
+
+                            <option
+                                value="pending"
+                                {% if order.status == "pending" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Pending
+                            </option>
+
+                            <option
+                                value="preparing"
+                                {% if order.status == "preparing" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Preparing
+                            </option>
+
+                            <option
+                                value="ready"
+                                {% if order.status == "ready" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Ready
+                            </option>
+
+                            <option
+                                value="served"
+                                {% if order.status == "served" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Served
+                            </option>
+
+                        </select>
+
+
+                        <button type="submit">
+                            Update Status
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- =========================================
+                     ORDER COMPLETED MESSAGE
+                ========================================== -->
+
+                {% if order.status == "served" %}
+
+                    <div class="order-completed">
+
+                        <p>
+                            This order has been served.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% else %}
+
+            <!-- =================================================
+                 NO ORDERS
+            ================================================== -->
+
+            <div class="no-orders">
+
+                <h2>
+                    No Orders Found
+                </h2>
+
+                <p>
+                    There are no orders matching the
+                    selected status.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

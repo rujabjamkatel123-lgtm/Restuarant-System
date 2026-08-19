@@ -1,0 +1,2682 @@
+{% extends "base.html" %}
+
+{% block title %}
+Customer Dashboard
+{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                darkbg: "#15130f",
+                darkpanel: "#1b1812",
+                darkcard: "#282116",
+                darkborder: "#40321e",
+                gold: "#e7a83f",
+                gold2: "#f0b54c",
+                cream: "#f2e5cc",
+                muted: "#9c8968"
+            }
+        }
+    }
+}
+</script>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 75px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #15130f;
+    color: #f2e5cc;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.restaurant-app {
+    min-height: 100vh;
+    background: #15130f;
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+
+    background: linear-gradient(
+        180deg,
+        #1b1812,
+        #17140f
+    );
+
+    border-bottom: 1px solid #3b2d1b;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 16px;
+
+    z-index: 2000;
+}
+
+.top-brand {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    white-space: nowrap;
+}
+
+.brand-logo {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border: 1px solid #a87525;
+
+    background: radial-gradient(
+        circle at 35% 30%,
+        #5b401d,
+        #211a11 65%
+    );
+
+    color: #e7a83f;
+    font-size: 20px;
+}
+
+.brand-name {
+    color: #f2e5cc;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.brand-subtitle {
+    margin-top: 4px;
+
+    color: #8f7959;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 7px;
+
+    letter-spacing: 2.5px;
+
+    text-transform: uppercase;
+}
+
+.top-table {
+    margin-left: auto;
+
+    min-width: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 6px 11px;
+
+    border: 1px solid #9d7027;
+
+    border-radius: 8px;
+
+    background: #211a11;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 9px;
+}
+
+.top-table-label {
+    color: #806b4d;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.top-table-number {
+    color: #e7a83f;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   MOBILE BUTTON
+========================================================= */
+
+.mobile-menu-button {
+    display: none;
+
+    width: 38px;
+    height: 38px;
+
+    border: 1px solid #765823;
+
+    border-radius: 8px;
+
+    background: #292116;
+
+    color: #e7a83f;
+
+    cursor: pointer;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    position: fixed;
+
+    top: 58px;
+    left: 0;
+    bottom: 0;
+
+    width: 235px;
+
+    background: #171510;
+
+    border-right: 1px solid #352b1d;
+
+    z-index: 1500;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand {
+    padding: 21px 16px 18px;
+
+    border-bottom: 1px solid #352b1d;
+}
+
+.sidebar-brand h2 {
+    margin: 0;
+
+    color: #f2e5cc;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+.sidebar-brand p {
+    margin: 6px 0 0;
+
+    color: #806e51;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 9px;
+
+    letter-spacing: 1.7px;
+
+    text-transform: uppercase;
+}
+
+.sidebar-nav {
+    flex: 1;
+
+    padding: 13px 8px;
+
+    overflow-y: auto;
+}
+
+.sidebar-link {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    padding: 11px 13px;
+
+    margin-bottom: 3px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    color: #bba681;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.sidebar-link:hover {
+    background: #292117;
+    color: #f2e5cc;
+    transform: translateX(2px);
+}
+
+.sidebar-link.active {
+    background: #3a2d1c;
+    color: #e7a83f;
+}
+
+.sidebar-link.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 7px;
+    bottom: 7px;
+
+    width: 3px;
+
+    border-radius: 0 4px 4px 0;
+
+    background: #e7a83f;
+}
+
+.sidebar-icon {
+    width: 22px;
+
+    text-align: center;
+
+    color: #95805e;
+
+    font-size: 16px;
+
+    flex-shrink: 0;
+}
+
+.sidebar-link.active .sidebar-icon {
+    color: #e7a83f;
+}
+
+.sidebar-bottom {
+    padding: 11px 8px;
+
+    border-top: 1px solid #352b1d;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+    margin-left: 235px;
+
+    margin-right: 300px;
+
+    padding-top: 58px;
+
+    min-height: 100vh;
+
+    background: #15130f;
+}
+
+.content-inner {
+    width: 100%;
+
+    max-width: 1250px;
+
+    margin: auto;
+
+    padding: 25px;
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+.welcome-card {
+    min-height: 250px;
+
+    padding: 32px;
+
+    border-radius: 18px;
+
+    border: 1px solid #59431f;
+
+    background:
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(231,168,63,0.13),
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            #2b2116,
+            #211b14
+        );
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.welcome-label {
+    color: #e7a83f;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+.welcome-card h1 {
+    margin: 16px 0 8px;
+
+    color: #f2e5cc;
+
+    font-size: clamp(38px, 4vw, 54px);
+
+    line-height: 0.96;
+
+    font-weight: 800;
+}
+
+.welcome-card h1 span {
+    display: block;
+}
+
+.table-message {
+    margin-top: 15px;
+
+    color: #a99169;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 13px;
+}
+
+.table-message strong {
+    color: #e7a83f;
+}
+
+.browse-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 23px;
+
+    padding: 12px 18px;
+
+    border-radius: 10px;
+
+    background: #efad43;
+
+    color: #1c150c;
+
+    text-decoration: none;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 900;
+}
+
+.browse-button:hover {
+    background: #f4bb59;
+}
+
+
+/* =========================================================
+   TABLE SECTION
+========================================================= */
+
+.table-section {
+    margin-top: 32px;
+
+    padding: 20px;
+
+    background: #211c15;
+
+    border: 1px solid #3f321f;
+
+    border-radius: 15px;
+
+    scroll-margin-top: 75px;
+}
+
+.table-section-title {
+    color: #f2e5cc;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+.table-section-subtitle {
+    margin-top: 4px;
+    margin-bottom: 16px;
+
+    color: #897658;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 10px;
+}
+
+.tables-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+.table-form {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.table-button {
+    width: 100%;
+
+    border: 1px solid #4b3b25;
+
+    background: #292217;
+
+    border-radius: 10px;
+
+    padding: 14px 8px;
+
+    cursor: pointer;
+
+    color: #d8c5a1;
+
+    transition: 0.2s;
+}
+
+.table-button:hover {
+    border-color: #d09b3a;
+
+    background: #332817;
+
+    transform: translateY(-2px);
+}
+
+.table-button.selected {
+    border-color: #e7a83f;
+
+    background: #3b2d1b;
+}
+
+.table-icon {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.table-name {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.table-status {
+    margin-top: 4px;
+
+    color: #8e7c60;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+.section-block {
+    margin-top: 32px;
+
+    scroll-margin-top: 75px;
+}
+
+.section-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 15px;
+}
+
+.section-header h2 {
+    margin: 0;
+
+    color: #f2e5cc;
+
+    font-size: 23px;
+
+    font-weight: 800;
+}
+
+.section-badge {
+    padding: 4px 8px;
+
+    border: 1px solid #61491f;
+
+    border-radius: 999px;
+
+    color: #e7a83f;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+.menu-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+.food-card {
+    background: #282116;
+
+    border: 1px solid #49371f;
+
+    border-radius: 13px;
+
+    overflow: hidden;
+
+    transition: 0.2s;
+}
+
+.food-card:hover {
+    transform: translateY(-4px);
+
+    border-color: #806029;
+
+    box-shadow:
+        0 14px 30px rgba(0,0,0,0.28);
+}
+
+.food-image {
+    height: 145px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #50402c,
+            #251f16
+        );
+}
+
+.food-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+.food-placeholder {
+    font-size: 50px;
+    opacity: 0.75;
+}
+
+.popular-badge {
+    position: absolute;
+
+    left: 9px;
+    top: 9px;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    background: #e7a83f;
+
+    color: #20170c;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 7px;
+
+    font-weight: 900;
+}
+
+.food-info {
+    padding: 13px;
+}
+
+.food-name {
+    color: #f2e5cc;
+
+    font-size: 15px;
+
+    font-weight: 800;
+}
+
+.food-description {
+    margin-top: 6px;
+
+    min-height: 42px;
+
+    color: #8f7b5d;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 10px;
+
+    line-height: 1.45;
+}
+
+.food-bottom {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 11px;
+}
+
+.food-price {
+    color: #e7a83f;
+
+    font-size: 14px;
+
+    font-weight: 800;
+}
+
+.add-button {
+    border: none;
+
+    background: #efad43;
+
+    color: #17130d;
+
+    padding: 8px 12px;
+
+    border-radius: 8px;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background: #f6bd5b;
+}
+
+
+/* =========================================================
+   DASHBOARD SECTIONS
+========================================================= */
+
+.dashboard-section {
+    margin-top: 32px;
+
+    padding: 22px;
+
+    background: #211c15;
+
+    border: 1px solid #3f321f;
+
+    border-radius: 15px;
+
+    scroll-margin-top: 75px;
+}
+
+.dashboard-section-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 17px;
+}
+
+.dashboard-section-header h2 {
+    margin: 0;
+
+    color: #f2e5cc;
+
+    font-size: 21px;
+
+    font-weight: 800;
+}
+
+.dashboard-section-header p {
+    margin: 5px 0 0;
+
+    color: #887456;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 10px;
+}
+
+.status-card,
+.profile-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 19px;
+
+    background: #292218;
+
+    border: 1px solid #443520;
+
+    border-radius: 12px;
+}
+
+.status-icon,
+.profile-avatar {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #3a2b19;
+
+    color: #e7a83f;
+
+    font-size: 22px;
+}
+
+.status-card h3,
+.profile-details h3 {
+    margin: 0;
+
+    color: #e5d6bb;
+
+    font-size: 15px;
+}
+
+.status-card p,
+.profile-details p {
+    margin: 5px 0 0;
+
+    color: #806d52;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 9px;
+}
+
+.help-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.help-card {
+    padding: 17px;
+
+    background: #292218;
+
+    border: 1px solid #443520;
+
+    border-radius: 12px;
+}
+
+.help-card span {
+    font-size: 22px;
+}
+
+.help-card h3 {
+    margin: 9px 0 0;
+
+    color: #e7d8bd;
+
+    font-size: 13px;
+}
+
+.help-card p {
+    margin: 5px 0 0;
+
+    color: #806d52;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ORDER PANEL
+========================================================= */
+
+.order-panel {
+    position: fixed;
+
+    top: 58px;
+    right: 0;
+    bottom: 0;
+
+    width: 300px;
+
+    background: #171510;
+
+    border-left: 1px solid #40321f;
+
+    z-index: 1400;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.order-header {
+    padding: 18px;
+
+    border-bottom: 1px solid #352b1d;
+}
+
+.order-header h2 {
+    margin: 0;
+
+    color: #f2e5cc;
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+.order-header p {
+    margin: 4px 0 0;
+
+    color: #8e7959;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 9px;
+}
+
+.selected-table {
+    margin: 13px 16px;
+
+    padding: 11px;
+
+    border-radius: 9px;
+
+    background: #272419;
+
+    color: #a9916c;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 9px;
+}
+
+.selected-table strong {
+    color: #e7a83f;
+}
+
+.order-items {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 0 16px;
+}
+
+.order-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 11px 0;
+
+    border-bottom: 1px solid #30271c;
+}
+
+.order-food-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #292319;
+
+    font-size: 17px;
+}
+
+.order-item-info {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.order-item-name {
+    color: #e7d8bd;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.order-item-details {
+    margin-top: 3px;
+
+    color: #806e52;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 8px;
+}
+
+.remove-button {
+    border: none;
+
+    background: transparent;
+
+    color: #936b51;
+
+    cursor: pointer;
+
+    font-size: 8px;
+}
+
+.remove-button:hover {
+    color: #e7a83f;
+}
+
+.order-item-total {
+    color: #e7a83f;
+
+    font-size: 10px;
+
+    font-weight: 800;
+}
+
+.empty-order {
+    text-align: center;
+
+    padding: 65px 15px;
+
+    color: #806f54;
+}
+
+.empty-order-icon {
+    font-size: 45px;
+
+    opacity: 0.45;
+
+    margin-bottom: 13px;
+}
+
+.empty-order h3 {
+    margin: 0;
+
+    color: #a88f6b;
+
+    font-size: 13px;
+}
+
+.empty-order p {
+    margin-top: 6px;
+
+    color: #665843;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 9px;
+}
+
+.order-footer {
+    border-top: 1px solid #352b1d;
+
+    padding: 15px 16px;
+
+    background: #1b1812;
+}
+
+.bill-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #9c8969;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 10px;
+
+    margin-bottom: 11px;
+}
+
+.bill-total {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding-top: 11px;
+
+    border-top: 1px solid #3a2e20;
+
+    color: #f2e5cc;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+.total-price {
+    color: #e7a83f;
+
+    font-size: 17px;
+}
+
+.place-order {
+    width: 100%;
+
+    border: none;
+
+    border-radius: 9px;
+
+    padding: 11px;
+
+    margin-top: 12px;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 900;
+}
+
+.place-order.enabled {
+    background: #e7a83f;
+
+    color: #1d160b;
+
+    cursor: pointer;
+}
+
+.place-order.disabled {
+    background: #3a352c;
+
+    color: #716a5c;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 1150px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+    .main-content {
+        margin-left: 210px;
+        margin-right: 270px;
+    }
+
+    .order-panel {
+        width: 270px;
+    }
+
+    .menu-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .tables-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+
+    .mobile-menu-button {
+        display: block;
+    }
+
+    .sidebar {
+        width: 235px;
+
+        transform: translateX(-100%);
+
+        transition: transform 0.25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .order-panel {
+        position: relative;
+
+        top: auto;
+        right: auto;
+        bottom: auto;
+
+        width: 100%;
+
+        min-height: 500px;
+
+        border-left: none;
+
+        border-top: 1px solid #40321f;
+    }
+
+    .help-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content-inner {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .brand-name {
+        font-size: 15px;
+    }
+
+    .brand-subtitle,
+    .top-table {
+        display: none;
+    }
+
+    .content-inner {
+        padding: 14px;
+    }
+
+    .welcome-card {
+        padding: 24px;
+    }
+
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tables-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
+</style>
+
+
+<!-- =========================================================
+     APPLICATION
+========================================================= -->
+
+<div class="restaurant-app">
+
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <header class="top-bar">
+
+        <button
+            class="mobile-menu-button"
+            id="mobileMenuButton"
+            type="button"
+        >
+            ☰
+        </button>
+
+
+        <div class="top-brand">
+
+            <div class="brand-logo">
+                🏔
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    Himalayan Bites
+                </div>
+
+                <div class="brand-subtitle">
+                    Taste of the Himalayas
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="top-table">
+
+            <span class="top-table-label">
+                Table
+            </span>
+
+            <span class="top-table-number">
+
+                {% if selected_table %}
+                    {{ selected_table.name }}
+                {% else %}
+                    --
+                {% endif %}
+
+            </span>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside
+        id="sidebar"
+        class="sidebar"
+    >
+
+        <div class="sidebar-brand">
+
+            <h2>
+                Himalayan Bites
+            </h2>
+
+            <p>
+                Customer Portal
+            </p>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+
+            <a
+                href="#home"
+                class="sidebar-link active"
+                data-section="home"
+            >
+
+                <span class="sidebar-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Home
+                </span>
+
+            </a>
+
+
+            <a
+                href="#menu"
+                class="sidebar-link"
+                data-section="menu"
+            >
+
+                <span class="sidebar-icon">
+                    ☰
+                </span>
+
+                <span>
+                    Menu
+                </span>
+
+            </a>
+
+
+            <a
+                href="#categories"
+                class="sidebar-link"
+                data-section="categories"
+            >
+
+                <span class="sidebar-icon">
+                    ▦
+                </span>
+
+                <span>
+                    Categories
+                </span>
+
+            </a>
+
+
+            <a
+                href="#cart"
+                class="sidebar-link"
+                data-section="cart"
+            >
+
+                <span class="sidebar-icon">
+                    🛒
+                </span>
+
+                <span>
+                    Current Order
+                </span>
+
+            </a>
+
+
+            <a
+                href="#order-status"
+                class="sidebar-link"
+                data-section="order-status"
+            >
+
+                <span class="sidebar-icon">
+                    ◷
+                </span>
+
+                <span>
+                    Order Status
+                </span>
+
+            </a>
+
+
+            <a
+                href="#order-history"
+                class="sidebar-link"
+                data-section="order-history"
+            >
+
+                <span class="sidebar-icon">
+                    ◴
+                </span>
+
+                <span>
+                    Order History
+                </span>
+
+            </a>
+
+
+            <a
+                href="#profile"
+                class="sidebar-link"
+                data-section="profile"
+            >
+
+                <span class="sidebar-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Profile
+                </span>
+
+            </a>
+
+
+            <a
+                href="#help"
+                class="sidebar-link"
+                data-section="help"
+            >
+
+                <span class="sidebar-icon">
+                    ?
+                </span>
+
+                <span>
+                    Help
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="{{ url_for('auth.logout') }}"
+                class="sidebar-link"
+            >
+
+                <span class="sidebar-icon">
+                    ↪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="main-content">
+
+        <div class="content-inner">
+
+
+            <!-- =================================================
+                 HOME
+            ================================================== -->
+
+            <section
+                id="home"
+                class="welcome-card"
+            >
+
+                <div class="welcome-label">
+                    Welcome Back
+                </div>
+
+                <h1>
+
+                    Welcome to
+
+                    <span>
+                        Himalayan Bites
+                    </span>
+
+                </h1>
+
+
+                <div class="table-message">
+
+                    🪑
+
+                    You're dining at
+
+                    {% if selected_table %}
+
+                        <strong>
+                            {{ selected_table.name }}
+                        </strong>
+
+                    {% else %}
+
+                        <strong>
+                            Select a Table
+                        </strong>
+
+                    {% endif %}
+
+                </div>
+
+
+                <a
+                    href="#menu"
+                    class="browse-button"
+                >
+
+                    Browse Full Menu
+
+                    <span>
+                        ›
+                    </span>
+
+                </a>
+
+            </section>
+
+
+            <!-- =================================================
+                 TABLES
+            ================================================== -->
+
+            <section
+                id="tables"
+                class="table-section"
+            >
+
+                <div class="table-section-title">
+                    Choose Your Table
+                </div>
+
+                <div class="table-section-subtitle">
+                    Select where you would like to enjoy your meal.
+                </div>
+
+
+                <div class="tables-grid">
+
+                    {% for table in tables %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'customer.select_table',
+                                table_id=table.id
+                            ) }}"
+                            class="table-form"
+                        >
+
+                            <button
+                                type="submit"
+                                class="table-button
+                                {% if selected_table and selected_table.id == table.id %}
+                                    selected
+                                {% endif %}"
+                            >
+
+                                <div class="table-icon">
+                                    🪑
+                                </div>
+
+                                <div class="table-name">
+                                    {{ table.name }}
+                                </div>
+
+                                <div class="table-status">
+
+                                    {% if selected_table and selected_table.id == table.id %}
+
+                                        Selected
+
+                                    {% else %}
+
+                                        Available
+
+                                    {% endif %}
+
+                                </div>
+
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <div
+                            style="
+                                grid-column:1/-1;
+                                text-align:center;
+                                padding:25px;
+                                color:#806f54;
+                            "
+                        >
+                            No tables available.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MENU
+            ================================================== -->
+
+            <section
+                id="menu"
+                class="section-block"
+            >
+
+                <div class="section-header">
+
+                    <h2>
+                        Popular Dishes
+                    </h2>
+
+                    <span class="section-badge">
+                        Crowd Favourites
+                    </span>
+
+                </div>
+
+
+                <div class="menu-grid">
+
+                    {% for item in menu_items %}
+
+                        <article class="food-card">
+
+                            <div class="food-image">
+
+                                {% if item.image %}
+
+                                    <img
+                                        src="{{ item.image }}"
+                                        alt="{{ item.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <div class="food-placeholder">
+                                        🍽️
+                                    </div>
+
+                                {% endif %}
+
+                                <span class="popular-badge">
+                                    POPULAR
+                                </span>
+
+                            </div>
+
+
+                            <div class="food-info">
+
+                                <div class="food-name">
+                                    {{ item.name }}
+                                </div>
+
+
+                                <div class="food-description">
+
+                                    {% if item.description %}
+
+                                        {{ item.description }}
+
+                                    {% else %}
+
+                                        Delicious food prepared
+                                        with fresh ingredients
+                                        and authentic flavours.
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="food-bottom">
+
+                                    <div class="food-price">
+                                        Rs. {{ item.price }}
+                                    </div>
+
+
+                                    <form
+                                        action="{{ url_for(
+                                            'auth.add_to_cart',
+                                            item_id=item.id
+                                        ) }}"
+                                        method="POST"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="add-button"
+                                        >
+                                            + Add
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    {% else %}
+
+                        <div
+                            style="
+                                grid-column:1/-1;
+                                text-align:center;
+                                padding:50px;
+                                color:#806f54;
+                            "
+                        >
+
+                            <div style="font-size:45px;">
+                                🍽️
+                            </div>
+
+                            <h3>
+                                No dishes available
+                            </h3>
+
+                            <p>
+                                The menu is currently empty.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CATEGORIES
+            ================================================== -->
+
+            <section
+                id="categories"
+                class="dashboard-section"
+            >
+
+                <div class="dashboard-section-header">
+
+                    <div>
+
+                        <h2>
+                            Categories
+                        </h2>
+
+                        <p>
+                            Browse available food categories.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="help-grid">
+
+                    {% for category in categories %}
+
+                        <div class="help-card">
+
+                            <span>
+                                🍽️
+                            </span>
+
+                            <h3>
+                                {{ category.name }}
+                            </h3>
+
+                            <p>
+                                Explore dishes from
+                                {{ category.name }}.
+                            </p>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="help-card">
+
+                            <span>
+                                🍽️
+                            </span>
+
+                            <h3>
+                                No Categories
+                            </h3>
+
+                            <p>
+                                No food categories are currently available.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ORDER STATUS
+            ================================================== -->
+
+            <section
+                id="order-status"
+                class="dashboard-section"
+            >
+
+                <div class="dashboard-section-header">
+
+                    <div>
+
+                        <h2>
+                            Order Status
+                        </h2>
+
+                        <p>
+                            Track your current restaurant order.
+                        </p>
+
+                    </div>
+
+                    <span class="section-badge">
+                        LIVE
+                    </span>
+
+                </div>
+
+
+                <div class="status-card">
+
+                    <div class="status-icon">
+                        ◷
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            No active order
+                        </h3>
+
+                        <p>
+                            Your order status will appear here
+                            after you place an order.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ORDER HISTORY
+            ================================================== -->
+
+            <section
+                id="order-history"
+                class="dashboard-section"
+            >
+
+                <div class="dashboard-section-header">
+
+                    <div>
+
+                        <h2>
+                            Order History
+                        </h2>
+
+                        <p>
+                            View your previous restaurant orders.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="status-card">
+
+                    <div class="status-icon">
+                        ◴
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            No previous orders
+                        </h3>
+
+                        <p>
+                            Your completed orders will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PROFILE
+            ================================================== -->
+
+            <section
+                id="profile"
+                class="dashboard-section"
+            >
+
+                <div class="dashboard-section-header">
+
+                    <div>
+
+                        <h2>
+                            Your Profile
+                        </h2>
+
+                        <p>
+                            Manage your customer information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-card">
+
+                    <div class="profile-avatar">
+                        👤
+                    </div>
+
+                    <div class="profile-details">
+
+                        <h3>
+                            Customer
+                        </h3>
+
+                        <p>
+                            Welcome to Himalayan Bites.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 HELP
+            ================================================== -->
+
+            <section
+                id="help"
+                class="dashboard-section"
+            >
+
+                <div class="dashboard-section-header">
+
+                    <div>
+
+                        <h2>
+                            Help & Support
+                        </h2>
+
+                        <p>
+                            Need help with your order?
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="help-grid">
+
+                    <div class="help-card">
+
+                        <span>
+                            🍽️
+                        </span>
+
+                        <h3>
+                            Ordering Help
+                        </h3>
+
+                        <p>
+                            Select a table and add dishes
+                            from the menu.
+                        </p>
+
+                    </div>
+
+
+                    <div class="help-card">
+
+                        <span>
+                            🪑
+                        </span>
+
+                        <h3>
+                            Table Help
+                        </h3>
+
+                        <p>
+                            Choose your available table
+                            before placing an order.
+                        </p>
+
+                    </div>
+
+
+                    <div class="help-card">
+
+                        <span>
+                            💬
+                        </span>
+
+                        <h3>
+                            Contact Restaurant
+                        </h3>
+
+                        <p>
+                            Ask restaurant staff if you
+                            need further assistance.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         CURRENT ORDER
+    ====================================================== -->
+
+    <aside
+        id="cart"
+        class="order-panel"
+    >
+
+        <div class="order-header">
+
+            <h2>
+                Current Order
+            </h2>
+
+            {% if selected_table %}
+
+                <p>
+                    {{ selected_table.name }}
+                </p>
+
+            {% else %}
+
+                <p>
+                    No table selected
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if selected_table %}
+
+            <div class="selected-table">
+
+                🪑 Table:
+
+                <strong>
+                    {{ selected_table.name }}
+                </strong>
+
+            </div>
+
+        {% else %}
+
+            <div class="selected-table">
+
+                ⚠️ Please select a table before
+                placing your order.
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="order-items">
+
+            {% for item in cart_items %}
+
+                <div class="order-item">
+
+                    <div class="order-food-icon">
+                        🍽️
+                    </div>
+
+
+                    <div class="order-item-info">
+
+                        <div class="order-item-name">
+                            {{ item.name }}
+                        </div>
+
+
+                        <div class="order-item-details">
+
+                            Rs. {{ item.price }}
+
+                            ×
+
+                            {{ item.quantity }}
+
+                        </div>
+
+
+                        <form
+                            action="{{ url_for(
+                                'auth.remove_from_cart',
+                                item_id=item.id
+                            ) }}"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="remove-button"
+                            >
+                                Remove
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="order-item-total">
+
+                        Rs.
+
+                        {{ item.price * item.quantity }}
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-order">
+
+                    <div class="empty-order-icon">
+                        🛒
+                    </div>
+
+                    <h3>
+                        Your order is empty
+                    </h3>
+
+                    <p>
+                        Add items from the menu.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="order-footer">
+
+            <div class="bill-row">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <span>
+                    Rs. {{ cart_total }}
+                </span>
+
+            </div>
+
+
+            <div class="bill-total">
+
+                <span>
+                    Total Amount
+                </span>
+
+                <span class="total-price">
+                    Rs. {{ cart_total }}
+                </span>
+
+            </div>
+
+
+            <form
+                action="{{ url_for('auth.place_order') }}"
+                method="POST"
+            >
+
+                {% if selected_table and cart_items %}
+
+                    <button
+                        type="submit"
+                        class="place-order enabled"
+                    >
+                        Place Order ➤
+                    </button>
+
+                {% else %}
+
+                    <button
+                        type="button"
+                        class="place-order disabled"
+                        disabled
+                    >
+
+                        {% if not selected_table %}
+                            Select Table First
+                        {% else %}
+                            Cart is Empty
+                        {% endif %}
+
+                    </button>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+const mobileMenuButton =
+    document.getElementById("mobileMenuButton");
+
+const sidebar =
+    document.getElementById("sidebar");
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+if (mobileMenuButton) {
+
+    mobileMenuButton.addEventListener(
+        "click",
+        function () {
+
+            sidebar.classList.toggle("open");
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SIDEBAR LINKS
+========================================================= */
+
+const sidebarLinks =
+    document.querySelectorAll(
+        ".sidebar-link[data-section]"
+    );
+
+
+sidebarLinks.forEach(function(link) {
+
+    link.addEventListener(
+        "click",
+        function(event) {
+
+            const sectionId =
+                this.getAttribute("data-section");
+
+
+            /* Current Order */
+
+            if (sectionId === "cart") {
+
+                event.preventDefault();
+
+                const orderPanel =
+                    document.getElementById("cart");
+
+                orderPanel.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+                sidebarLinks.forEach(function(item) {
+
+                    item.classList.remove("active");
+
+                });
+
+                this.classList.add("active");
+
+                sidebar.classList.remove("open");
+
+                return;
+            }
+
+
+            const target =
+                document.getElementById(sectionId);
+
+
+            if (!target) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+
+            sidebarLinks.forEach(function(item) {
+
+                item.classList.remove("active");
+
+            });
+
+
+            this.classList.add("active");
+
+
+            sidebar.classList.remove("open");
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   BROWSE MENU
+========================================================= */
+
+const browseButton =
+    document.querySelector(".browse-button");
+
+
+if (browseButton) {
+
+    browseButton.addEventListener(
+        "click",
+        function(event) {
+
+            const menu =
+                document.getElementById("menu");
+
+
+            if (!menu) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            menu.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+
+            sidebarLinks.forEach(function(item) {
+
+                item.classList.remove("active");
+
+            });
+
+
+            const menuLink =
+                document.querySelector(
+                    '[data-section="menu"]'
+                );
+
+
+            if (menuLink) {
+
+                menuLink.classList.add("active");
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE MOBILE SIDEBAR
+========================================================= */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            window.innerWidth <= 850 &&
+            sidebar.classList.contains("open")
+        ) {
+
+            const clickedInsideSidebar =
+                sidebar.contains(event.target);
+
+            const clickedMenuButton =
+                mobileMenuButton &&
+                mobileMenuButton.contains(event.target);
+
+
+            if (
+                !clickedInsideSidebar &&
+                !clickedMenuButton
+            ) {
+
+                sidebar.classList.remove("open");
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ACTIVE SECTION
+========================================================= */
+
+const sections = [
+    "home",
+    "menu",
+    "categories",
+    "order-status",
+    "order-history",
+    "profile",
+    "help"
+];
+
+
+window.addEventListener(
+    "scroll",
+    function() {
+
+        const scrollPosition =
+            window.scrollY + 150;
+
+
+        let currentSection = "home";
+
+
+        sections.forEach(function(id) {
+
+            const section =
+                document.getElementById(id);
+
+
+            if (!section) {
+                return;
+            }
+
+
+            if (
+                section.offsetTop <=
+                scrollPosition
+            ) {
+
+                currentSection = id;
+
+            }
+
+        });
+
+
+        sidebarLinks.forEach(function(link) {
+
+            const id =
+                link.getAttribute(
+                    "data-section"
+                );
+
+
+            if (id === currentSection) {
+
+                link.classList.add("active");
+
+            } else {
+
+                link.classList.remove("active");
+
+            }
+
+        });
+
+    }
+);
+
+</script>
+
+{% endblock %}

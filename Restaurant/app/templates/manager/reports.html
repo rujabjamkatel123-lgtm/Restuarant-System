@@ -1,0 +1,438 @@
+<!--
+=============================================================
+  Manager Reports
+=============================================================
+  This page provides detailed restaurant sales reports.
+
+  Manager can:
+    - Filter reports by date range
+    - View total sales
+    - View total orders
+    - View total items sold
+    - View estimated profit
+    - View sales by period
+    - View sales by category
+    - View best-selling menu items
+
+  The controller performs the calculations.
+  This template only displays the results.
+=============================================================
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+Reports
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Manager Navigation -->
+{% include "partials/manager_navbar.html" %}
+
+
+<div class="manager-reports">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="reports-header">
+
+        <h1>
+            Sales Reports
+        </h1>
+
+        <p>
+            Analyze restaurant sales and performance.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         DATE FILTER
+    ====================================================== -->
+
+    <section class="report-filter">
+
+        <form
+            method="GET"
+            action="{{ url_for('auth.sales_report') }}"
+        >
+
+            <div class="form-group">
+
+                <label for="start_date">
+                    From Date
+                </label>
+
+                <input
+                    type="date"
+                    id="start_date"
+                    name="start_date"
+                    value="{{ start_date }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="end_date">
+                    To Date
+                </label>
+
+                <input
+                    type="date"
+                    id="end_date"
+                    name="end_date"
+                    value="{{ end_date }}"
+                    required
+                >
+
+            </div>
+
+
+            <button type="submit">
+                Generate Report
+            </button>
+
+
+            <a
+                href="{{ url_for('auth.sales_report') }}"
+            >
+                Clear
+            </a>
+
+        </form>
+
+    </section>
+
+
+    <!-- =====================================================
+         REPORT SUMMARY
+    ====================================================== -->
+
+    <section class="report-summary">
+
+        <!-- Total Sales -->
+
+        <div class="report-card">
+
+            <h3>
+                Total Sales
+            </h3>
+
+            <p>
+                Rs. {{ total_sales }}
+            </p>
+
+        </div>
+
+
+        <!-- Total Orders -->
+
+        <div class="report-card">
+
+            <h3>
+                Total Orders
+            </h3>
+
+            <p>
+                {{ total_orders }}
+            </p>
+
+        </div>
+
+
+        <!-- Items Sold -->
+
+        <div class="report-card">
+
+            <h3>
+                Items Sold
+            </h3>
+
+            <p>
+                {{ total_items_sold }}
+            </p>
+
+        </div>
+
+
+        <!-- Profit -->
+
+        <div class="report-card">
+
+            <h3>
+                Estimated Profit
+            </h3>
+
+            <p>
+                Rs. {{ total_profit }}
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SALES BY PERIOD
+    ====================================================== -->
+
+    <section class="sales-report-section">
+
+        <div class="section-header">
+
+            <h2>
+                Sales by Period
+            </h2>
+
+            <p>
+                Revenue generated during the selected period.
+            </p>
+
+        </div>
+
+
+        <div class="sales-chart">
+
+            {% if sales_data %}
+
+                <!--
+                    Text-based chart for MVP.
+
+                    Later this can be replaced with
+                    Chart.js or another chart library.
+                -->
+
+                {% for data in sales_data %}
+
+                    <div class="sales-row">
+
+                        <div class="sales-period">
+
+                            <strong>
+                                {{ data.period }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="sales-value">
+
+                            Rs. {{ data.sales }}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>
+                    No sales data available.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SALES BY CATEGORY
+    ====================================================== -->
+
+    <section class="category-report-section">
+
+        <div class="section-header">
+
+            <h2>
+                Sales by Category
+            </h2>
+
+            <p>
+                Compare revenue generated by menu categories.
+            </p>
+
+        </div>
+
+
+        <div class="category-list">
+
+            {% for category in category_sales %}
+
+                <div class="category-row">
+
+                    <div>
+
+                        <strong>
+                            {{ category.category }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        {{ category.quantity }}
+                        items sold
+
+                    </div>
+
+
+                    <div>
+
+                        Rs. {{ category.sales }}
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <p>
+                    No category sales data available.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         BEST SELLING ITEMS
+    ====================================================== -->
+
+    <section class="best-selling-section">
+
+        <div class="section-header">
+
+            <h2>
+                Best-Selling Items
+            </h2>
+
+            <p>
+                Menu items with the highest number of sales.
+            </p>
+
+        </div>
+
+
+        <div class="best-selling-list">
+
+            {% for item in best_selling_items %}
+
+                <div class="best-selling-item">
+
+                    <!-- Rank -->
+
+                    <div class="item-rank">
+
+                        #{{ loop.index }}
+
+                    </div>
+
+
+                    <!-- Item Name -->
+
+                    <div class="item-details">
+
+                        <h3>
+                            {{ item.name }}
+                        </h3>
+
+                        <p>
+                            {{ item.category }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- Quantity -->
+
+                    <div class="item-quantity">
+
+                        <strong>
+                            {{ item.quantity }}
+                        </strong>
+
+                        <span>
+                            sold
+                        </span>
+
+                    </div>
+
+
+                    <!-- Revenue -->
+
+                    <div class="item-revenue">
+
+                        <strong>
+                            Rs. {{ item.sales }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <p>
+                    No item sales data available.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         REPORT TOTAL
+    ====================================================== -->
+
+    <section class="report-total">
+
+        <div>
+
+            <span>
+                Report Period:
+            </span>
+
+            <strong>
+                {{ start_date }}
+                -
+                {{ end_date }}
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Total Revenue:
+            </span>
+
+            <strong>
+                Rs. {{ total_sales }}
+            </strong>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

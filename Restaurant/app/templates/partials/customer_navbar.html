@@ -1,0 +1,62 @@
+<!--
+=============================================================
+  Customer Navigation Bar
+=============================================================
+  This navigation bar is used by customers in the
+  Restaurant Management System.
+
+  Customer can access:
+    - Dashboard / Home
+    - Restaurant Menu
+    - Cart
+    - My Orders
+    - Mobile View
+    - Logout
+=============================================================
+-->
+
+<nav class="customer-navbar">
+
+    <!-- Restaurant Logo / Name -->
+    <div class="navbar-brand">
+        <a href="{{ url_for('auth.customer_dashboard') }}">
+            Restaurant Management System
+        </a>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="navbar-links">
+
+        <!-- Home -->
+        <a href="{{ url_for('auth.customer_dashboard') }}">
+            Home
+        </a>
+
+        <!-- Restaurant Menu -->
+        <a href="{{ url_for('auth.menu') }}">
+            Menu
+        </a>
+
+        <!-- Cart -->
+        <a href="{{ url_for('auth.view_cart') }}">
+            Cart
+        </a>
+
+        <!-- My Orders -->
+        <a href="{{ url_for('auth.customer_order_history') }}">
+            My Orders
+        </a>
+
+        <!-- Mobile View -->
+        <a href="{{ url_for('auth.customer_mobile_dashboard') }}">
+            Mobile
+        </a>
+
+        <!-- Logout -->
+        <a href="{{ url_for('auth.logout') }}">
+            Logout
+        </a>
+
+    </div>
+
+</nav>

@@ -1,0 +1,1652 @@
+<!--
+=============================================================
+    Manager Dashboard
+    File: templates/manager/dashboard.html
+
+    Theme:
+      - White main content
+      - Green manager sidebar
+      - Restaurant style
+      - Manager avatar
+      - Sales cards
+      - Recent orders
+      - Quick actions
+=============================================================
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+Manager Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =========================================================
+     TAILWIND CSS
+========================================================= -->
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    restaurant: {
+                        green: '#176B4D',
+                        greenDark: '#105239',
+                        greenLight: '#21825E',
+                        greenSoft: '#EAF5EF',
+                        greenPale: '#F5FAF7',
+                        text: '#26352F',
+                        muted: '#718078'
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+
+<!-- =========================================================
+     DASHBOARD WRAPPER
+========================================================= -->
+
+<div class="min-h-screen bg-white text-[#26352F]">
+
+
+    <!-- =====================================================
+         LEFT SIDEBAR
+    ====================================================== -->
+
+    <aside
+        class="fixed left-0 top-0 z-40 flex h-screen w-[245px] flex-col bg-[#176B4D] text-white shadow-xl"
+    >
+
+
+        <!-- =================================================
+             RESTAURANT LOGO
+        ================================================== -->
+
+        <div
+            class="flex h-[82px] items-center gap-3 border-b border-white/10 px-6"
+        >
+
+            <!-- Logo -->
+
+            <div
+                class="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#176B4D] shadow-sm"
+            >
+
+                <!-- Restaurant icon -->
+
+                <svg
+                    class="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                >
+
+                    <!-- Fork -->
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M7 3v7M5 3v4M9 3v4M7 10v11"
+                    />
+
+                    <!-- Spoon -->
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 3c2.2 1.5 3 4.3 2 6.7-.5 1.2-1.3 2-2.5 2.4V21"
+                    />
+
+                </svg>
+
+            </div>
+
+
+            <!-- Restaurant name -->
+
+            <div>
+
+                <h1 class="text-base font-bold tracking-wide">
+                    Restaurant
+                </h1>
+
+                <p class="text-xs text-white/65">
+                    Management System
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             NAVIGATION
+        ================================================== -->
+
+        <nav class="flex-1 px-4 py-6">
+
+
+            <!-- Navigation label -->
+
+            <p
+                class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+            >
+                Main Menu
+            </p>
+
+
+            <!-- =================================================
+                 DASHBOARD
+            ================================================== -->
+
+            <a
+                href="{{ url_for('manager.dashboard') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#176B4D] shadow-sm"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EAF5EF]"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <rect
+                            x="3"
+                            y="3"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                        <rect
+                            x="14"
+                            y="3"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                        <rect
+                            x="3"
+                            y="14"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                        <rect
+                            x="14"
+                            y="14"
+                            width="7"
+                            height="7"
+                            rx="1"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Dashboard
+
+            </a>
+
+
+
+            <!-- =================================================
+                 MENU
+            ================================================== -->
+
+            <a
+                href="{{ url_for('manager.menu') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 5h16M4 12h16M4 19h16"
+                        />
+
+                        <circle
+                            cx="8"
+                            cy="5"
+                            r="1"
+                        />
+
+                        <circle
+                            cx="16"
+                            cy="12"
+                            r="1"
+                        />
+
+                        <circle
+                            cx="10"
+                            cy="19"
+                            r="1"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Menu Management
+
+            </a>
+
+
+
+            <!-- =================================================
+                 ORDER HISTORY
+            ================================================== -->
+
+            <a
+                href="{{ url_for('manager.history') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 3h12v18H6z"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            d="M9 7h6M9 11h6M9 15h4"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Order History
+
+            </a>
+
+
+
+            <!-- =================================================
+                 REPORTS
+            ================================================== -->
+
+            <a
+                href="{{ url_for('manager.reports') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 19V5"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 19h17"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M7 15l4-4 3 2 5-6"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Reports
+
+            </a>
+
+
+
+            <!-- =================================================
+                 SALES
+            ================================================== -->
+
+            <a
+                href="{{ url_for('manager.sales') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 3v18"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M17 7c0-2-2-3-5-3s-5 1-5 3 2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Sales
+
+            </a>
+
+
+
+            <!-- Divider -->
+
+            <div class="my-6 border-t border-white/10"></div>
+
+
+            <p
+                class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+            >
+                Account
+            </p>
+
+
+
+            <!-- =================================================
+                 LOGOUT
+            ================================================== -->
+
+            <a
+                href="{{ url_for('auth.logout') }}"
+                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-red-500/20 hover:text-white"
+            >
+
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M10 17l5-5-5-5"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 12H3"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M21 19V5a2 2 0 00-2-2h-6"
+                        />
+
+                    </svg>
+
+                </span>
+
+                Logout
+
+            </a>
+
+        </nav>
+
+
+
+        <!-- =================================================
+             SIDEBAR MANAGER PROFILE
+        ================================================== -->
+
+        <div class="border-t border-white/10 p-4">
+
+            <div
+                class="flex items-center gap-3 rounded-xl bg-white/10 p-3"
+            >
+
+                <!-- Avatar -->
+
+                <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-[#176B4D]"
+                >
+                    M
+                </div>
+
+
+                <!-- Details -->
+
+                <div class="min-w-0">
+
+                    <p class="truncate text-sm font-semibold">
+                        Manager
+                    </p>
+
+                    <p class="truncate text-xs text-white/55">
+                        Restaurant Manager
+                    </p>
+
+                </div>
+
+
+                <!-- Online -->
+
+                <span
+                    class="ml-auto h-2.5 w-2.5 rounded-full bg-emerald-300 ring-4 ring-white/10"
+                ></span>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="ml-[245px] min-h-screen bg-[#FFFFFF]">
+
+
+        <!-- =================================================
+             TOP HEADER
+        ================================================== -->
+
+        <header
+            class="flex h-[82px] items-center justify-between border-b border-gray-100 bg-white px-8"
+        >
+
+            <!-- Left -->
+
+            <div>
+
+                <p class="text-xs font-semibold uppercase tracking-wider text-[#718078]">
+                    Restaurant Management
+                </p>
+
+                <h2 class="mt-1 text-xl font-bold text-[#26352F]">
+                    Dashboard Overview
+                </h2>
+
+            </div>
+
+
+            <!-- Right -->
+
+            <div class="flex items-center gap-5">
+
+
+                <!-- Notification -->
+
+                <button
+                    type="button"
+                    class="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-100 bg-white text-[#718078] shadow-sm transition hover:bg-[#F5FAF7] hover:text-[#176B4D]"
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            d="M10 21h4"
+                        />
+
+                    </svg>
+
+
+                    <span
+                        class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"
+                    ></span>
+
+                </button>
+
+
+
+                <!-- Manager -->
+
+                <div
+                    class="flex items-center gap-3 border-l border-gray-100 pl-5"
+                >
+
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#176B4D] text-sm font-bold text-white shadow-sm"
+                    >
+                        M
+                    </div>
+
+                    <div class="hidden md:block">
+
+                        <p class="text-sm font-bold text-[#26352F]">
+                            Manager
+                        </p>
+
+                        <p class="text-xs text-[#718078]">
+                            Administrator
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             DASHBOARD CONTENT
+        ================================================== -->
+
+        <div class="p-8">
+
+
+            <!-- =================================================
+                 WELCOME SECTION
+            ================================================== -->
+
+            <section
+                class="relative mb-7 overflow-hidden rounded-2xl bg-[#176B4D] p-7 text-white shadow-lg"
+            >
+
+                <!-- Decorative circles -->
+
+                <div
+                    class="absolute -right-12 -top-16 h-48 w-48 rounded-full bg-white/5"
+                ></div>
+
+                <div
+                    class="absolute -bottom-20 right-32 h-40 w-40 rounded-full bg-white/5"
+                ></div>
+
+
+                <div class="relative z-10 flex items-center justify-between">
+
+
+                    <div>
+
+                        <div
+                            class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/90"
+                        >
+
+                            <span
+                                class="h-2 w-2 rounded-full bg-emerald-300"
+                            ></span>
+
+                            Restaurant is operating
+
+                        </div>
+
+
+                        <h1
+                            class="text-2xl font-bold md:text-3xl"
+                        >
+                            Good day, Manager! 👋
+                        </h1>
+
+
+                        <p
+                            class="mt-2 max-w-xl text-sm leading-6 text-white/70"
+                        >
+                            Keep an eye on today's restaurant performance,
+                            orders and sales from one place.
+                        </p>
+
+                    </div>
+
+
+                    <!-- Restaurant illustration -->
+
+                    <div
+                        class="hidden h-24 w-24 items-center justify-center rounded-2xl bg-white/10 md:flex"
+                    >
+
+                        <svg
+                            class="h-12 w-12 text-white/90"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.3"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M4 11h16v9H4z"
+                            />
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3 11l2-7h14l2 7"
+                            />
+
+                            <path
+                                stroke-linecap="round"
+                                d="M8 15h8M8 18h5"
+                            />
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 STATISTICS CARDS
+            ================================================== -->
+
+            <section
+                class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"
+            >
+
+
+                <!-- =================================================
+                     SALES CARD
+                ================================================== -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Today's Sales
+                            </p>
+
+
+                            <h3
+                                class="mt-2 text-2xl font-bold text-[#26352F]"
+                            >
+                                Rs. {{ today_sales }}
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EAF5EF] text-[#176B4D] transition group-hover:bg-[#176B4D] group-hover:text-white"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 3v18"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M17 7c0-2-2-3-5-3S7 5 7 7s2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5 flex items-center gap-2">
+
+                        <span
+                            class="rounded-full bg-[#EAF5EF] px-2 py-1 text-xs font-semibold text-[#176B4D]"
+                        >
+                            Today
+                        </span>
+
+                        <span class="text-xs text-[#718078]">
+                            Total restaurant revenue
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     ORDERS CARD
+                ================================================== -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Today's Orders
+                            </p>
+
+
+                            <h3
+                                class="mt-2 text-2xl font-bold text-[#26352F]"
+                            >
+                                {{ today_orders }}
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 3h12v18H6z"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    d="M9 7h6M9 11h6M9 15h4"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5 flex items-center gap-2">
+
+                        <span
+                            class="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+                        >
+                            Orders
+                        </span>
+
+                        <span class="text-xs text-[#718078]">
+                            Today's total orders
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     ITEMS CARD
+                ================================================== -->
+
+                <div
+                    class="group rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+                >
+
+                    <div class="flex items-start justify-between">
+
+
+                        <div>
+
+                            <p class="text-sm font-medium text-[#718078]">
+                                Items Sold
+                            </p>
+
+
+                            <h3
+                                class="mt-2 text-2xl font-bold text-[#26352F]"
+                            >
+                                {{ today_items }}
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-500 transition group-hover:bg-orange-500 group-hover:text-white"
+                        >
+
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                viewBox="0 0 24 24"
+                            >
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M5 11h14M6 11l1 8h10l1-8"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9 11V7a3 3 0 016 0v4"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-5 flex items-center gap-2">
+
+                        <span
+                            class="rounded-full bg-orange-50 px-2 py-1 text-xs font-semibold text-orange-600"
+                        >
+                            Food
+                        </span>
+
+                        <span class="text-xs text-[#718078]">
+                            Total items sold today
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 MAIN DASHBOARD GRID
+            ================================================== -->
+
+            <section
+                class="mt-7 grid grid-cols-1 gap-6 xl:grid-cols-3"
+            >
+
+
+                <!-- =================================================
+                     SALES OVERVIEW
+                ================================================== -->
+
+                <div
+                    class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm xl:col-span-2"
+                >
+
+
+                    <!-- Header -->
+
+                    <div class="flex items-center justify-between">
+
+                        <div>
+
+                            <h2
+                                class="text-lg font-bold text-[#26352F]"
+                            >
+                                Sales Overview
+                            </h2>
+
+                            <p
+                                class="mt-1 text-sm text-[#718078]"
+                            >
+                                Restaurant sales performance for today.
+                            </p>
+
+                        </div>
+
+
+                        <a
+                            href="{{ url_for('manager.sales') }}"
+                            class="rounded-lg bg-[#EAF5EF] px-3 py-2 text-xs font-semibold text-[#176B4D] transition hover:bg-[#176B4D] hover:text-white"
+                        >
+                            View Sales
+                        </a>
+
+                    </div>
+
+
+
+                    <!-- Sales visual -->
+
+                    <div class="mt-7">
+
+
+                        <div class="flex h-48 items-end gap-3 rounded-xl bg-[#F8FBF9] px-5 pb-5 pt-6">
+
+
+                            <!-- Bars -->
+
+                            <div class="flex h-full flex-1 items-end gap-2">
+
+
+                                <div
+                                    class="h-[35%] flex-1 rounded-t-lg bg-[#D6EADF]"
+                                ></div>
+
+                                <div
+                                    class="h-[50%] flex-1 rounded-t-lg bg-[#C2DFD0]"
+                                ></div>
+
+                                <div
+                                    class="h-[42%] flex-1 rounded-t-lg bg-[#AED5C1]"
+                                ></div>
+
+                                <div
+                                    class="h-[65%] flex-1 rounded-t-lg bg-[#8FC5A9]"
+                                ></div>
+
+                                <div
+                                    class="h-[55%] flex-1 rounded-t-lg bg-[#72B592]"
+                                ></div>
+
+                                <div
+                                    class="h-[78%] flex-1 rounded-t-lg bg-[#4C9B76]"
+                                ></div>
+
+                                <div
+                                    class="h-[92%] flex-1 rounded-t-lg bg-[#176B4D]"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Labels -->
+
+                        <div
+                            class="mt-3 flex justify-between px-3 text-[11px] text-[#718078]"
+                        >
+
+                            <span>Mon</span>
+                            <span>Tue</span>
+                            <span>Wed</span>
+                            <span>Thu</span>
+                            <span>Fri</span>
+                            <span>Sat</span>
+                            <span>Today</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     QUICK ACTIONS
+                ================================================== -->
+
+                <div
+                    class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+                >
+
+                    <div>
+
+                        <h2
+                            class="text-lg font-bold text-[#26352F]"
+                        >
+                            Quick Actions
+                        </h2>
+
+                        <p
+                            class="mt-1 text-sm text-[#718078]"
+                        >
+                            Manage your restaurant quickly.
+                        </p>
+
+                    </div>
+
+
+                    <div class="mt-6 space-y-3">
+
+
+                        <!-- Menu -->
+
+                        <a
+                            href="{{ url_for('manager.menu') }}"
+                            class="flex items-center gap-3 rounded-xl border border-gray-100 p-3 transition hover:border-[#176B4D]/20 hover:bg-[#F5FAF7]"
+                        >
+
+                            <span
+                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#EAF5EF] text-[#176B4D]"
+                            >
+
+                                <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    viewBox="0 0 24 24"
+                                >
+
+                                    <path
+                                        stroke-linecap="round"
+                                        d="M4 6h16M4 12h16M4 18h16"
+                                    />
+
+                                </svg>
+
+                            </span>
+
+
+                            <div class="flex-1">
+
+                                <p
+                                    class="text-sm font-semibold text-[#26352F]"
+                                >
+                                    Manage Menu
+                                </p>
+
+                                <p class="text-xs text-[#718078]">
+                                    Add or edit food items
+                                </p>
+
+                            </div>
+
+
+                            <span class="text-[#718078]">
+                                →
+                            </span>
+
+                        </a>
+
+
+
+                        <!-- History -->
+
+                        <a
+                            href="{{ url_for('manager.history') }}"
+                            class="flex items-center gap-3 rounded-xl border border-gray-100 p-3 transition hover:border-[#176B4D]/20 hover:bg-[#F5FAF7]"
+                        >
+
+                            <span
+                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600"
+                            >
+
+                                <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    viewBox="0 0 24 24"
+                                >
+
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M6 3h12v18H6z"
+                                    />
+
+                                    <path
+                                        stroke-linecap="round"
+                                        d="M9 8h6M9 12h6M9 16h3"
+                                    />
+
+                                </svg>
+
+                            </span>
+
+
+                            <div class="flex-1">
+
+                                <p
+                                    class="text-sm font-semibold text-[#26352F]"
+                                >
+                                    Order History
+                                </p>
+
+                                <p class="text-xs text-[#718078]">
+                                    View previous orders
+                                </p>
+
+                            </div>
+
+
+                            <span class="text-[#718078]">
+                                →
+                            </span>
+
+                        </a>
+
+
+
+                        <!-- Reports -->
+
+                        <a
+                            href="{{ url_for('manager.reports') }}"
+                            class="flex items-center gap-3 rounded-xl border border-gray-100 p-3 transition hover:border-[#176B4D]/20 hover:bg-[#F5FAF7]"
+                        >
+
+                            <span
+                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600"
+                            >
+
+                                <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    viewBox="0 0 24 24"
+                                >
+
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M4 19V5"
+                                    />
+
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M4 19h17"
+                                    />
+
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M7 15l4-4 3 2 5-6"
+                                    />
+
+                                </svg>
+
+                            </span>
+
+
+                            <div class="flex-1">
+
+                                <p
+                                    class="text-sm font-semibold text-[#26352F]"
+                                >
+                                    Sales Reports
+                                </p>
+
+                                <p class="text-xs text-[#718078]">
+                                    Analyze restaurant performance
+                                </p>
+
+                            </div>
+
+
+                            <span class="text-[#718078]">
+                                →
+                            </span>
+
+                        </a>
+
+
+
+                        <!-- Sales -->
+
+                        <a
+                            href="{{ url_for('manager.sales') }}"
+                            class="flex items-center gap-3 rounded-xl border border-gray-100 p-3 transition hover:border-[#176B4D]/20 hover:bg-[#F5FAF7]"
+                        >
+
+                            <span
+                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50 text-orange-500"
+                            >
+
+                                <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    viewBox="0 0 24 24"
+                                >
+
+                                    <path
+                                        stroke-linecap="round"
+                                        d="M12 3v18"
+                                    />
+
+                                    <path
+                                        stroke-linecap="round"
+                                        d="M17 7c0-2-2-3-5-3S7 5 7 7s2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3"
+                                    />
+
+                                </svg>
+
+                            </span>
+
+
+                            <div class="flex-1">
+
+                                <p
+                                    class="text-sm font-semibold text-[#26352F]"
+                                >
+                                    Sales
+                                </p>
+
+                                <p class="text-xs text-[#718078]">
+                                    Check revenue details
+                                </p>
+
+                            </div>
+
+
+                            <span class="text-[#718078]">
+                                →
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 RECENT ORDERS
+            ================================================== -->
+
+            <section
+                class="mt-7 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+            >
+
+
+                <!-- Header -->
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2
+                            class="text-lg font-bold text-[#26352F]"
+                        >
+                            Recent Orders
+                        </h2>
+
+                        <p
+                            class="mt-1 text-sm text-[#718078]"
+                        >
+                            Recently placed restaurant orders.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('manager.history') }}"
+                        class="text-sm font-semibold text-[#176B4D] hover:underline"
+                    >
+                        View All
+                    </a>
+
+                </div>
+
+
+
+                <!-- Orders -->
+
+                <div class="mt-6 overflow-x-auto">
+
+                    <table class="w-full min-w-[700px] text-left">
+
+
+                        <!-- Table Header -->
+
+                        <thead>
+
+                            <tr
+                                class="border-b border-gray-100 text-xs uppercase tracking-wider text-[#718078]"
+                            >
+
+                                <th class="pb-4 font-semibold">
+                                    Order
+                                </th>
+
+                                <th class="pb-4 font-semibold">
+                                    Table
+                                </th>
+
+                                <th class="pb-4 font-semibold">
+                                    Date
+                                </th>
+
+                                <th class="pb-4 font-semibold">
+                                    Status
+                                </th>
+
+                                <th class="pb-4 text-right font-semibold">
+                                    Total
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+
+                        <!-- Table Body -->
+
+                        <tbody>
+
+                            {% for order in recent_orders %}
+
+                            <tr
+                                class="border-b border-gray-50 transition hover:bg-[#F8FBF9]"
+                            >
+
+
+                                <!-- Order -->
+
+                                <td class="py-4">
+
+                                    <div class="flex items-center gap-3">
+
+                                        <div
+                                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EAF5EF] text-xs font-bold text-[#176B4D]"
+                                        >
+
+                                            #
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <p
+                                                class="text-sm font-bold text-[#26352F]"
+                                            >
+                                                #{{ order.id }}
+                                            </p>
+
+                                            <p
+                                                class="text-xs text-[#718078]"
+                                            >
+                                                Restaurant Order
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+
+                                <!-- Table -->
+
+                                <td class="py-4">
+
+                                    <span
+                                        class="text-sm font-medium text-[#26352F]"
+                                    >
+                                        {{ order.table_name or "Takeaway" }}
+                                    </span>
+
+                                </td>
+
+
+
+                                <!-- Date -->
+
+                                <td class="py-4">
+
+                                    <span
+                                        class="text-sm text-[#718078]"
+                                    >
+                                        {{ order.created_at }}
+                                    </span>
+
+                                </td>
+
+
+
+                                <!-- Status -->
+
+                                <td class="py-4">
+
+                                    {% if order.status == "completed" %}
+
+                                        <span
+                                            class="inline-flex rounded-full bg-[#EAF5EF] px-3 py-1 text-xs font-semibold text-[#176B4D]"
+                                        >
+                                            Completed
+                                        </span>
+
+                                    {% elif order.status == "cancelled" %}
+
+                                        <span
+                                            class="inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600"
+                                        >
+                                            Cancelled
+                                        </span>
+
+                                    {% elif order.status == "pending" %}
+
+                                        <span
+                                            class="inline-flex rounded-full bg-yellow-50 px-3 py-1 text-xs font-semibold text-yellow-600"
+                                        >
+                                            Pending
+                                        </span>
+
+                                    {% else %}
+
+                                        <span
+                                            class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600"
+                                        >
+                                            {{ order.status|capitalize }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <!-- Total -->
+
+                                <td class="py-4 text-right">
+
+                                    <span
+                                        class="text-sm font-bold text-[#26352F]"
+                                    >
+                                        Rs. {{ order.total }}
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            {% else %}
+
+
+                            <!-- No orders -->
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="py-12 text-center"
+                                >
+
+                                    <div
+                                        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EAF5EF] text-[#176B4D]"
+                                    >
+
+                                        <svg
+                                            class="h-6 w-6"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            viewBox="0 0 24 24"
+                                        >
+
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M6 3h12v18H6z"
+                                            />
+
+                                            <path
+                                                stroke-linecap="round"
+                                                d="M9 8h6M9 12h6M9 16h3"
+                                            />
+
+                                        </svg>
+
+                                    </div>
+
+
+                                    <p
+                                        class="mt-3 text-sm font-semibold text-[#26352F]"
+                                    >
+                                        No recent orders
+                                    </p>
+
+
+                                    <p
+                                        class="mt-1 text-xs text-[#718078]"
+                                    >
+                                        New restaurant orders will appear here.
+                                    </p>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer
+                class="mt-8 border-t border-gray-100 pt-5 text-center"
+            >
+
+                <p class="text-xs text-[#718078]">
+
+                    Restaurant Management System
+
+                    <span class="mx-1">
+                        •
+                    </span>
+
+                    Manager Dashboard
+
+                </p>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

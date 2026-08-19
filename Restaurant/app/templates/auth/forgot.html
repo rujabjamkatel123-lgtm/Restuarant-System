@@ -1,0 +1,163 @@
+<!--
+=============================================================
+  Restaurant Management System - Forgot Password
+=============================================================
+  This page allows a user to request a password reset.
+
+  User provides:
+    - Email address
+
+  Flow:
+    1. User enters registered email.
+    2. Controller checks whether the email exists.
+    3. OTP is generated and sent to the user.
+    4. User is redirected to OTP verification.
+=============================================================
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+Forgot Password
+{% endblock %}
+
+
+{% block content %}
+
+<div class="forgot-password-page">
+
+    <!-- =====================================================
+         FORGOT PASSWORD CONTAINER
+    ====================================================== -->
+
+    <div class="forgot-password-container">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="forgot-password-header">
+
+            <h1>
+                Forgot Password?
+            </h1>
+
+            <p>
+                Enter your registered email address to
+                reset your password.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             FLASH MESSAGES
+        ================================================== -->
+
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+            {% if messages %}
+
+                <div class="flash-messages">
+
+                    {% for category, message in messages %}
+
+                        <div class="flash-message {{ category }}">
+
+                            {{ message }}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =================================================
+             FORGOT PASSWORD FORM
+        ================================================== -->
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.forgot_password') }}"
+        >
+
+            <!-- Email -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your registered email"
+                    value="{{ request.form.get('email', '') }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 SEND OTP BUTTON
+            ================================================== -->
+
+            <button
+                type="submit"
+                class="forgot-password-button"
+            >
+                Send OTP
+            </button>
+
+        </form>
+
+
+        <!-- =================================================
+             BACK TO LOGIN
+        ================================================== -->
+
+        <div class="back-to-login">
+
+            <a
+                href="{{ url_for('auth.login') }}"
+            >
+                ← Back to Login
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             MOBILE OPTION
+        ================================================== -->
+
+        <div class="mobile-forgot">
+
+            <p>
+                Using a mobile device?
+            </p>
+
+            <a
+                href="{{ url_for('auth.mobile_login') }}"
+            >
+                Mobile
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

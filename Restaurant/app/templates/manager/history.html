@@ -1,0 +1,408 @@
+<!--
+=============================================================
+  Manager Order History
+=============================================================
+  This page is used by the manager to view previous orders.
+
+  Manager can:
+    - View past orders
+    - See order ID
+    - See table number
+    - See ordered items
+    - See order date/time
+    - See total amount
+    - Filter history by date
+    - Filter history by order status
+=============================================================
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+Order History
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Manager Navigation -->
+{% include "partials/manager_navbar.html" %}
+
+
+<div class="manager-history">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="history-header">
+
+        <h1>
+            Order History
+        </h1>
+
+        <p>
+            View previous restaurant orders and revenue.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTER
+    ====================================================== -->
+
+    <section class="history-filter">
+
+        <form
+            method="GET"
+            action="{{ url_for('auth.manager_order_history') }}"
+        >
+
+            <!-- From Date -->
+
+            <div class="form-group">
+
+                <label for="start_date">
+                    From Date
+                </label>
+
+                <input
+                    type="date"
+                    id="start_date"
+                    name="start_date"
+                    value="{{ start_date }}"
+                >
+
+            </div>
+
+
+            <!-- To Date -->
+
+            <div class="form-group">
+
+                <label for="end_date">
+                    To Date
+                </label>
+
+                <input
+                    type="date"
+                    id="end_date"
+                    name="end_date"
+                    value="{{ end_date }}"
+                >
+
+            </div>
+
+
+            <!-- Status -->
+
+            <div class="form-group">
+
+                <label for="status">
+                    Status
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                >
+
+                    <option value="">
+                        All Orders
+                    </option>
+
+                    <option
+                        value="served"
+                        {% if selected_status == "served" %}
+                            selected
+                        {% endif %}
+                    >
+                        Served
+                    </option>
+
+                    <option
+                        value="ready"
+                        {% if selected_status == "ready" %}
+                            selected
+                        {% endif %}
+                    >
+                        Ready
+                    </option>
+
+                    <option
+                        value="preparing"
+                        {% if selected_status == "preparing" %}
+                            selected
+                        {% endif %}
+                    >
+                        Preparing
+                    </option>
+
+                    <option
+                        value="pending"
+                        {% if selected_status == "pending" %}
+                            selected
+                        {% endif %}
+                    >
+                        Pending
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button type="submit">
+                Apply Filter
+            </button>
+
+
+            <a
+                href="{{ url_for('auth.manager_order_history') }}"
+            >
+                Clear Filter
+            </a>
+
+        </form>
+
+    </section>
+
+
+    <!-- =====================================================
+         HISTORY SUMMARY
+    ====================================================== -->
+
+    <section class="history-summary">
+
+        <div class="history-summary-card">
+
+            <h3>
+                Total Orders
+            </h3>
+
+            <p>
+                {{ total_orders }}
+            </p>
+
+        </div>
+
+
+        <div class="history-summary-card">
+
+            <h3>
+                Total Revenue
+            </h3>
+
+            <p>
+                Rs. {{ total_revenue }}
+            </p>
+
+        </div>
+
+
+        <div class="history-summary-card">
+
+            <h3>
+                Items Sold
+            </h3>
+
+            <p>
+                {{ total_items_sold }}
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ORDER HISTORY
+    ====================================================== -->
+
+    <section class="history-orders">
+
+        <div class="section-header">
+
+            <h2>
+                Previous Orders
+            </h2>
+
+        </div>
+
+
+        {% for order in orders %}
+
+            <div class="history-order-card">
+
+                <!-- =========================================
+                     ORDER HEADER
+                ========================================== -->
+
+                <div class="history-order-header">
+
+                    <div>
+
+                        <h2>
+                            Order #{{ order.id }}
+                        </h2>
+
+                        <p>
+                            Table:
+                            <strong>
+                                {{ order.table_name }}
+                            </strong>
+                        </p>
+
+                    </div>
+
+
+                    <div class="history-order-status">
+
+                        {% if order.status == "served" %}
+
+                            <span class="status served">
+                                Served
+                            </span>
+
+                        {% elif order.status == "ready" %}
+
+                            <span class="status ready">
+                                Ready
+                            </span>
+
+                        {% elif order.status == "preparing" %}
+
+                            <span class="status preparing">
+                                Preparing
+                            </span>
+
+                        {% else %}
+
+                            <span class="status pending">
+                                {{ order.status }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     ORDER DATE
+                ========================================== -->
+
+                <div class="history-order-date">
+
+                    <p>
+                        Date:
+                        {{ order.created_at }}
+                    </p>
+
+                </div>
+
+
+                <!-- =========================================
+                     ORDER ITEMS
+                ========================================== -->
+
+                <div class="history-order-items">
+
+                    <h3>
+                        Ordered Items
+                    </h3>
+
+
+                    {% for item in order.items %}
+
+                        <div class="history-item">
+
+                            <div>
+
+                                <strong>
+                                    {{ item.name }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                Quantity:
+                                {{ item.quantity }}
+
+                            </div>
+
+
+                            <div>
+
+                                Price:
+                                Rs. {{ item.price_at_order }}
+
+                            </div>
+
+
+                            <div>
+
+                                Subtotal:
+                                Rs.
+                                {{
+                                    item.price_at_order
+                                    * item.quantity
+                                }}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- =========================================
+                     ORDER TOTAL
+                ========================================== -->
+
+                <div class="history-order-total">
+
+                    <span>
+                        Order Total
+                    </span>
+
+                    <strong>
+                        Rs. {{ order.total }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <!-- =============================================
+                 NO HISTORY
+            ============================================== -->
+
+            <div class="no-history">
+
+                <h2>
+                    No Orders Found
+                </h2>
+
+                <p>
+                    There are no orders matching the
+                    selected filters.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </section>
+
+</div>
+
+{% endblock %}

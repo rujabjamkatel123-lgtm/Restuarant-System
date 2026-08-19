@@ -1,0 +1,400 @@
+<!--
+=============================================================
+  Receptionist Dashboard
+=============================================================
+  This is the main dashboard for the receptionist.
+
+  Receptionist can:
+    - View incoming orders
+    - See table number
+    - See ordered food items
+    - See quantity
+    - See order total
+    - Update order status
+    - Mark order as Preparing
+    - Mark order as Ready
+    - Mark order as Served
+=============================================================
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+Receptionist Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Receptionist Navigation -->
+{% include "partials/receptionist_navbar.html" %}
+
+
+<div class="receptionist-dashboard">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="dashboard-header">
+
+        <h1>Receptionist Dashboard</h1>
+
+        <p>
+            Manage incoming restaurant orders.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         ORDER SUMMARY
+    ====================================================== -->
+
+    <div class="order-summary">
+
+        <div class="summary-card">
+
+            <h3>
+                Pending Orders
+            </h3>
+
+            <p>
+                {{ pending_count }}
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                Preparing
+            </h3>
+
+            <p>
+                {{ preparing_count }}
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                Ready
+            </h3>
+
+            <p>
+                {{ ready_count }}
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                Served
+            </h3>
+
+            <p>
+                {{ served_count }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INCOMING ORDERS
+    ====================================================== -->
+
+    <section class="orders-section">
+
+        <div class="section-header">
+
+            <h2>
+                Incoming Orders
+            </h2>
+
+            <p>
+                View and manage customer orders.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             ORDER LIST
+        ================================================== -->
+
+        <div class="receptionist-orders">
+
+            {% for order in orders %}
+
+                <div class="receptionist-order-card">
+
+
+                    <!-- =====================================
+                         ORDER HEADER
+                    ====================================== -->
+
+                    <div class="order-header">
+
+                        <div>
+
+                            <h2>
+                                Order #{{ order.id }}
+                            </h2>
+
+                            <p>
+                                Table:
+                                <strong>
+                                    {{ order.table_name }}
+                                </strong>
+                            </p>
+
+                            <p>
+                                Ordered:
+                                {{ order.created_at }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- Current Status -->
+
+                        <div class="order-status">
+
+                            {% if order.status == "pending" %}
+
+                                <span class="status pending">
+                                    Pending
+                                </span>
+
+                            {% elif order.status == "preparing" %}
+
+                                <span class="status preparing">
+                                    Preparing
+                                </span>
+
+                            {% elif order.status == "ready" %}
+
+                                <span class="status ready">
+                                    Ready
+                                </span>
+
+                            {% elif order.status == "served" %}
+
+                                <span class="status served">
+                                    Served
+                                </span>
+
+                            {% else %}
+
+                                <span class="status">
+                                    {{ order.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         ORDER ITEMS
+                    ====================================== -->
+
+                    <div class="order-items">
+
+                        <h3>
+                            Ordered Items
+                        </h3>
+
+
+                        {% for item in order.items %}
+
+                            <div class="order-item">
+
+                                <div>
+                                    <strong>
+                                        {{ item.name }}
+                                    </strong>
+                                </div>
+
+
+                                <div>
+                                    Quantity:
+                                    {{ item.quantity }}
+                                </div>
+
+
+                                <div>
+                                    Rs.
+                                    {{ item.price_at_order }}
+                                </div>
+
+
+                                <div>
+                                    Rs.
+                                    {{
+                                        item.price_at_order
+                                        * item.quantity
+                                    }}
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- =====================================
+                         ORDER TOTAL
+                    ====================================== -->
+
+                    <div class="order-total">
+
+                        <strong>
+                            Total:
+                        </strong>
+
+                        <strong>
+                            Rs. {{ order.total }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         ORDER STATUS ACTIONS
+                    ====================================== -->
+
+                    <div class="order-actions">
+
+                        {% if order.status == "pending" %}
+
+                            <!-- Mark Preparing -->
+
+                            <form
+                                action="{{ url_for(
+                                    'auth.update_order_status',
+                                    order_id=order.id
+                                ) }}"
+                                method="POST"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="status"
+                                    value="preparing"
+                                >
+
+                                <button
+                                    type="submit"
+                                >
+                                    Mark Preparing
+                                </button>
+
+                            </form>
+
+
+                        {% elif order.status == "preparing" %}
+
+                            <!-- Mark Ready -->
+
+                            <form
+                                action="{{ url_for(
+                                    'auth.update_order_status',
+                                    order_id=order.id
+                                ) }}"
+                                method="POST"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="status"
+                                    value="ready"
+                                >
+
+                                <button
+                                    type="submit"
+                                >
+                                    Mark Ready
+                                </button>
+
+                            </form>
+
+
+                        {% elif order.status == "ready" %}
+
+                            <!-- Mark Served -->
+
+                            <form
+                                action="{{ url_for(
+                                    'auth.update_order_status',
+                                    order_id=order.id
+                                ) }}"
+                                method="POST"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="status"
+                                    value="served"
+                                >
+
+                                <button
+                                    type="submit"
+                                >
+                                    Mark Served
+                                </button>
+
+                            </form>
+
+
+                        {% elif order.status == "served" %}
+
+                            <p>
+                                Order completed.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <!-- =========================================
+                     NO ORDERS
+                ========================================== -->
+
+                <div class="no-orders">
+
+                    <h2>
+                        No Incoming Orders
+                    </h2>
+
+                    <p>
+                        There are currently no orders
+                        waiting for processing.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

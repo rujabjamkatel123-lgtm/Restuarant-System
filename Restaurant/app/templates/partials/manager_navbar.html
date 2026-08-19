@@ -1,0 +1,193 @@
+<aside class="fixed left-0 top-0 z-50 flex h-screen w-[245px] flex-col bg-[#1d314f] text-white">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-6 py-7">
+
+        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#d47d4f]">
+            <svg
+                class="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8 10h8M7 14h10M5 20h14a2 2 0 002-2V9a2 2 0 00-2-2h-1.5a5.5 5.5 0 00-11 0H5a2 2 0 00-2 2v9a2 2 0 002 2z"
+                />
+            </svg>
+        </div>
+
+        <div>
+            <h1 class="text-lg font-bold">
+                FoodHub
+            </h1>
+
+            <p class="text-xs text-[#9db2d0]">
+                MANAGER
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-4">
+
+
+        <!-- Dashboard -->
+        <a
+            href="{{ url_for('manager.dashboard') }}"
+            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
+            {% if request.endpoint == 'manager.dashboard' %}
+                bg-[#d47d4f] text-white
+            {% else %}
+                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
+            {% endif %}"
+        >
+
+            <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+
+            Dashboard
+
+        </a>
+
+
+        <!-- Menu Management -->
+        <a
+            href="{{ url_for('manager.menu') }}"
+            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
+            {% if request.endpoint == 'manager.menu' %}
+                bg-[#d47d4f] text-white
+            {% else %}
+                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
+            {% endif %}"
+        >
+
+            <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h4"
+                />
+            </svg>
+
+            Menu Management
+
+        </a>
+
+
+        <!-- Order History -->
+        <a
+            href="{{ url_for('manager.history') }}"
+            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
+            {% if request.endpoint == 'manager.history' %}
+                bg-[#d47d4f] text-white
+            {% else %}
+                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
+            {% endif %}"
+        >
+
+            <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 7h12l1 13H5L6 7zM9 7a3 3 0 016 0"
+                />
+            </svg>
+
+            Order History
+
+        </a>
+
+
+        <!-- Reports -->
+        <a
+            href="{{ url_for('manager.reports') }}"
+            class="mb-2 flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition
+            {% if request.endpoint == 'manager.reports' %}
+                bg-[#d47d4f] text-white
+            {% else %}
+                text-[#9db2d0] hover:bg-[#263b5b] hover:text-white
+            {% endif %}"
+        >
+
+            <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 4h14v16H5zM8 8h8M8 12h6M8 16h8"
+                />
+            </svg>
+
+            Reports
+
+        </a>
+
+    </nav>
+
+
+    <!-- Logout -->
+    <div class="border-t border-[#304361] px-6 py-5">
+
+        <a
+            href="{{ url_for('auth.logout') }}"
+            class="flex items-center gap-4 text-sm text-[#9db2d0] transition hover:text-white"
+        >
+
+            <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10 17l5-5-5-5M15 12H3"
+                />
+
+                <path
+                    stroke-linecap="round"
+                    d="M21 19V5a2 2 0 00-2-2h-5"
+                />
+            </svg>
+
+            Logout
+
+        </a>
+
+    </div>
+
+</aside>

@@ -1,0 +1,1689 @@
+<!--
+=============================================================
+    Restaurant Management System
+    Customer Registration Page
+=============================================================
+-->
+
+{% extends "base.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   RESET / PAGE
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+.register-page {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+
+    background:
+        radial-gradient(
+            circle at 80% 25%,
+            rgba(255,255,255,0.18),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #aeb0ac 0%,
+            #b7b8b4 45%,
+            #a5a7a3 100%
+        );
+
+    overflow-x: hidden;
+
+    color: #252525;
+}
+
+
+/* =========================================================
+   BACKGROUND DECORATIONS
+========================================================= */
+
+.register-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    right: -180px;
+    top: -180px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.08);
+
+    animation: floatingCircle 8s ease-in-out infinite;
+
+    pointer-events: none;
+}
+
+
+.register-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 380px;
+    height: 380px;
+
+    left: -170px;
+    bottom: -170px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(255,255,255,0.18);
+
+    animation: slowRotate 20s linear infinite;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+========================================================= */
+
+.register-wrapper {
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 100vh;
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 40% 60%;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   IMAGE SECTION
+========================================================= */
+
+.register-image-section {
+    position: sticky;
+
+    top: 0;
+
+    height: 100vh;
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    background: #aeb0ac;
+}
+
+
+.register-image {
+    width: 100%;
+    height: 100%;
+
+    min-height: 100vh;
+
+    object-fit: cover;
+
+    display: block;
+
+    filter:
+        brightness(0.88)
+        saturate(0.82)
+        contrast(0.96);
+
+    transform: scale(1.01);
+
+    animation: imageReveal 1.2s ease forwards;
+}
+
+
+.register-image-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(174,176,172,0.02),
+            rgba(174,176,172,0.10)
+        );
+
+    pointer-events: none;
+}
+
+
+.register-image-section::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    width: 80px;
+    height: 100%;
+
+    background: linear-gradient(
+        to right,
+        rgba(174,176,172,0),
+        rgba(174,176,172,0.40)
+    );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.register-brand {
+    position: absolute;
+
+    top: 24px;
+    left: 35px;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #333333;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    letter-spacing: -0.5px;
+
+    animation: fadeDown 0.8s ease;
+}
+
+
+.brand-circle {
+    width: 36px;
+    height: 36px;
+
+    border-radius: 50%;
+
+    background: rgba(245,245,242,0.90);
+
+    border: 2px solid rgba(50,50,50,0.25);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 19px;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,0.12);
+}
+
+
+/* =========================================================
+   IMAGE TEXT
+========================================================= */
+
+.image-caption {
+    position: absolute;
+
+    left: 38px;
+    bottom: 45px;
+
+    z-index: 5;
+
+    color: white;
+
+    max-width: 330px;
+
+    animation:
+        fadeUp 1s ease 0.2s both;
+}
+
+
+.image-caption small {
+    display: block;
+
+    font-size: 12px;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 10px;
+
+    opacity: 0.85;
+}
+
+
+.image-caption h2 {
+    margin: 0;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(30px, 3vw, 48px);
+
+    line-height: 1.05;
+
+    text-shadow:
+        0 3px 12px rgba(0,0,0,0.35);
+}
+
+
+.image-caption p {
+    margin-top: 12px;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    opacity: 0.90;
+}
+
+
+/* =========================================================
+   REGISTER CONTENT
+========================================================= */
+
+.register-content {
+    min-height: 100vh;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 70px 70px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(190,191,187,0.96),
+            rgba(175,177,173,0.96)
+        );
+
+    animation: contentReveal 0.9s ease;
+}
+
+
+.register-container {
+    width: 100%;
+
+    max-width: 560px;
+
+    padding: 20px 10px;
+
+    animation:
+        formAppear 0.9s ease 0.15s both;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.register-header {
+    margin-bottom: 30px;
+}
+
+
+.register-header h1 {
+    margin: 0;
+
+    color: #242424;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(42px, 4vw, 64px);
+
+    line-height: 0.98;
+
+    font-weight: 700;
+
+    letter-spacing: -2px;
+}
+
+
+.register-header h2 {
+    margin: 26px 0 0;
+
+    color: #7c4f42;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.3px;
+}
+
+
+.register-header p {
+    margin-top: 9px;
+
+    color: #555555;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FLASH MESSAGES
+========================================================= */
+
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+
+.flash-message {
+    padding: 12px 16px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    margin-bottom: 8px;
+
+    animation:
+        slideMessage 0.5s ease;
+}
+
+
+.flash-message.success {
+    background: rgba(155,201,87,0.18);
+
+    border: 1px solid rgba(110,160,50,0.35);
+
+    color: #42631f;
+}
+
+
+.flash-message.error,
+.flash-message.danger {
+    background: rgba(200,70,60,0.12);
+
+    border: 1px solid rgba(200,70,60,0.25);
+
+    color: #8b332c;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.register-form {
+    width: 100%;
+}
+
+
+.form-group {
+    margin-bottom: 17px;
+
+    animation:
+        formField 0.6s ease both;
+}
+
+
+.form-group:nth-child(1) {
+    animation-delay: 0.15s;
+}
+
+
+.form-group:nth-child(2) {
+    animation-delay: 0.22s;
+}
+
+
+.form-group:nth-child(3) {
+    animation-delay: 0.29s;
+}
+
+
+.form-group:nth-child(4) {
+    animation-delay: 0.36s;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #444444;
+
+    font-size: 13px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   INPUT WRAPPER
+========================================================= */
+
+.input-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.form-input {
+    width: 100%;
+
+    height: 54px;
+
+    padding: 0 16px;
+
+    border: 1px solid rgba(90,90,90,0.35);
+
+    border-radius: 12px;
+
+    background: rgba(245,245,245,0.76);
+
+    color: #2b2b2b;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.form-input::placeholder {
+    color: #8c8c8c;
+}
+
+
+.form-input:hover {
+    background: rgba(255,255,255,0.85);
+
+    border-color: rgba(70,70,70,0.50);
+}
+
+
+.form-input:focus {
+    background: rgba(255,255,255,0.96);
+
+    border-color: #8db94d;
+
+    box-shadow:
+        0 0 0 3px rgba(155,201,87,0.20),
+        0 6px 18px rgba(0,0,0,0.08);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   PASSWORD INPUT
+========================================================= */
+
+.password-input {
+    padding-right: 52px;
+}
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+========================================================= */
+
+.password-toggle {
+    position: absolute;
+
+    top: 50%;
+    right: 16px;
+
+    transform: translateY(-50%);
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    color: #666666;
+
+    font-size: 17px;
+
+    padding: 4px;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.password-toggle:hover {
+    color: #222222;
+
+    transform:
+        translateY(-50%)
+        scale(1.1);
+}
+
+
+/* =========================================================
+   CUSTOMER ACCOUNT INFORMATION
+========================================================= */
+
+.customer-role {
+    margin-top: 5px;
+    margin-bottom: 17px;
+
+    padding: 12px 15px;
+
+    border-radius: 12px;
+
+    background: rgba(245,245,245,0.55);
+
+    border: 1px solid rgba(90,90,90,0.25);
+
+    color: #555555;
+
+    font-size: 13px;
+}
+
+
+.customer-role strong {
+    color: #6d9840;
+}
+
+
+/* =========================================================
+   REGISTER BUTTON
+========================================================= */
+
+.register-button {
+    width: 100%;
+
+    height: 55px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9bc957,
+            #8fbd4d
+        );
+
+    color: #17200f;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 18px rgba(70,90,40,0.20);
+
+    position: relative;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.register-button::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: -120%;
+
+    width: 80%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.35),
+            transparent
+        );
+
+    transform: skewX(-20deg);
+
+    transition:
+        left 0.6s ease;
+}
+
+
+.register-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(70,90,40,0.28);
+}
+
+
+.register-button:hover::before {
+    left: 140%;
+}
+
+
+.register-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   BUTTON ARROW
+========================================================= */
+
+.button-arrow {
+    display: inline-block;
+
+    margin-right: 13px;
+
+    font-size: 18px;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+.register-button:hover .button-arrow {
+    transform:
+        translateX(5px);
+}
+
+
+/* =========================================================
+   LOGIN LINK
+========================================================= */
+
+.login-link {
+    text-align: center;
+
+    margin-top: 16px;
+
+    font-size: 13px;
+
+    color: #666666;
+}
+
+
+.login-link a {
+    color: #6d9840;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    margin-left: 5px;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.login-link a:hover {
+    color: #45652a;
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   DECORATIVE TEXT
+========================================================= */
+
+.register-decoration {
+    position: absolute;
+
+    right: 45px;
+    bottom: 30px;
+
+    color: rgba(80,80,80,0.35);
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    transform: rotate(-4deg);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   TOP NAV
+========================================================= */
+
+.register-nav {
+    position: absolute;
+
+    top: 22px;
+    right: 38px;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 38px;
+}
+
+
+.register-nav a {
+    color: #303030;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.register-nav a:hover {
+    opacity: 0.65;
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes imageReveal {
+
+    from {
+        opacity: 0;
+        transform: scale(1.08);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.01);
+    }
+
+}
+
+
+@keyframes contentReveal {
+
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+
+@keyframes formAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes formField {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes fadeDown {
+
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes fadeUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes slideMessage {
+
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes floatingCircle {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(-20px, 20px);
+    }
+
+}
+
+
+@keyframes slowRotate {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .register-wrapper {
+        grid-template-columns: 42% 58%;
+    }
+
+    .register-content {
+        padding: 60px 40px;
+    }
+
+    .register-header h1 {
+        font-size: 46px;
+    }
+
+    .register-nav {
+        gap: 22px;
+        right: 22px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 750px) {
+
+    .register-wrapper {
+        display: block;
+    }
+
+
+    .register-image-section {
+        position: relative;
+
+        min-height: 280px;
+
+        height: 280px;
+    }
+
+
+    .register-image {
+        min-height: 280px;
+
+        height: 280px;
+    }
+
+
+    .register-content {
+        min-height: auto;
+
+        padding: 45px 25px 60px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #b7b8b4,
+                #aeb0ac
+            );
+    }
+
+
+    .register-brand {
+        top: 18px;
+        left: 20px;
+
+        font-size: 18px;
+    }
+
+
+    .brand-circle {
+        width: 30px;
+        height: 30px;
+
+        font-size: 15px;
+    }
+
+
+    .register-nav {
+        top: 20px;
+        right: 18px;
+
+        gap: 15px;
+    }
+
+
+    .register-nav a {
+        font-size: 11px;
+    }
+
+
+    .image-caption {
+        left: 25px;
+        bottom: 25px;
+    }
+
+
+    .image-caption h2 {
+        font-size: 30px;
+    }
+
+
+    .image-caption p {
+        display: none;
+    }
+
+
+    .register-container {
+        max-width: 550px;
+    }
+
+
+    .register-header h1 {
+        font-size: 42px;
+
+        letter-spacing: -1px;
+    }
+
+
+    .register-header h2 {
+        margin-top: 20px;
+    }
+
+
+    .register-decoration {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+    .register-image-section {
+        min-height: 230px;
+
+        height: 230px;
+    }
+
+
+    .register-image {
+        min-height: 230px;
+
+        height: 230px;
+    }
+
+
+    .register-content {
+        padding: 35px 20px 50px;
+    }
+
+
+    .register-header h1 {
+        font-size: 36px;
+    }
+
+
+    .register-header h2 {
+        font-size: 14px;
+    }
+
+
+    .form-input {
+        height: 52px;
+    }
+
+
+    .register-button {
+        height: 53px;
+    }
+
+}
+
+</style>
+
+
+<!-- =========================================================
+     REGISTER PAGE
+========================================================= -->
+
+<div class="register-page">
+
+    <div class="register-wrapper">
+
+
+        <!-- =================================================
+             LEFT IMAGE
+        ================================================== -->
+
+        <section class="register-image-section">
+
+
+            <!-- BRAND -->
+
+            <div class="register-brand">
+
+                <div class="brand-circle">
+                    🍕
+                </div>
+
+                <span>
+                    Rujab
+                </span>
+
+            </div>
+
+
+            <!-- IMAGE -->
+
+            <img
+                src="{{ url_for('static', filename='register.jpeg') }}"
+                alt="Restaurant Food"
+                class="register-image"
+            >
+
+
+            <!-- IMAGE OVERLAY -->
+
+            <div class="register-image-overlay"></div>
+
+
+            <!-- IMAGE TEXT -->
+
+            <div class="image-caption">
+
+                <small>
+                    Fresh • Simple • Delicious
+                </small>
+
+                <h2>
+                    Made with<br>
+                    Passion.
+                </h2>
+
+                <p>
+                    Delicious food and memorable moments
+                    start with a great choice.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RIGHT REGISTER AREA
+        ================================================== -->
+
+        <section class="register-content">
+
+
+            <!-- TOP NAVIGATION -->
+
+            <nav class="register-nav">
+
+                <a href="#">
+                    Deals
+                </a>
+
+                <a href="#">
+                    Contact Us
+                </a>
+
+                <a href="#">
+                    EN⌄
+                </a>
+
+            </nav>
+
+
+            <!-- REGISTER CONTAINER -->
+
+            <div class="register-container">
+
+
+                <!-- HEADER -->
+
+                <div class="register-header">
+
+                    <h1>
+                        Join Our<br>
+                        Restaurant<br>
+                        Create Your<br>
+                        Account
+                    </h1>
+
+                    <h2>
+                        Please Register To Continue
+                    </h2>
+
+                    <p>
+                        Create your customer account
+                        and start enjoying delicious food.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     FLASH MESSAGES
+                ================================================== -->
+
+                {% with messages = get_flashed_messages(
+                    with_categories=true
+                ) %}
+
+                    {% if messages %}
+
+                        <div class="flash-messages">
+
+                            {% for category, message in messages %}
+
+                                <div class="flash-message {{ category }}">
+                                    {{ message }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endwith %}
+
+
+                <!-- =================================================
+                     REGISTRATION FORM
+                ================================================== -->
+
+                <form
+                    method="POST"
+                    action="{{ url_for('auth.register') }}"
+                    class="register-form"
+                >
+
+
+                    <!-- NAME -->
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Full Name
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                class="form-input"
+                                placeholder="Enter your full name"
+                                value="{{ request.form.get('name', '') }}"
+                                autocomplete="name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-input"
+                                placeholder="Enter your email"
+                                value="{{ request.form.get('email', '') }}"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-input password-input"
+                                placeholder="Create a password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                onclick="togglePassword('password', this)"
+                                aria-label="Show password"
+                            >
+                                ◉
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="confirm_password">
+                            Confirm Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                class="form-input password-input"
+                                placeholder="Confirm your password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                onclick="togglePassword('confirm_password', this)"
+                                aria-label="Show password"
+                            >
+                                ◉
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FIXED CUSTOMER ROLE
+                    ================================================== -->
+
+                    <!--
+                        IMPORTANT:
+
+                        Public registration is ONLY for customers.
+
+                        We do NOT show a role dropdown.
+
+                        This hidden field sends:
+
+                            role = customer
+
+                        Your AuthController also creates new users
+                        with role="customer".
+                    -->
+
+                    <input
+                        type="hidden"
+                        name="role"
+                        value="customer"
+                    >
+
+
+                    <!-- ACCOUNT TYPE -->
+
+                    <div class="customer-role">
+
+                        Account Type:
+
+                        <strong>
+                            Customer
+                        </strong>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         CREATE ACCOUNT
+                    ================================================== -->
+
+                    <button
+                        type="submit"
+                        class="register-button"
+                    >
+
+                        <span class="button-arrow">
+                            ›
+                        </span>
+
+                        CREATE ACCOUNT
+
+                    </button>
+
+
+                </form>
+
+
+                <!-- =================================================
+                     LOGIN LINK
+                ================================================== -->
+
+                <div class="login-link">
+
+                    Already have an account?
+
+                    <a
+                        href="{{ url_for('auth.login') }}"
+                    >
+                        LOGIN
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- DECORATIVE TEXT -->
+
+            <div class="register-decoration">
+                Fresh • Simple • Delicious
+            </div>
+
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+
+/* =========================================================
+   PASSWORD SHOW / HIDE
+========================================================= */
+
+function togglePassword(inputId, button) {
+
+    const input =
+        document.getElementById(inputId);
+
+
+    if (!input) {
+        return;
+    }
+
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        button.textContent = "◉";
+
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
+
+    } else {
+
+        input.type = "password";
+
+        button.textContent = "◉";
+
+        button.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PASSWORD MATCH VALIDATION
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const form =
+            document.querySelector(
+                ".register-form"
+            );
+
+
+        if (!form) {
+            return;
+        }
+
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                const password =
+                    document.getElementById(
+                        "password"
+                    ).value;
+
+
+                const confirmPassword =
+                    document.getElementById(
+                        "confirm_password"
+                    ).value;
+
+
+                if (
+                    password !==
+                    confirmPassword
+                ) {
+
+                    event.preventDefault();
+
+
+                    alert(
+                        "Passwords do not match."
+                    );
+
+
+                    document
+                        .getElementById(
+                            "confirm_password"
+                        )
+                        .focus();
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+
+{% endblock %}

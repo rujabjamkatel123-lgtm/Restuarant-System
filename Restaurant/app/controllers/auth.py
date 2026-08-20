@@ -692,6 +692,7 @@ class AuthController(BaseController):
             menu_items=menu_items,
             tables=tables,
             cart=cart,
+            total=cart_total,
             cart_total=cart_total,
             user_name=session.get("user_name")
         )
@@ -720,6 +721,7 @@ class AuthController(BaseController):
             menu_items=menu_items,
             tables=tables,
             cart=cart,
+            total=cart_total,
             cart_total=cart_total,
             user_name=session.get("user_name")
         )
@@ -745,6 +747,7 @@ class AuthController(BaseController):
             "customer/dashboard.html",
             menu_items=menu_items,
             cart=cart,
+            total=cart_total,
             cart_total=cart_total
         )
 

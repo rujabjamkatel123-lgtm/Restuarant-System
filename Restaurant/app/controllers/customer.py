@@ -1,698 +1,302 @@
 """
 =============================================================
-    Restaurant Management System
-    Customer Controller
-=============================================================
-
-Customer flow:
-
-    Customer scans QR code
-            ↓
-    QR contains table ID
-            ↓
-    scan_qr(table_id)
-            ↓
-    table_id + table_name stored in session
-            ↓
-    Customer Dashboard
-            ↓
-    Browse Menu
-            ↓
-    Add items to cart
-            ↓
-    Place Order
-            ↓
-    Order saved with correct table
-            ↓
-    Customer Order History
-
-Only two customer HTML pages are required:
-
-    customer/dashboard.html
-    customer/orders.html
+                CUSTOMER CONTROLLER
 =============================================================
 """
 
 from flask import (
     render_template,
-    session,
     redirect,
     url_for,
+    session,
     flash,
-    request
+    request,
+    jsonify
 )
 
-from app.controllers.base_controllers import BaseController
 from app.modules.database import Database
+from app.modules.table import Table
 
 
-class CustomerController(BaseController):
-
-    # =========================================================
-    # MENU (ALIAS)
-    # =========================================================
-
-    def menu(self):
-        """
-        Alias for dashboard, as the menu is displayed on the customer dashboard.
-        """
-        return self.dashboard()
+class CustomerController:
 
     # =========================================================
-    # CART (ALIAS)
-    # =========================================================
-
-    def cart(self):
-        """
-        Alias for dashboard, as the cart is managed on the customer dashboard.
-        """
-        return self.dashboard()
-
-    # =========================================================
-    # VIEW ORDER (ALIAS)
-    # =========================================================
-
-    def view_order(self, order_id=None):
-        """
-        Alias for orders, as order history and details are handled there.
-        """
-        return self.orders()
-
-    # =========================================================
-    # MOBILE (ALIAS)
-    # =========================================================
-
-    def mobile(self):
-        """
-        Alias for dashboard, as mobile views are handled there.
-        """
-        return self.dashboard()
-
-    # =========================================================
-    # CUSTOMER DASHBOARD
+    # DASHBOARD
     # =========================================================
 
     def dashboard(self):
-        """
-        Main customer page.
 
-        Everything is handled inside dashboard.html:
+        table_id = session.get("customer_table_id")
 
-            - Restaurant welcome
-            - Automatically selected table
-            - Menu
-            - Cart / current order
-            - Total amount
-            - Add item
-            - Remove item
-            - Place order
-        """
+        selected_table = None
 
-        # -----------------------------------------------------
-        # Table must normally come from QR scan
-        # -----------------------------------------------------
-
-        table_id = session.get("table_id")
-
-        if not table_id:
-            flash(
-                "Please scan the QR code on your table first.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
-
-        db = Database()
-
-        try:
-
-            # -------------------------------------------------
-            # Get the actual table from database
-            # -------------------------------------------------
-
-            selected_table = db.fetch_one(
-                """
-                SELECT
-                    id,
-                    name
-                FROM restaurant_tables
-                WHERE id = %s
-                """,
-                (table_id,)
-            )
-
-            # -------------------------------------------------
-            # If table no longer exists
-            # -------------------------------------------------
+        if table_id:
+            table_model = Table()
+            selected_table = table_model.find_by_id(table_id)
 
             if not selected_table:
+                session.pop("customer_table_id", None)
 
-                session.pop("table_id", None)
-                session.pop("table_name", None)
-
-                flash(
-                    "This table could not be found.",
-                    "danger"
-                )
-
-                return redirect(
-                    url_for("auth.login")
-                )
-
-            # -------------------------------------------------
-            # Get available menu items
-            # -------------------------------------------------
-
-            menu_items = db.fetch_all(
-                """
-                SELECT
-                    menu_items.id,
-                    menu_items.name,
-                    menu_items.price,
-                    menu_items.category_id,
-                    menu_items.description,
-                    menu_items.image,
-                    menu_categories.name AS category
+        db = Database()
+        try:
+            menu_items = db.fetch_all("""
+                SELECT id, name, price, description, image, available
                 FROM menu_items
-
-                LEFT JOIN menu_categories
-                    ON menu_items.category_id =
-                       menu_categories.id
-
-                WHERE menu_items.available = 1
-
-                ORDER BY
-                    menu_categories.name,
-                    menu_items.name
-                """
-            )
-
+                WHERE available = 1
+                ORDER BY name
+            """)
         except Exception as e:
-
-            print("Customer dashboard error:", e)
-
-            flash(
-                "Unable to load the restaurant menu.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
-
+            print("Menu load error:", e)
+            menu_items = []
         finally:
             db.close()
 
-        # -----------------------------------------------------
-        # Keep table name synchronized with database
-        # -----------------------------------------------------
-
-        session["table_id"] = selected_table["id"]
-        session["table_name"] = selected_table["name"]
-
-        # -----------------------------------------------------
-        # Get current cart
-        # -----------------------------------------------------
-
-        cart = self.get_cart()
-
-        # -----------------------------------------------------
-        # Calculate total
-        # -----------------------------------------------------
-
-        total = self.calculate_cart_total(cart)
-
-        # -----------------------------------------------------
-        # Render ONLY dashboard.html
-        # -----------------------------------------------------
+        cart = session.get("customer_cart", {})
+        total = self._calculate_cart_total(cart)
 
         return render_template(
             "customer/dashboard.html",
-
-            menu_items=menu_items,
-
-            cart=cart,
-
-            total=total,
-
             selected_table=selected_table,
-
-            table_id=selected_table["id"],
-
-            table_name=selected_table["name"]
+            menu_items=menu_items,
+            cart=cart,
+            total=total
         )
 
     # =========================================================
-    # QR CODE SCANNER
+    # QR CODE ENTRY
     # =========================================================
 
     def scan_qr(self, table_id):
-        """
-        This route is opened by the QR code.
-
-        Example:
-
-            Table 1 QR
-            /customer/scan/1
-
-        Table 2 QR
-            /customer/scan/2
-
-        Table 5 QR
-            /customer/scan/5
-
-        The table number comes directly from the QR URL.
-
-        IMPORTANT:
-        This does NOT use table 1 as a default.
-        """
-
-        db = Database()
-
-        try:
-
-            table = db.fetch_one(
-                """
-                SELECT
-                    id,
-                    name
-                FROM restaurant_tables
-                WHERE id = %s
-                """,
-                (table_id,)
-            )
-
-        except Exception as e:
-
-            print("QR table lookup error:", e)
-
-            flash(
-                "Unable to read the table QR code.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
-
-        finally:
-            db.close()
-
-        # -----------------------------------------------------
-        # Invalid QR / invalid table
-        # -----------------------------------------------------
+        table_model = Table()
+        table = table_model.find_by_id(table_id)
 
         if not table:
+            flash("This table does not exist.", "error")
+            return redirect(url_for("auth.login"))
 
-            session.pop("table_id", None)
-            session.pop("table_name", None)
+        session["customer_table_id"] = table["id"]
 
-            flash(
-                "Invalid table QR code.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
-
-        # -----------------------------------------------------
-        # IMPORTANT
-        #
-        # Store the table that was actually scanned.
-        # -----------------------------------------------------
-
-        session["table_id"] = int(table["id"])
-        session["table_name"] = table["name"]
-
-        # -----------------------------------------------------
-        # New table = new cart
-        #
-        # This prevents an old customer's cart from being
-        # carried into another table.
-        # -----------------------------------------------------
-
-        session.pop("cart", None)
+        if "customer_cart" not in session:
+            session["customer_cart"] = {}
 
         session.modified = True
-
-        flash(
-            f'Welcome! You are ordering from {table["name"]}.',
-            "success"
-        )
-
-        # -----------------------------------------------------
-        # Always go to dashboard.html
-        # -----------------------------------------------------
 
         return redirect(
             url_for("customer.dashboard")
         )
 
     # =========================================================
-    # GET CART
+    # MENU
     # =========================================================
 
-    def get_cart(self):
-        """
-        Get current customer's cart from Flask session.
+    def menu(self):
+        db = Database()
+        try:
+            menu_items = db.fetch_all("""
+                SELECT id, name, price, description, image, available
+                FROM menu_items
+                WHERE available = 1
+                ORDER BY name
+            """)
+        except Exception as e:
+            print("Menu error:", e)
+            menu_items = []
+        finally:
+            db.close()
 
-        Example:
-
-        {
-            "1": {
-                "id": 1,
-                "name": "Momo",
-                "price": 180,
-                "quantity": 2
-            }
-        }
-        """
-
-        cart = session.get("cart", {})
-
-        # Safety check
-        if not isinstance(cart, dict):
-            cart = {}
-
-        return cart
-
-    # =========================================================
-    # CALCULATE CART TOTAL
-    # =========================================================
-
-    def calculate_cart_total(self, cart):
-        """
-        Calculate:
-
-            price × quantity
-
-        for every item.
-        """
-
-        total = 0
-
-        for item in cart.values():
-
-            try:
-
-                price = float(
-                    item.get("price", 0)
-                )
-
-                quantity = int(
-                    item.get("quantity", 0)
-                )
-
-                total += price * quantity
-
-            except (
-                ValueError,
-                TypeError
-            ):
-
-                continue
-
-        return total
+        return render_template(
+            "customer/dashboard.html",
+            selected_table=self._get_selected_table(),
+            menu_items=menu_items,
+            cart=session.get("customer_cart", {}),
+            total=self._calculate_cart_total(
+                session.get("customer_cart", {})
+            )
+        )
 
     # =========================================================
-    # ADD ITEM TO CART
+    # ADD TO CART
     # =========================================================
 
     def add_to_cart(self, item_id):
-        """
-        Add one menu item.
+        table_id = session.get("customer_table_id")
+        is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
-        If item already exists:
-
-            quantity + 1
-
-        Otherwise:
-
-            quantity = 1
-        """
-
-        # -----------------------------------------------------
-        # Make sure customer scanned a QR code
-        # -----------------------------------------------------
-
-        if not session.get("table_id"):
-
-            flash(
-                "Please scan the QR code on your table first.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
+        if not table_id:
+            if is_ajax:
+                return jsonify({"success": False, "message": "Please scan the QR code on your table first."}), 400
+            flash("Please scan the QR code on your table first.", "error")
+            return redirect(url_for("customer.dashboard"))
 
         db = Database()
-
         try:
-
-            item = db.fetch_one(
-                """
-                SELECT
-                    menu_items.id,
-                    menu_items.name,
-                    menu_items.price,
-                    menu_items.category_id,
-                    menu_categories.name AS category
-
+            item = db.fetch_one("""
+                SELECT id, name, price, available
                 FROM menu_items
-
-                LEFT JOIN menu_categories
-                    ON menu_items.category_id =
-                       menu_categories.id
-
-                WHERE menu_items.id = %s
-                AND menu_items.available = 1
-                """,
-                (item_id,)
-            )
-
+                WHERE id = %s AND available = 1
+            """, (item_id,))
         except Exception as e:
-
             print("Add to cart error:", e)
-
-            flash(
-                "Unable to add item.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("customer.dashboard")
-            )
-
+            item = None
         finally:
             db.close()
 
-        # -----------------------------------------------------
-        # Item does not exist
-        # -----------------------------------------------------
-
         if not item:
+            if is_ajax:
+                return jsonify({"success": False, "message": "Food item not found or unavailable."}), 404
+            flash("Food item not found or unavailable.", "error")
+            return redirect(url_for("customer.dashboard"))
 
-            flash(
-                "Menu item not found.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("customer.dashboard")
-            )
-
-        # -----------------------------------------------------
-        # Get cart
-        # -----------------------------------------------------
-
-        cart = self.get_cart()
-
-        item_key = str(item["id"])
-
-        # -----------------------------------------------------
-        # Item already exists
-        # -----------------------------------------------------
+        cart = session.get("customer_cart", {})
+        item_key = str(item_id)
 
         if item_key in cart:
-
-            cart[item_key]["quantity"] = (
-                int(cart[item_key].get("quantity", 0))
-                + 1
-            )
-
-        # -----------------------------------------------------
-        # New item
-        # -----------------------------------------------------
-
+            cart[item_key]["quantity"] += 1
         else:
-
             cart[item_key] = {
                 "id": item["id"],
                 "name": item["name"],
-                "price": float(item["price"]),
-                "category": item.get("category"),
+                "price": float(item["price"] or 0),
                 "quantity": 1
             }
 
-        # -----------------------------------------------------
-        # Save cart
-        # -----------------------------------------------------
-
-        session["cart"] = cart
+        session["customer_cart"] = cart
         session.modified = True
+        total = self._calculate_cart_total(cart)
 
-        flash(
-            f'{item["name"]} added to your order.',
-            "success"
-        )
+        if is_ajax:
+            return jsonify({
+                "success": True,
+                "message": f"{item['name']} added to your order.",
+                "total": total,
+                "item_count": sum(int(i.get("quantity", 0) or 0) for i in cart.values())
+            })
 
-        # -----------------------------------------------------
-        # IMPORTANT:
-        #
-        # Do NOT redirect to customer.menu.
-        #
-        # We only have dashboard.html.
-        # -----------------------------------------------------
-
-        return redirect(
-            url_for("customer.dashboard")
-        )
+        return redirect(url_for("customer.dashboard"))
 
     # =========================================================
-    # REMOVE ITEM FROM CART
+    # VIEW CART
     # =========================================================
 
-    def remove_from_cart(self, item_id):
-        """
-        Completely remove an item from cart.
+    def cart(self):
+        db = Database()
+        try:
+            menu_items = db.fetch_all("SELECT * FROM menu_items")
+        except Exception:
+            menu_items = []
+        finally:
+            db.close()
 
-        This fixes the old problem where the route redirected
-        to customer.cart, even though cart.html is no longer used.
-        """
+        selected_table = self._get_selected_table()
+        cart = session.get("customer_cart", {})
+        total = self._calculate_cart_total(cart)
 
-        cart = self.get_cart()
-
-        item_key = str(item_id)
-
-        # -----------------------------------------------------
-        # Item exists
-        # -----------------------------------------------------
-
-        if item_key in cart:
-
-            item_name = cart[item_key].get(
-                "name",
-                "Item"
-            )
-
-            del cart[item_key]
-
-            session["cart"] = cart
-            session.modified = True
-
-            flash(
-                f"{item_name} removed from your order.",
-                "success"
-            )
-
-        else:
-
-            flash(
-                "Item was not found in your order.",
-                "warning"
-            )
-
-        # -----------------------------------------------------
-        # Stay on dashboard
-        # -----------------------------------------------------
-
-        return redirect(
-            url_for("customer.dashboard")
+        return render_template(
+            "customer/dashboard.html",
+            selected_table=selected_table,
+            menu_items=menu_items,
+            cart=cart,
+            total=total
         )
 
     # =========================================================
-    # UPDATE CART QUANTITY
+    # UPDATE CART
     # =========================================================
 
     def update_cart(self, item_id):
-        """
-        Update one item's quantity.
-
-        Expected POST:
-
-            quantity=3
-        """
-
-        cart = self.get_cart()
-
+        cart = session.get("customer_cart", {})
         item_key = str(item_id)
+        is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
         if item_key not in cart:
+            if is_ajax:
+                return jsonify({"success": False, "message": "Item is not in your cart."}), 404
+            flash("Item is not in your cart.", "error")
+            return redirect(url_for("customer.dashboard"))
 
-            flash(
-                "Item not found in your order.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("customer.dashboard")
-            )
-
-        quantity = request.form.get(
-            "quantity",
-            1
-        )
-
-        try:
-
-            quantity = int(quantity)
-
-        except (
-            ValueError,
-            TypeError
-        ):
-
+        quantity = request.form.get("quantity", type=int)
+        if quantity is None:
             quantity = 1
 
-        # -----------------------------------------------------
-        # Quantity 0 = remove
-        # -----------------------------------------------------
-
         if quantity <= 0:
-
-            del cart[item_key]
-
+            cart.pop(item_key)
         else:
-
             cart[item_key]["quantity"] = quantity
 
-        session["cart"] = cart
+        session["customer_cart"] = cart
         session.modified = True
+        total = self._calculate_cart_total(cart)
 
-        return redirect(
-            url_for("customer.dashboard")
-        )
+        if is_ajax:
+            return jsonify({
+                "success": True,
+                "total": total,
+                "item_count": sum(int(i.get("quantity", 0) or 0) for i in cart.values())
+            })
+
+        return redirect(url_for("customer.dashboard"))
+
+    # =========================================================
+    # REMOVE FROM CART
+    # =========================================================
+
+    def remove_from_cart(self, item_id):
+        cart = session.get("customer_cart", {})
+        item_key = str(item_id)
+        is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+        if item_key in cart:
+            removed_item = cart[item_key]["name"]
+            cart.pop(item_key)
+            session["customer_cart"] = cart
+            session.modified = True
+
+            total = self._calculate_cart_total(cart)
+
+            if is_ajax:
+                return jsonify({
+                    "success": True,
+                    "message": f"{removed_item} removed from your order.",
+                    "total": total,
+                    "item_count": sum(int(i.get("quantity", 0) or 0) for i in cart.values())
+                })
+
+            flash("Item removed from your order.", "success")
+
+        if is_ajax:
+            return jsonify({
+                "success": True,
+                "total": self._calculate_cart_total(cart),
+                "item_count": sum(int(i.get("quantity", 0) or 0) for i in cart.values())
+            })
+
+        return redirect(url_for("customer.dashboard"))
 
     # =========================================================
     # CLEAR CART
     # =========================================================
 
     def clear_cart(self):
-        """
-        Remove every item from current order.
-        """
-
-        session.pop("cart", None)
+        session["customer_cart"] = {}
         session.modified = True
-
-        flash(
-            "Your current order has been cleared.",
-            "success"
+        return redirect(
+            url_for("customer.dashboard")
         )
+
+    # =========================================================
+    # SELECT TABLE
+    # =========================================================
+
+    def select_table(self, table_id):
+        table_model = Table()
+        table = table_model.find_by_id(table_id)
+
+        if not table:
+            flash("Table not found.", "error")
+            return redirect(url_for("customer.dashboard"))
+
+        session["customer_table_id"] = table["id"]
+        session.modified = True
 
         return redirect(
             url_for("customer.dashboard")
@@ -703,157 +307,48 @@ class CustomerController(BaseController):
     # =========================================================
 
     def place_order(self):
-        """
-        Create order using the table stored by QR scan.
-
-        VERY IMPORTANT:
-
-            table_id = session["table_id"]
-
-        We do NOT get the table from the HTML form.
-
-        Therefore:
-
-            QR Table 1 → order.table_id = 1
-            QR Table 2 → order.table_id = 2
-            QR Table 5 → order.table_id = 5
-        """
-
-        # -----------------------------------------------------
-        # Get scanned table
-        # -----------------------------------------------------
-
-        table_id = session.get("table_id")
-
-        # -----------------------------------------------------
-        # Get cart
-        # -----------------------------------------------------
-
-        cart = self.get_cart()
-
-        # -----------------------------------------------------
-        # Table check
-        # -----------------------------------------------------
+        table_id = session.get("customer_table_id")
+        is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
         if not table_id:
+            if is_ajax:
+                return jsonify({"success": False, "message": "Please scan your table QR code first."}), 400
+            flash("Please scan your table QR code first.", "error")
+            return redirect(url_for("customer.dashboard"))
 
-            flash(
-                "Please scan the QR code on your table first.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
-
-        # -----------------------------------------------------
-        # Cart check
-        # -----------------------------------------------------
+        cart = session.get("customer_cart", {})
 
         if not cart:
-
-            flash(
-                "Your order is empty.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("customer.dashboard")
-            )
+            if is_ajax:
+                return jsonify({"success": False, "message": "Your cart is empty."}), 400
+            flash("Your cart is empty.", "error")
+            return redirect(url_for("customer.dashboard"))
 
         db = Database()
 
         try:
-
-            # -------------------------------------------------
-            # Verify table still exists
-            # -------------------------------------------------
-
-            table = db.fetch_one(
-                """
-                SELECT
-                    id,
-                    name
-                FROM restaurant_tables
-                WHERE id = %s
-                """,
-                (table_id,)
-            )
-
-            if not table:
-
-                raise Exception(
-                    "The scanned table no longer exists."
-                )
-
-            # -------------------------------------------------
-            # Create order
-            # -------------------------------------------------
-
             db.execute(
                 """
                 INSERT INTO orders
-                (
-                    user_id,
-                    table_id,
-                    status
-                )
-                VALUES
-                (
-                    %s,
-                    %s,
-                    %s
-                )
+                (user_id, table_id, status)
+                VALUES (%s, %s, %s)
                 """,
-                (
-                    session.get("user_id"),
-                    table["id"],
-                    "pending"
-                )
+                (None, table_id, "pending")
             )
 
-            # -------------------------------------------------
-            # Get order ID
-            # -------------------------------------------------
+            order = db.fetch_one("SELECT LAST_INSERT_ID() AS order_id")
 
-            order = db.fetch_one(
-                """
-                SELECT
-                    LAST_INSERT_ID()
-                    AS order_id
-                """
-            )
-
-            if not order:
-
-                raise Exception(
-                    "Unable to create order."
-                )
+            if not order or not order.get("order_id"):
+                raise Exception("Could not retrieve the new order ID.")
 
             order_id = order["order_id"]
 
-            # -------------------------------------------------
-            # Insert every cart item
-            # -------------------------------------------------
-
             for item in cart.values():
-
                 db.execute(
                     """
                     INSERT INTO order_items
-                    (
-                        order_id,
-                        item_id,
-                        quantity,
-                        price_at_order
-                    )
-                    VALUES
-                    (
-                        %s,
-                        %s,
-                        %s,
-                        %s
-                    )
+                    (order_id, item_id, quantity, price_at_order)
+                    VALUES (%s, %s, %s, %s)
                     """,
                     (
                         order_id,
@@ -863,171 +358,81 @@ class CustomerController(BaseController):
                     )
                 )
 
-            # -------------------------------------------------
-            # Close database
-            # -------------------------------------------------
-
-            db.close()
-
-            # -------------------------------------------------
-            # Clear cart ONLY after successful order
-            # -------------------------------------------------
-
-            session.pop("cart", None)
+            session["customer_cart"] = {}
             session.modified = True
 
-            flash(
-                f'Order #{order_id} placed successfully for '
-                f'{table["name"]}.',
-                "success"
-            )
+            if is_ajax:
+                return jsonify({
+                    "success": True,
+                    "message": f"Order #{order_id} placed successfully!",
+                    "order_id": order_id
+                })
 
-            # -------------------------------------------------
-            # Go to order history
-            # -------------------------------------------------
-
-            return redirect(
-                url_for("customer.orders")
-            )
+            flash("Your order has been placed successfully!", "success")
+            return redirect(url_for("customer.view_order", order_id=order_id))
 
         except Exception as e:
+            print("ORDER PLACEMENT ERROR:", e)
 
-            try:
-                db.close()
-            except Exception:
-                pass
+            if is_ajax:
+                return jsonify({
+                    "success": False,
+                    "message": "Unable to place your order. Please try again."
+                }), 500
 
-            print(
-                "ORDER PLACEMENT ERROR:",
-                e
-            )
+            flash("Unable to place your order. Please try again.", "error")
+            return redirect(url_for("customer.dashboard"))
 
-            flash(
-                "Unable to place your order. "
-                "Please try again.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("customer.dashboard")
-            )
+        finally:
+            db.close()
 
     # =========================================================
-    # CUSTOMER ORDER HISTORY
+    # ORDER HISTORY
     # =========================================================
 
     def orders(self):
-        """
-        Display all orders made by the current customer.
-
-        This uses:
-
-            customer/orders.html
-        """
-
-        user_id = self.get_current_user_id()
-
-        if not user_id:
-
-            flash(
-                "Please login first.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
-
+        table_id = session.get("customer_table_id")
         db = Database()
 
         try:
+            if table_id:
+                orders = db.fetch_all("""
+                    SELECT
+                        o.id,
+                        o.table_id,
+                        t.name AS table_name,
+                        o.status,
+                        o.created_at
 
-            # -------------------------------------------------
-            # Get orders
-            # -------------------------------------------------
+                    FROM orders o
 
-            orders = db.fetch_all(
-                """
-                SELECT
-                    orders.id,
-                    orders.created_at,
-                    orders.status,
-                    restaurant_tables.name
-                    AS table_name
+                    LEFT JOIN restaurant_tables t
+                        ON t.id = o.table_id
 
-                FROM orders
+                    WHERE o.table_id = %s
 
-                LEFT JOIN restaurant_tables
-                    ON orders.table_id =
-                       restaurant_tables.id
-
-                WHERE orders.user_id = %s
-
-                ORDER BY
-                    orders.created_at DESC
-                """,
-                (user_id,)
-            )
-
-            # -------------------------------------------------
-            # Get items for every order
-            # -------------------------------------------------
+                    ORDER BY o.id DESC
+                """, (table_id,))
+            else:
+                orders = []
 
             for order in orders:
-
-                order["items"] = db.fetch_all(
-                    """
-                    SELECT
-                        order_items.quantity,
-                        order_items.price_at_order,
-                        menu_items.name
-
+                items = db.fetch_all("""
+                    SELECT quantity, price_at_order
                     FROM order_items
+                    WHERE order_id = %s
+                """, (order["id"],))
 
-                    INNER JOIN menu_items
-                        ON order_items.item_id =
-                           menu_items.id
-
-                    WHERE order_items.order_id = %s
-
-                    ORDER BY menu_items.name
-                    """,
-                    (order["id"],)
-                )
-
-                # ---------------------------------------------
-                # Calculate total
-                # ---------------------------------------------
-
-                order["total"] = 0
-
-                for item in order["items"]:
-
-                    order["total"] += (
-                        float(
-                            item["price_at_order"]
-                        )
-                        *
-                        int(
-                            item["quantity"]
-                        )
-                    )
-
-        except Exception as e:
-
-            print(
-                "Order history error:",
-                e
-            )
-
-            flash(
-                "Unable to load your order history.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("customer.dashboard")
-            )
+                # Safe total calculation
+                total = 0
+                for i in items:
+                    try:
+                        price = float(i.get("price_at_order", 0) or 0)
+                        qty = int(i.get("quantity", 0) or 0)
+                        total += price * qty
+                    except (ValueError, TypeError):
+                        pass
+                order["total_amount"] = total
 
         finally:
             db.close()
@@ -1036,3 +441,104 @@ class CustomerController(BaseController):
             "customer/orders.html",
             orders=orders
         )
+
+    # =========================================================
+    # VIEW SINGLE ORDER
+    # =========================================================
+
+    def view_order(self, order_id):
+        table_id = session.get("customer_table_id")
+        db = Database()
+
+        try:
+            order = db.fetch_one("""
+                SELECT
+                    o.id,
+                    o.table_id,
+                    t.name AS table_name,
+                    o.status,
+                    o.created_at
+
+                FROM orders o
+
+                LEFT JOIN restaurant_tables t
+                    ON t.id = o.table_id
+
+                WHERE o.id = %s
+                AND o.table_id = %s
+            """, (order_id, table_id))
+
+            if not order:
+                flash("Order not found.", "error")
+                return redirect(url_for("customer.orders"))
+
+            order_items = db.fetch_all("""
+                SELECT
+                    oi.id,
+                    oi.item_id AS menu_item_id,
+                    oi.quantity,
+                    oi.price_at_order AS price,
+                    m.name
+
+                FROM order_items oi
+
+                LEFT JOIN menu_items m
+                    ON m.id = oi.item_id
+
+                WHERE oi.order_id = %s
+
+                ORDER BY oi.id ASC
+            """, (order_id,))
+
+            # Safe total calculation
+            total = 0
+            for i in order_items:
+                try:
+                    price = float(i.get("price", 0) or 0)
+                    qty = int(i.get("quantity", 0) or 0)
+                    total += price * qty
+                except (ValueError, TypeError):
+                    pass
+            order["total_amount"] = total
+
+        finally:
+            db.close()
+
+        return render_template(
+            "customer/orders.html",
+            orders=[order],
+            selected_order=order,
+            order_items=order_items
+        )
+
+    # =========================================================
+    # MOBILE
+    # =========================================================
+
+    def mobile(self):
+        return redirect(url_for("customer.dashboard"))
+
+    # =========================================================
+    # PRIVATE: SELECTED TABLE
+    # =========================================================
+
+    def _get_selected_table(self):
+        table_id = session.get("customer_table_id")
+        if not table_id:
+            return None
+        return Table().find_by_id(table_id)
+
+    # =========================================================
+    # PRIVATE: CART TOTAL
+    # =========================================================
+
+    def _calculate_cart_total(self, cart):
+        total = 0
+        for item in cart.values():
+            try:
+                price = float(item.get("price", 0) or 0)
+                quantity = int(item.get("quantity", 0) or 0)
+                total += price * quantity
+            except (ValueError, TypeError):
+                pass
+        return total

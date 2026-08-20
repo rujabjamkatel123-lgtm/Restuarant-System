@@ -1,32 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Customer Dashboard{% endblock %}
+{% block title %}Himalayan Bites{% endblock %}
 
 {% block content %}
 
 <style>
+
 /* =========================================================
    GLOBAL
 ========================================================= */
-
-:root {
-    --forest: #304b3b;
-    --forest-dark: #243a2d;
-    --forest-light: #e8f0e8;
-    --sage: #8fa58e;
-
-    --cream: #f5f3ed;
-    --cream-dark: #ebe8de;
-
-    --white: #ffffff;
-    --text: #20251f;
-    --muted: #7b8078;
-
-    --border: #dddcd3;
-
-    --shadow: 0 10px 30px rgba(38, 48, 40, 0.08);
-    --radius: 16px;
-}
 
 * {
     box-sizing: border-box;
@@ -34,14 +16,22 @@
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 80px;
+    scroll-padding-top: 72px;
 }
 
 body {
     margin: 0;
-    background: var(--cream);
-    color: var(--text);
-    font-family: "DM Sans", Arial, sans-serif;
+    padding: 0;
+    background: #f4f1e8;
+    color: #202820;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
 }
 
 button,
@@ -51,18 +41,19 @@ a {
 
 .restaurant-app {
     min-height: 100vh;
+
     background:
         radial-gradient(
-            circle at 85% 10%,
-            rgba(143, 165, 142, 0.12),
-            transparent 28%
+            circle at 15% 5%,
+            rgba(126, 151, 111, 0.10),
+            transparent 25%
         ),
-        var(--cream);
+        #f4f1e8;
 }
 
 
 /* =========================================================
-   TOP BAR
+   TOP NAVBAR
 ========================================================= */
 
 .top-bar {
@@ -78,13 +69,17 @@ a {
 
     padding: 0 24px;
 
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.96);
 
-    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
 
-    z-index: 2000;
+    border-bottom: 1px solid #dedbcf;
+
+    z-index: 3000;
 }
+
+
+/* Mobile menu */
 
 .mobile-menu-button {
     display: none;
@@ -92,98 +87,115 @@ a {
     width: 42px;
     height: 42px;
 
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 1px solid #d8d5c9;
+    border-radius: 12px;
 
-    background: var(--white);
-    color: var(--forest);
+    background: #f8f7f2;
+    color: #344638;
 
     cursor: pointer;
 
-    font-size: 19px;
+    font-size: 20px;
 }
 
 
-/* CENTER BRAND */
+/* Brand */
 
 .top-brand {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
     display: flex;
     align-items: center;
-    gap: 10px;
-
-    white-space: nowrap;
+    gap: 11px;
 }
 
 .brand-logo {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 12px;
+    border-radius: 13px;
 
-    background: var(--forest);
-    color: white;
+    background:
+        linear-gradient(
+            145deg,
+            #dbe7d6,
+            #edf2e9
+        );
 
-    font-size: 20px;
+    border: 1px solid #b8c8b2;
+
+    font-size: 21px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
 }
 
 .brand-name {
-    font-family: Georgia, serif;
+    font-size: 19px;
+    font-weight: 800;
 
-    font-size: 21px;
-    font-weight: 700;
+    color: #263329;
 
-    color: var(--text);
+    letter-spacing: -0.3px;
 }
 
 .brand-subtitle {
     margin-top: 2px;
 
-    color: var(--muted);
-
     font-size: 9px;
     font-weight: 700;
 
-    letter-spacing: 2px;
+    letter-spacing: 1.7px;
+
     text-transform: uppercase;
+
+    color: #8c9185;
 }
 
 
-/* TABLE INDICATOR */
+/* Table badge */
 
 .top-table {
     margin-left: auto;
 
     display: flex;
     align-items: center;
-    gap: 7px;
 
-    padding: 9px 15px;
+    gap: 8px;
 
-    border-radius: 10px;
+    padding: 9px 14px;
 
-    background: var(--forest-light);
-    border: 1px solid #cbdacb;
+    background: #edf3e9;
+
+    border: 1px solid #b8c8b2;
+
+    border-radius: 12px;
 
     font-size: 12px;
-    font-weight: 700;
+}
+
+.top-table-icon {
+    font-size: 15px;
 }
 
 .top-table-label {
-    color: var(--muted);
+    color: #788074;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
 }
 
 .top-table-number {
-    color: var(--forest);
+    color: #314b37;
+
     font-weight: 800;
 }
 
@@ -199,48 +211,45 @@ a {
     left: 0;
     bottom: 0;
 
-    width: 235px;
+    width: 225px;
 
-    background: rgba(255, 255, 255, 0.97);
+    background: #ffffff;
 
-    border-right: 1px solid var(--border);
+    border-right: 1px solid #dedbcf;
 
-    z-index: 1500;
+    z-index: 2500;
 
     display: flex;
     flex-direction: column;
 }
 
 .sidebar-brand {
-    padding: 25px 20px 20px;
+    padding: 24px 18px 20px;
 
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid #ece9df;
 }
 
-.sidebar-brand h2 {
-    margin: 0;
+.sidebar-brand-title {
+    font-size: 14px;
+    font-weight: 800;
 
-    font-family: Georgia, serif;
-
-    font-size: 21px;
+    color: #2d392f;
 }
 
-.sidebar-brand p {
-    margin: 5px 0 0;
-
-    color: var(--muted);
+.sidebar-brand-subtitle {
+    margin-top: 4px;
 
     font-size: 10px;
-    font-weight: 700;
 
-    letter-spacing: 1.5px;
+    color: #969a90;
+
+    letter-spacing: 1px;
+
     text-transform: uppercase;
 }
 
 .sidebar-nav {
-    flex: 1;
-
-    padding: 16px 10px;
+    padding: 14px 10px;
 
     overflow-y: auto;
 }
@@ -255,38 +264,32 @@ a {
 
     width: 100%;
 
-    padding: 12px 14px;
+    padding: 12px 13px;
 
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 
-    border-radius: 10px;
+    border-radius: 11px;
+
+    color: #73786f;
 
     text-decoration: none;
 
-    color: #6f756d;
-
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
 
     transition: 0.2s;
 }
 
 .sidebar-link:hover {
-    background: var(--cream);
-    color: var(--text);
+    background: #f5f7f2;
+
+    color: #2e3e31;
 }
 
 .sidebar-link.active {
-    background: var(--forest-light);
-    color: var(--forest);
-}
+    background: #e8f0e3;
 
-.sidebar-icon {
-    width: 22px;
-
-    text-align: center;
-
-    font-size: 17px;
+    color: #304b37;
 }
 
 .sidebar-link.active::before {
@@ -300,15 +303,25 @@ a {
 
     width: 3px;
 
-    border-radius: 0 5px 5px 0;
+    background: #567158;
 
-    background: var(--forest);
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar-icon {
+    width: 22px;
+
+    text-align: center;
+
+    font-size: 16px;
 }
 
 .sidebar-bottom {
+    margin-top: auto;
+
     padding: 12px 10px;
 
-    border-top: 1px solid var(--border);
+    border-top: 1px solid #ece9df;
 }
 
 
@@ -317,8 +330,7 @@ a {
 ========================================================= */
 
 .main-content {
-    margin-left: 235px;
-    margin-right: 340px;
+    margin-left: 225px;
 
     padding-top: 70px;
 
@@ -326,195 +338,240 @@ a {
 }
 
 .content-inner {
-    max-width: 1200px;
+    width: 100%;
+
+    max-width: 1180px;
 
     margin: auto;
 
-    padding: 30px;
+    padding: 28px;
 }
 
 
 /* =========================================================
-   WELCOME
+   HERO
 ========================================================= */
 
-.welcome-card {
+.hero {
     position: relative;
 
     overflow: hidden;
 
-    padding: 42px;
+    min-height: 270px;
 
-    border-radius: 22px;
+    padding: 38px;
+
+    border-radius: 24px;
 
     background:
         linear-gradient(
-            135deg,
-            rgba(255,255,255,0.98),
-            rgba(233,240,231,0.92)
+            120deg,
+            #ffffff 0%,
+            #f1f5ed 60%,
+            #e5eee0 100%
         );
 
-    border: 1px solid #d9e1d7;
+    border: 1px solid #d8dfd2;
 
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 16px 45px rgba(46, 61, 48, 0.07);
 }
 
-.welcome-card::after {
-    content: "🌿";
+.hero::after {
+    content: "🏔";
 
     position: absolute;
 
-    right: 45px;
-    bottom: 25px;
+    right: 35px;
+    bottom: -18px;
 
-    font-size: 90px;
+    font-size: 145px;
 
     opacity: 0.08;
+
+    pointer-events: none;
 }
 
-.welcome-label {
-    color: var(--forest);
+.hero-label {
+    display: inline-flex;
 
-    font-size: 11px;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: #e3eddf;
+
+    color: #4c674f;
+
+    font-size: 10px;
+
     font-weight: 800;
 
-    letter-spacing: 2px;
+    letter-spacing: 1.4px;
+
     text-transform: uppercase;
 }
 
-.welcome-card h1 {
-    max-width: 650px;
+.hero h1 {
+    max-width: 700px;
 
-    margin: 12px 0 12px;
+    margin: 18px 0 10px;
 
-    font-family: Georgia, serif;
+    color: #263329;
 
-    font-size: clamp(30px, 4vw, 46px);
+    font-family: Georgia, "Times New Roman", serif;
 
-    line-height: 1.05;
+    font-size: clamp(32px, 5vw, 52px);
+
+    line-height: 1.02;
+
+    letter-spacing: -1px;
 }
 
-.welcome-text {
-    max-width: 650px;
+.hero p {
+    max-width: 600px;
 
     margin: 0;
 
-    color: var(--muted);
+    color: #7d8478;
 
     font-size: 14px;
 
     line-height: 1.7;
 }
 
+.hero-info {
+    display: flex;
 
-/* TABLE STATUS */
-
-.table-status-card {
-    display: inline-flex;
     align-items: center;
+
     gap: 10px;
 
-    margin-top: 22px;
+    margin-top: 20px;
 
-    padding: 11px 15px;
+    width: fit-content;
 
-    border-radius: 10px;
+    padding: 10px 14px;
 
-    background: white;
+    background: rgba(255,255,255,0.75);
 
-    border: 1px solid #d7e0d5;
+    border: 1px solid #d9dfd5;
 
-    font-size: 13px;
+    border-radius: 11px;
+
+    color: #556057;
+
+    font-size: 12px;
 }
 
-.table-status-card strong {
-    color: var(--forest);
+.hero-info strong {
+    color: #36513b;
 }
 
 
 /* =========================================================
-   MENU
+   SECTION
 ========================================================= */
 
-.section-block {
-    margin-top: 35px;
+.section {
+    margin-top: 34px;
 
-    scroll-margin-top: 90px;
+    scroll-margin-top: 85px;
 }
 
-.section-header {
+.section-heading {
     display: flex;
-    align-items: center;
+
+    align-items: flex-end;
+
     justify-content: space-between;
 
-    margin-bottom: 18px;
+    gap: 15px;
+
+    margin-bottom: 17px;
 }
 
-.section-header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.section-header h2 {
+.section-heading-left h2 {
     margin: 0;
 
-    font-family: Georgia, serif;
+    color: #263329;
 
-    font-size: 27px;
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 26px;
 }
 
-.section-badge {
-    padding: 5px 11px;
+.section-heading-left p {
+    margin: 5px 0 0;
+
+    color: #91968c;
+
+    font-size: 12px;
+}
+
+.section-count {
+    padding: 6px 11px;
+
+    background: #e7efe3;
+
+    border: 1px solid #d1ddcc;
 
     border-radius: 999px;
 
-    background: var(--forest-light);
-
-    color: var(--forest);
+    color: #4d654f;
 
     font-size: 10px;
-    font-weight: 800;
 
-    letter-spacing: 0.5px;
+    font-weight: 800;
 
     text-transform: uppercase;
 }
 
 
-/* CATEGORY */
+/* =========================================================
+   MENU CATEGORY
+========================================================= */
 
 .category-block {
     margin-bottom: 30px;
 }
 
 .category-title {
-    margin-bottom: 14px;
+    display: flex;
 
-    color: var(--forest);
+    align-items: center;
 
-    font-family: Georgia, serif;
+    gap: 10px;
+
+    margin-bottom: 13px;
+
+    color: #425a46;
+
+    font-family: Georgia, "Times New Roman", serif;
 
     font-size: 18px;
-    font-weight: 700;
+
+    font-weight: 800;
 }
 
 .category-title::after {
     content: "";
 
-    display: block;
+    height: 1px;
 
-    width: 45px;
+    flex: 1;
 
-    height: 2px;
-
-    margin-top: 7px;
-
-    background: var(--sage);
+    background: #dce3d7;
 }
 
 
-/* MENU GRID */
+/* =========================================================
+   FOOD GRID
+========================================================= */
 
 .menu-grid {
     display: grid;
@@ -522,48 +579,51 @@ a {
     grid-template-columns:
         repeat(3, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 16px;
 }
-
-
-/* FOOD CARD */
 
 .food-card {
     overflow: hidden;
 
-    background: white;
+    background: #ffffff;
 
-    border: 1px solid var(--border);
+    border: 1px solid #dddcd3;
 
-    border-radius: 15px;
+    border-radius: 17px;
 
-    box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    box-shadow:
+        0 7px 22px rgba(40,50,42,0.04);
 
-    transition: 0.25s;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
 }
 
 .food-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
 
-    box-shadow: 0 15px 30px rgba(35, 48, 39, 0.10);
+    border-color: #b7c8b2;
 
-    border-color: #bdcdbb;
+    box-shadow:
+        0 15px 32px rgba(40,50,42,0.09);
 }
 
-.food-image {
-    height: 155px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Food image */
+
+.food-image {
+    position: relative;
+
+    height: 165px;
 
     overflow: hidden;
 
     background:
         linear-gradient(
             135deg,
-            #eaf1e8,
-            #dce7da
+            #edf2e9,
+            #dce7d8
         );
 }
 
@@ -572,31 +632,53 @@ a {
     height: 100%;
 
     object-fit: cover;
+
+    display: block;
+
+    transition: transform .3s ease;
+}
+
+.food-card:hover .food-image img {
+    transform: scale(1.04);
 }
 
 .food-placeholder {
-    font-size: 48px;
+    height: 100%;
 
-    opacity: 0.45;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 50px;
+
+    opacity: .55;
 }
+
+
+/* Food info */
 
 .food-info {
     padding: 16px;
 }
 
 .food-name {
-    font-family: Georgia, serif;
+    color: #29352c;
 
-    font-size: 18px;
-    font-weight: 700;
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 17px;
+
+    font-weight: 800;
 }
 
 .food-description {
-    min-height: 36px;
+    min-height: 39px;
 
-    margin-top: 7px;
+    margin-top: 6px;
 
-    color: var(--muted);
+    color: #8b9087;
 
     font-size: 11.5px;
 
@@ -605,196 +687,284 @@ a {
 
 .food-bottom {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     gap: 10px;
 
-    margin-top: 16px;
+    margin-top: 14px;
 }
 
 .food-price {
-    color: var(--forest);
+    color: #405b45;
 
-    font-size: 16px;
+    font-size: 15px;
+
     font-weight: 800;
 }
 
 .add-button {
-    border: none;
+    display: inline-flex;
 
-    padding: 9px 14px;
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 72px;
+
+    padding: 9px 13px;
+
+    border: none;
 
     border-radius: 9px;
 
-    background: var(--forest);
+    background: #405b45;
+
     color: white;
 
     font-size: 11px;
+
     font-weight: 800;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition: .2s;
 }
 
 .add-button:hover {
-    background: var(--forest-dark);
+    background: #314b37;
+}
 
-    transform: translateY(-1px);
+.add-button:active {
+    transform: scale(.96);
 }
 
 
 /* =========================================================
-   ORDER PANEL
+   CURRENT ORDER / CART
 ========================================================= */
 
-.order-panel {
-    position: fixed;
+.order-section {
+    margin-top: 36px;
 
-    top: 70px;
-    right: 0;
-    bottom: 0;
-
-    width: 340px;
-
-    display: flex;
-    flex-direction: column;
-
-    background: white;
-
-    border-left: 1px solid var(--border);
-
-    z-index: 1400;
+    scroll-margin-top: 85px;
 }
 
+.order-card {
+    overflow: hidden;
 
-/* ORDER HEADER */
+    background: #ffffff;
 
-.order-header {
-    padding: 22px 20px 18px;
+    border: 1px solid #dddcd3;
 
-    border-bottom: 1px solid var(--border);
+    border-radius: 19px;
+
+    box-shadow:
+        0 10px 30px rgba(40,50,42,0.05);
 }
 
-.order-header-top {
+.order-card-header {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 20px;
+
+    border-bottom: 1px solid #ece9df;
 }
 
-.order-header h2 {
-    margin: 0;
+.order-title {
+    color: #29352c;
 
-    font-family: Georgia, serif;
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 21px;
+
+    font-weight: 800;
+}
+
+.order-subtitle {
+    margin-top: 4px;
+
+    color: #949990;
+
+    font-size: 11px;
+}
+
+.order-table-badge {
+    padding: 8px 12px;
+
+    background: #edf3e9;
+
+    border: 1px solid #cfddc9;
+
+    border-radius: 10px;
+
+    color: #456047;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+/* Cart items */
+
+.cart-items {
+    padding: 0 20px;
+}
+
+.cart-item {
+    display: grid;
+
+    grid-template-columns:
+        46px
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 16px 0;
+
+    border-bottom: 1px solid #efede6;
+}
+
+.cart-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #edf2e9;
 
     font-size: 21px;
 }
 
-.order-count {
-    min-width: 27px;
-    height: 27px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: var(--forest);
-
-    color: white;
-
-    font-size: 11px;
-    font-weight: 800;
-}
-
-.order-table {
-    margin-top: 6px;
-
-    color: var(--muted);
-
-    font-size: 11px;
-}
-
-.order-table strong {
-    color: var(--forest);
-}
-
-
-/* ORDER ITEMS */
-
-.order-items {
-    flex: 1;
-
-    overflow-y: auto;
-
-    padding: 5px 20px;
-}
-
-.order-item {
-    display: grid;
-
-    grid-template-columns: 42px 1fr auto;
-
-    gap: 11px;
-
-    padding: 15px 0;
-
-    border-bottom: 1px solid #eeece5;
-}
-
-.order-food-icon {
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 10px;
-
-    background: var(--cream);
-
-    font-size: 18px;
-}
-
-.order-item-info {
+.cart-main {
     min-width: 0;
 }
 
-.order-item-name {
-    color: var(--text);
+.cart-food-name {
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    color: #2b352d;
 
     font-size: 13px;
+
     font-weight: 800;
 }
 
-.order-item-details {
-    margin-top: 5px;
+.cart-price-line {
+    margin-top: 4px;
 
-    color: var(--muted);
+    color: #92978e;
 
     font-size: 10.5px;
-
-    line-height: 1.5;
 }
 
-.order-item-details span {
-    display: block;
+
+/* Quantity */
+
+.quantity-control {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 8px;
 }
 
-.order-item-total {
-    align-self: center;
+.quantity-control form {
+    margin: 0;
+}
 
-    color: var(--forest);
+.quantity-button {
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #d4d9d0;
+
+    border-radius: 7px;
+
+    background: #f7f8f5;
+
+    color: #405b45;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: .15s;
+}
+
+.quantity-button:hover {
+    background: #e8eee4;
+}
+
+.quantity-button:active {
+    transform: scale(.92);
+}
+
+.quantity-number {
+    min-width: 24px;
+
+    text-align: center;
+
+    color: #38443b;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+/* Cart total */
+
+.cart-right {
+    min-width: 80px;
+
+    text-align: right;
+}
+
+.cart-line-total {
+    color: #3d5842;
 
     font-size: 13px;
+
     font-weight: 800;
 }
 
 .remove-button {
-    margin-top: 5px;
+    margin-top: 7px;
 
     padding: 0;
 
@@ -802,147 +972,263 @@ a {
 
     background: none;
 
-    color: #9b8f80;
+    color: #a06e62;
 
     font-size: 10px;
 
-    cursor: pointer;
-
     text-decoration: underline;
+
+    cursor: pointer;
 }
 
 .remove-button:hover {
-    color: #b35d4d;
+    color: #7c4438;
 }
 
 
-/* EMPTY */
+/* Empty cart */
 
-.empty-order {
-    padding: 70px 20px;
+.empty-cart {
+    padding: 50px 20px;
 
     text-align: center;
 
-    color: var(--muted);
+    color: #9a9f95;
 }
 
-.empty-order-icon {
-    margin-bottom: 10px;
+.empty-cart-icon {
+    font-size: 43px;
 
-    font-size: 42px;
-
-    opacity: 0.4;
+    opacity: .55;
 }
 
-.empty-order h3 {
-    margin: 0;
+.empty-cart h3 {
+    margin: 10px 0 0;
 
-    font-family: Georgia, serif;
+    color: #626960;
+
+    font-family: Georgia, "Times New Roman", serif;
 
     font-size: 17px;
-
-    color: #60665f;
 }
 
-.empty-order p {
-    margin-top: 7px;
+.empty-cart p {
+    margin: 6px 0 0;
 
     font-size: 11px;
 }
 
 
 /* =========================================================
-   BILL
+   ORDER FOOTER
 ========================================================= */
 
 .order-footer {
-    padding: 18px 20px;
+    padding: 20px;
 
-    background: #faf9f5;
+    background: #f7f7f3;
 
-    border-top: 1px solid var(--border);
+    border-top: 1px solid #e3e1d7;
 }
 
 .bill-row {
     display: flex;
+
     justify-content: space-between;
 
-    margin-bottom: 10px;
+    margin-bottom: 9px;
 
-    color: var(--muted);
+    color: #8c9289;
 
     font-size: 12px;
 }
 
 .bill-total {
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
 
-    padding-top: 13px;
+    justify-content: space-between;
 
-    border-top: 1px solid var(--border);
+    padding-top: 12px;
 
-    font-size: 13px;
+    border-top: 1px solid #deddd4;
+
+    color: #29352c;
+
+    font-size: 14px;
+
     font-weight: 800;
 }
 
 .total-price {
-    color: var(--forest);
+    color: #3d5842;
 
-    font-size: 21px;
+    font-size: 22px;
 }
 
 .place-order {
     width: 100%;
 
-    margin-top: 14px;
+    margin-top: 15px;
 
-    padding: 13px;
+    padding: 14px;
 
     border: none;
 
-    border-radius: 10px;
+    border-radius: 11px;
 
     font-size: 12px;
-    font-weight: 800;
+
+    font-weight: 900;
+
+    transition: .2s;
 }
 
 .place-order.enabled {
-    background: var(--forest);
-    color: white;
+    background: #405b45;
+
+    color: #ffffff;
 
     cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(64,91,69,.18);
 }
 
 .place-order.enabled:hover {
-    background: var(--forest-dark);
+    background: #314b37;
+
+    transform: translateY(-1px);
 }
 
 .place-order.disabled {
-    background: #e6e5df;
+    background: #dedfd9;
 
-    color: #a5a59c;
+    color: #989c94;
 
     cursor: not-allowed;
 }
 
-.clear-cart-link {
+.clear-cart {
     width: 100%;
 
-    margin-top: 9px;
+    margin-top: 10px;
+
+    padding: 7px;
 
     border: none;
 
     background: none;
 
-    color: #9b9e96;
+    color: #9a9e96;
 
     font-size: 10px;
 
-    cursor: pointer;
-
     text-decoration: underline;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   ORDER HISTORY
+========================================================= */
+
+.history-section {
+    margin-top: 36px;
+
+    scroll-margin-top: 85px;
+}
+
+.history-card {
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #dddcd3;
+
+    border-radius: 19px;
+}
+
+.history-list {
+    padding: 0 20px;
+}
+
+.history-item {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 17px 0;
+
+    border-bottom: 1px solid #efede6;
+}
+
+.history-left {
+    min-width: 0;
+}
+
+.history-order-number {
+    color: #2c382f;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+.history-meta {
+    margin-top: 5px;
+
+    color: #92978e;
+
+    font-size: 10.5px;
+}
+
+.history-right {
+    text-align: right;
+}
+
+.history-amount {
+    color: #405b45;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+.status-badge {
+    display: inline-block;
+
+    margin-top: 6px;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    background: #edf2e9;
+
+    color: #4b624f;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.empty-history {
+    padding: 45px 20px;
+
+    text-align: center;
+
+    color: #9a9f95;
+
+    font-size: 12px;
 }
 
 
@@ -950,69 +1236,53 @@ a {
    HELP
 ========================================================= */
 
-.dashboard-section {
-    margin-top: 35px;
+.help-section {
+    margin-top: 36px;
 
-    padding: 25px;
-
-    background: white;
-
-    border: 1px solid var(--border);
-
-    border-radius: 16px;
-
-    scroll-margin-top: 90px;
-}
-
-.dashboard-section h2 {
-    margin: 0;
-
-    font-family: Georgia, serif;
-
-    font-size: 22px;
-}
-
-.dashboard-section p {
-    color: var(--muted);
-
-    font-size: 12px;
+    scroll-margin-top: 85px;
 }
 
 .help-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3, minmax(0, 1fr));
 
     gap: 14px;
-
-    margin-top: 18px;
 }
 
 .help-card {
-    padding: 18px;
+    padding: 19px;
 
-    border-radius: 12px;
+    background: #ffffff;
 
-    background: var(--cream);
+    border: 1px solid #dddcd3;
 
-    border: 1px solid var(--border);
+    border-radius: 15px;
 }
 
-.help-card span {
-    font-size: 23px;
+.help-card-icon {
+    font-size: 24px;
 }
 
 .help-card h3 {
-    margin: 9px 0 0;
+    margin: 10px 0 0;
 
-    font-size: 14px;
+    color: #2c382f;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 15px;
 }
 
 .help-card p {
-    margin-bottom: 0;
+    margin: 6px 0 0;
 
-    line-height: 1.5;
+    color: #8f948b;
+
+    font-size: 11px;
+
+    line-height: 1.6;
 }
 
 
@@ -1020,80 +1290,46 @@ a {
    MOBILE
 ========================================================= */
 
-@media (max-width: 1150px) {
-
-    .sidebar {
-        width: 210px;
-    }
-
-    .main-content {
-        margin-left: 210px;
-        margin-right: 310px;
-    }
-
-    .order-panel {
-        width: 310px;
-    }
+@media (max-width: 1050px) {
 
     .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-
-@media (max-width: 850px) {
-
-    .mobile-menu-button {
-        display: block;
-    }
-
-    .sidebar {
-        width: 235px;
-
-        transform: translateX(-100%);
-
-        transition: transform 0.25s ease;
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-    .main-content {
-        margin-left: 0;
-        margin-right: 0;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
     .content-inner {
-        padding: 20px;
-    }
-
-    .order-panel {
-        position: relative;
-
-        top: auto;
-        right: auto;
-        bottom: auto;
-
-        width: 100%;
-
-        min-height: 450px;
-
-        border-left: none;
-
-        border-top: 1px solid var(--border);
-    }
-
-    .help-grid {
-        grid-template-columns: 1fr;
+        padding: 22px;
     }
 }
 
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
 
-    .top-brand {
-        left: 55%;
+    html {
+        scroll-padding-top: 66px;
+    }
+
+    .top-bar {
+        height: 64px;
+
+        padding: 0 13px;
+    }
+
+    .mobile-menu-button {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        margin-right: 10px;
+    }
+
+    .brand-logo {
+        width: 37px;
+        height: 37px;
+
+        font-size: 18px;
     }
 
     .brand-name {
@@ -1105,19 +1341,202 @@ a {
     }
 
     .top-table {
-        display: none;
+        padding: 8px 10px;
+
+        margin-left: auto;
+    }
+
+    .sidebar {
+        top: 64px;
+
+        width: 235px;
+
+        transform: translateX(-105%);
+
+        transition:
+            transform .25s ease;
+
+        box-shadow:
+            10px 0 35px rgba(0,0,0,.08);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+
+        padding-top: 64px;
     }
 
     .content-inner {
-        padding: 15px;
+        padding: 14px;
     }
 
-    .welcome-card {
-        padding: 27px 22px;
+    .hero {
+        min-height: 260px;
+
+        padding: 25px 21px;
+
+        border-radius: 19px;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+
+        letter-spacing: -.6px;
+    }
+
+    .hero p {
+        font-size: 12px;
+    }
+
+    .hero::after {
+        right: 5px;
+        bottom: -12px;
+
+        font-size: 100px;
+    }
+
+    .section {
+        margin-top: 28px;
+    }
+
+    .section-heading-left h2 {
+        font-size: 23px;
     }
 
     .menu-grid {
         grid-template-columns: 1fr;
+
+        gap: 13px;
+    }
+
+    .food-card {
+        display: grid;
+
+        grid-template-columns:
+            115px minmax(0,1fr);
+    }
+
+    .food-image {
+        height: 100%;
+
+        min-height: 155px;
+    }
+
+    .food-info {
+        padding: 14px;
+    }
+
+    .food-description {
+        min-height: auto;
+
+        font-size: 10.5px;
+    }
+
+    .food-name {
+        font-size: 15px;
+    }
+
+    .add-button {
+        min-width: 68px;
+    }
+
+    .help-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .brand-name {
+        font-size: 15px;
+    }
+
+    .top-table-label {
+        display: none;
+    }
+
+    .top-table {
+        border-radius: 10px;
+
+        padding: 8px 11px;
+    }
+
+    .hero {
+        padding: 22px 18px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .hero-info {
+        width: 100%;
+
+        font-size: 10.5px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .section-count {
+        display: none;
+    }
+
+    .food-card {
+        grid-template-columns:
+            105px minmax(0,1fr);
+    }
+
+    .food-image {
+        min-height: 145px;
+    }
+
+    .food-bottom {
+        align-items: flex-end;
+    }
+
+    .cart-item {
+        grid-template-columns:
+            40px
+            minmax(0,1fr)
+            auto;
+
+        gap: 9px;
+    }
+
+    .cart-icon {
+        width: 40px;
+        height: 40px;
+
+        font-size: 18px;
+    }
+
+    .cart-right {
+        min-width: 65px;
+    }
+
+    .order-card-header {
+        padding: 16px;
+    }
+
+    .cart-items {
+        padding: 0 15px;
+    }
+
+    .order-footer {
+        padding: 16px;
+    }
+
+    .history-list {
+        padding: 0 15px;
     }
 }
 
@@ -1126,614 +1545,679 @@ a {
 
 <div class="restaurant-app">
 
-    <!-- =====================================================
-         TOP BAR
-    ====================================================== -->
 
-    <header class="top-bar">
+<!-- =========================================================
+     TOP BAR
+========================================================= -->
 
-        <button
-            id="mobileMenuButton"
-            class="mobile-menu-button"
-            type="button">
-            ☰
-        </button>
+<header class="top-bar">
+
+    <button
+        id="mobileMenuButton"
+        class="mobile-menu-button"
+        type="button"
+        aria-label="Open menu">
+
+        ☰
+
+    </button>
 
 
-        <div class="top-brand">
+    <div class="top-brand">
 
-            <div class="brand-logo">
-                🏔
+        <div class="brand-logo">
+            🏔️
+        </div>
+
+        <div class="brand-text">
+
+            <div class="brand-name">
+                Himalayan Bites
             </div>
 
-            <div>
-                <div class="brand-name">
-                    Himalayan Bites
-                </div>
-
-                <div class="brand-subtitle">
-                    Taste of the Himalayas
-                </div>
+            <div class="brand-subtitle">
+                Taste of the Himalayas
             </div>
 
         </div>
 
+    </div>
 
-        <!-- AUTOMATIC TABLE -->
-        <div class="top-table">
 
-            <span class="top-table-label">
-                Table
-            </span>
+    <div class="top-table">
 
-            <span class="top-table-number">
+        <span class="top-table-icon">
+            🪑
+        </span>
 
-                {% if selected_table %}
-                    {{ selected_table.name }}
-                {% else %}
-                    Table 1
-                {% endif %}
+        <span class="top-table-label">
+            Table
+        </span>
 
-            </span>
+        <span class="top-table-number">
 
+            {% if selected_table %}
+
+                {{ selected_table.name }}
+
+            {% elif table %}
+
+                {{ table.name }}
+
+            {% elif session.get('table_name') %}
+
+                {{ session.get('table_name') }}
+
+            {% else %}
+
+                --
+
+            {% endif %}
+
+        </span>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside
+    id="sidebar"
+    class="sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-brand-title">
+            Himalayan Bites
         </div>
 
-    </header>
+        <div class="sidebar-brand-subtitle">
+            Customer Ordering
+        </div>
+
+    </div>
 
 
-    <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
+    <nav class="sidebar-nav">
 
-    <aside id="sidebar" class="sidebar">
+        <a
+            href="#home"
+            class="sidebar-link active"
+            data-section="home">
 
-        <div class="sidebar-brand">
+            <span class="sidebar-icon">
+                ⌂
+            </span>
+
+            <span>
+                Home
+            </span>
+
+        </a>
+
+
+        <a
+            href="#menu"
+            class="sidebar-link"
+            data-section="menu">
+
+            <span class="sidebar-icon">
+                🍽️
+            </span>
+
+            <span>
+                Menu
+            </span>
+
+        </a>
+
+
+        <a
+            href="#cart"
+            class="sidebar-link"
+            data-section="cart">
+
+            <span class="sidebar-icon">
+                🛒
+            </span>
+
+            <span>
+                My Order
+            </span>
+
+        </a>
+
+
+        <a
+            href="#history"
+            class="sidebar-link"
+            data-section="history">
+
+            <span class="sidebar-icon">
+                ◴
+            </span>
+
+            <span>
+                Order History
+            </span>
+
+        </a>
+
+
+        <a
+            href="#help"
+            class="sidebar-link"
+            data-section="help">
+
+            <span class="sidebar-icon">
+                ?
+            </span>
+
+            <span>
+                Help
+            </span>
+
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <a
+            href="{{ url_for('auth.logout') }}"
+            class="sidebar-link">
+
+            <span class="sidebar-icon">
+                ↪
+            </span>
+
+            <span>
+                Logout
+            </span>
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
+
+<main class="main-content">
+
+<div class="content-inner">
+
+
+<!-- =========================================================
+     HOME
+========================================================= -->
+
+<section
+    id="home"
+    class="hero">
+
+    <div class="hero-label">
+        🌿 Welcome
+    </div>
+
+
+    <h1>
+        Taste the Himalayas,
+        one plate at a time.
+    </h1>
+
+
+    <p>
+        Explore our freshly prepared dishes and
+        order directly from your table. No waiting,
+        no calling — just scan, choose and enjoy.
+    </p>
+
+
+    <div class="hero-info">
+
+        🪑
+
+        Ordering from
+
+        <strong>
+
+            {% if selected_table %}
+
+                {{ selected_table.name }}
+
+            {% elif table %}
+
+                {{ table.name }}
+
+            {% elif session.get('table_name') %}
+
+                {{ session.get('table_name') }}
+
+            {% else %}
+
+                Your Table
+
+            {% endif %}
+
+        </strong>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     MENU
+========================================================= -->
+
+<section
+    id="menu"
+    class="section">
+
+    <div class="section-heading">
+
+        <div class="section-heading-left">
 
             <h2>
-                Himalayan Bites
+                Our Menu
             </h2>
 
             <p>
-                Customer Portal
+                Freshly prepared Himalayan favourites
             </p>
 
         </div>
 
 
-        <nav class="sidebar-nav">
-
-            <a
-                href="#home"
-                class="sidebar-link active"
-                data-section="home">
-
-                <span class="sidebar-icon">
-                    ⌂
-                </span>
-
-                <span>
-                    Home
-                </span>
-
-            </a>
-
-
-            <a
-                href="#menu"
-                class="sidebar-link"
-                data-section="menu">
-
-                <span class="sidebar-icon">
-                    ☰
-                </span>
-
-                <span>
-                    Menu
-                </span>
-
-            </a>
-
-
-            <a
-                href="#cart"
-                class="sidebar-link"
-                data-section="cart">
-
-                <span class="sidebar-icon">
-                    🛒
-                </span>
-
-                <span>
-                    Current Order
-                </span>
-
-            </a>
-
-
-            <a
-                href="{{ url_for('customer.orders') }}"
-                class="sidebar-link">
-
-                <span class="sidebar-icon">
-                    ◴
-                </span>
-
-                <span>
-                    Order History
-                </span>
-
-            </a>
-
-
-            <a
-                href="#help"
-                class="sidebar-link"
-                data-section="help">
-
-                <span class="sidebar-icon">
-                    ?
-                </span>
-
-                <span>
-                    Help
-                </span>
-
-            </a>
-
-        </nav>
-
-
-        <div class="sidebar-bottom">
-
-            <a
-                href="{{ url_for('auth.logout') }}"
-                class="sidebar-link">
-
-                <span class="sidebar-icon">
-                    ↪
-                </span>
-
-                <span>
-                    Logout
-                </span>
-
-            </a>
-
+        <div class="section-count">
+            Freshly Prepared
         </div>
 
-    </aside>
+    </div>
 
 
-    <!-- =====================================================
-         MAIN CONTENT
-    ====================================================== -->
-
-    <main class="main-content">
-
-        <div class="content-inner">
+    {% set ns = namespace(current_category=None) %}
 
 
-            <!-- HOME -->
+    {% for item in menu_items %}
 
-            <section
-                id="home"
-                class="welcome-card">
+        {% if item.category != ns.current_category %}
 
-                <div class="welcome-label">
-                    Welcome
-                </div>
-
-
-                <h1>
-                    Welcome to Himalayan Bites
-                </h1>
-
-
-                <p class="welcome-text">
-                    Enjoy freshly prepared Himalayan flavours
-                    from the comfort of your table.
-                    Browse the menu, choose your favourite dishes,
-                    and place your order directly from here.
-                </p>
-
-
-                <!-- AUTOMATIC TABLE INFORMATION -->
-
-                <div class="table-status-card">
-
-                    🪑
-
-                    <span>
-                        You're ordering from
-                        <strong>
-                            {% if selected_table %}
-                                {{ selected_table.name }}
-                            {% else %}
-                                Table 1
-                            {% endif %}
-                        </strong>
-                    </span>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 MENU
-            ================================================== -->
-
-            <section
-                id="menu"
-                class="section-block">
-
-                <div class="section-header">
-
-                    <div class="section-header-left">
-
-                        <h2>
-                            Our Menu
-                        </h2>
-
-                        <span class="section-badge">
-                            Freshly Prepared
-                        </span>
+            {% if not loop.first %}
 
                     </div>
+                </div>
+
+            {% endif %}
+
+
+            <div class="category-block">
+
+                <div class="category-title">
+
+                    {{ item.category or "Other" }}
 
                 </div>
 
 
-                {% set ns = namespace(current_category=None) %}
+                <div class="menu-grid">
 
 
-                {% for item in menu_items %}
+            {% set ns.current_category = item.category %}
+
+        {% endif %}
 
 
-                    {% if item.category != ns.current_category %}
 
-                        {% if not loop.first %}
-                            </div>
-                            </div>
-                        {% endif %}
+        <!-- FOOD CARD -->
+
+        <article class="food-card">
 
 
-                        <div class="category-block">
+            <div class="food-image">
 
-                            <div class="category-title">
-                                {{ item.category or "Other" }}
-                            </div>
+                {% if item.image %}
 
-                            <div class="menu-grid">
-
-                        {% set ns.current_category = item.category %}
-
-                    {% endif %}
-
-
-                    <!-- FOOD CARD -->
-
-                    <article class="food-card">
-
-                        <div class="food-image">
-
-                            {% if item.image %}
-
-                                <img
-                                    src="{{ item.image }}"
-                                    alt="{{ item.name }}">
-
-                            {% else %}
-
-                                <div class="food-placeholder">
-                                    🍽️
-                                </div>
-
-                            {% endif %}
-
-                        </div>
-
-
-                        <div class="food-info">
-
-                            <div class="food-name">
-                                {{ item.name }}
-                            </div>
-
-
-                            <div class="food-description">
-
-                                {% if item.description %}
-
-                                    {{ item.description }}
-
-                                {% else %}
-
-                                    Prepared fresh with
-                                    authentic Himalayan flavours.
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <div class="food-bottom">
-
-                                <div class="food-price">
-
-                                    Rs.
-                                    {{ item.price }}
-
-                                </div>
-
-
-                                <form action="{{ url_for('customer.place_order') }}" method="POST">
-    
-                                        <!-- Your cart items, totals, etc. stay inside or above this form -->
-    
-                                    <button type="submit" class="btn btn-success">
-                                        Place Order
-                                    </button>
-                                </form> 
-
-                            </div>
-
-                        </div>
-
-                    </article>
-
-
-                    {% if loop.last %}
-
-                            </div>
-                        </div>
-
-                    {% endif %}
-
+                    <img
+                        src="{{ item.image }}"
+                        alt="{{ item.name }}"
+                        loading="lazy">
 
                 {% else %}
 
-                    <div class="empty-order">
+                    <div class="food-placeholder">
+                        🍽️
+                    </div>
 
-                        <div class="empty-order-icon">
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="food-info">
+
+                <div class="food-name">
+                    {{ item.name }}
+                </div>
+
+
+                <div class="food-description">
+
+                    {% if item.description %}
+
+                        {{ item.description }}
+
+                    {% else %}
+
+                        Prepared fresh with authentic
+                        Himalayan flavours.
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="food-bottom">
+
+                    <div class="food-price">
+
+                        Rs. {{ item.price }}
+
+                    </div>
+
+
+                    <!-- NORMAL FORM
+                         PAGE REFRESH IS INTENTIONAL -->
+
+                    <form
+                        action="{{ url_for('customer.add_to_cart', item_id=item.id) }}"
+                        method="POST">
+
+                        <button
+                            type="submit"
+                            class="add-button">
+
+                            + Add
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        {% if loop.last %}
+
+                </div>
+            </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+
+        <div class="empty-cart">
+
+            <div class="empty-cart-icon">
+                🍽️
+            </div>
+
+            <h3>
+                No dishes available
+            </h3>
+
+            <p>
+                Please check again later.
+            </p>
+
+        </div>
+
+
+    {% endfor %}
+
+</section>
+
+
+
+<!-- =========================================================
+     CURRENT ORDER
+========================================================= -->
+
+<section
+    id="cart"
+    class="order-section">
+
+    <div class="section-heading">
+
+        <div class="section-heading-left">
+
+            <h2>
+                Your Order
+            </h2>
+
+            <p>
+                Review your selected dishes before ordering.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="order-card">
+
+
+        <!-- ORDER HEADER -->
+
+        <div class="order-card-header">
+
+            <div>
+
+                <div class="order-title">
+                    Current Order
+                </div>
+
+                <div class="order-subtitle">
+                    Your food selection
+                </div>
+
+            </div>
+
+
+            <div class="order-table-badge">
+
+                🪑
+
+                {% if selected_table %}
+
+                    {{ selected_table.name }}
+
+                {% elif table %}
+
+                    {{ table.name }}
+
+                {% elif session.get('table_name') %}
+
+                    {{ session.get('table_name') }}
+
+                {% else %}
+
+                    Table --
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CART ITEMS -->
+
+        <div class="cart-items">
+
+
+            {% if cart %}
+
+
+                {% for item in cart.values() %}
+
+                    <div class="cart-item">
+
+
+                        <div class="cart-icon">
                             🍽️
                         </div>
 
-                        <h3>
-                            No dishes available
-                        </h3>
 
-                        <p>
-                            Please check again later.
-                        </p>
+                        <div class="cart-main">
+
+                            <div class="cart-food-name">
+
+                                {{ item.name }}
+
+                            </div>
+
+
+                            <div class="cart-price-line">
+
+                                Rs. {{ item.price }}
+
+                                ×
+
+                                {{ item.quantity }}
+
+                            </div>
+
+
+                            <!-- QUANTITY -->
+
+                            <div class="quantity-control">
+
+
+                                <!-- DECREASE -->
+
+                                <form
+                                    action="{{ url_for('customer.update_cart', item_id=item.id) }}"
+                                    method="POST">
+
+                                    <input
+                                        type="hidden"
+                                        name="quantity"
+                                        value="{{ item.quantity - 1 }}">
+
+                                    <button
+                                        type="submit"
+                                        class="quantity-button"
+                                        aria-label="Decrease quantity">
+
+                                        −
+
+                                    </button>
+
+                                </form>
+
+
+                                <span class="quantity-number">
+
+                                    {{ item.quantity }}
+
+                                </span>
+
+
+                                <!-- INCREASE -->
+
+                                <form
+                                    action="{{ url_for('customer.update_cart', item_id=item.id) }}"
+                                    method="POST">
+
+                                    <input
+                                        type="hidden"
+                                        name="quantity"
+                                        value="{{ item.quantity + 1 }}">
+
+                                    <button
+                                        type="submit"
+                                        class="quantity-button"
+                                        aria-label="Increase quantity">
+
+                                        +
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- RIGHT -->
+
+                        <div class="cart-right">
+
+                            <div class="cart-line-total">
+
+                                Rs.
+
+                                {{ "%.2f"|format(
+                                    (item.price|float) *
+                                    (item.quantity|int)
+                                ) }}
+
+                            </div>
+
+
+                            <!-- REMOVE -->
+
+                            <form
+                                action="{{ url_for('customer.remove_from_cart', item_id=item.id) }}"
+                                method="POST">
+
+                                <button
+                                    type="submit"
+                                    class="remove-button">
+
+                                    Remove
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
 
                     </div>
 
                 {% endfor %}
 
-            </section>
-
-
-            <!-- =================================================
-                 HELP
-            ================================================== -->
-
-            <section
-                id="help"
-                class="dashboard-section">
-
-                <h2>
-                    Help & Support
-                </h2>
-
-                <p>
-                    Everything you need to know about ordering.
-                </p>
-
-
-                <div class="help-grid">
-
-                    <div class="help-card">
-
-                        <span>📷</span>
-
-                        <h3>
-                            Scan & Order
-                        </h3>
-
-                        <p>
-                            Scan the QR code on your table.
-                            Your table is automatically connected
-                            to your order.
-                        </p>
-
-                    </div>
-
-
-                    <div class="help-card">
-
-                        <span>🍽️</span>
-
-                        <h3>
-                            Add Food
-                        </h3>
-
-                        <p>
-                            Select any dish from the menu.
-                            It will appear in your current order.
-                        </p>
-
-                    </div>
-
-
-                    <div class="help-card">
-
-                        <span>🧾</span>
-
-                        <h3>
-                            Place Order
-                        </h3>
-
-                        <p>
-                            Review your items and total amount,
-                            then place your order.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-        </div>
-
-    </main>
-
-
-    <!-- =====================================================
-         CURRENT ORDER
-    ====================================================== -->
-
-    <aside
-        id="cart"
-        class="order-panel">
-
-
-        <!-- ORDER HEADER -->
-
-        <div class="order-header">
-
-            <div class="order-header-top">
-
-                <h2>
-                    Your Order
-                </h2>
-
-
-                <div class="order-count">
-
-                    {{ cart|length }}
-
-                </div>
-
-            </div>
-
-
-            <div class="order-table">
-
-                Table:
-
-                <strong>
-
-                    {% if selected_table %}
-                        {{ selected_table.name }}
-                    {% else %}
-                        Table 1
-                    {% endif %}
-
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             ORDER ITEMS
-        ================================================== -->
-
-        <div class="order-items">
-
-
-            {# Calculate total directly from cart #}
-
-            {% set ns = namespace(total=0, quantity=0) %}
-
-
-            {% for item in cart.values() %}
-
-                {% set unit_price = item.price|float %}
-                {% set item_quantity = item.quantity|int %}
-                {% set item_total = unit_price * item_quantity %}
-
-                {% set ns.total = ns.total + item_total %}
-                {% set ns.quantity = ns.quantity + item_quantity %}
-
-
-                <div class="order-item">
-
-
-                    <div class="order-food-icon">
-                        🍽️
-                    </div>
-
-
-                    <div class="order-item-info">
-
-                        <!-- FOOD NAME -->
-
-                        <div class="order-item-name">
-                            {{ item.name }}
-                        </div>
-
-
-                        <!-- SINGLE PRICE + QUANTITY -->
-
-                        <div class="order-item-details">
-
-                            <span>
-                                Unit price:
-                                <strong>
-                                    Rs. {{ "%.2f"|format(unit_price) }}
-                                </strong>
-                            </span>
-
-                            <span>
-                                Quantity:
-                                <strong>
-                                    {{ item_quantity }}
-                                </strong>
-                            </span>
-
-                        </div>
-
-
-                        <form
-                            action="{{ url_for('customer.remove_from_cart', item_id=item.id) }}"
-                            method="POST">
-
-                            <button
-                                type="submit"
-                                class="remove-button">
-
-                                Remove
-
-                            </button>
-
-                        </form>
-
-                    </div>
-
-
-                    <!-- ITEM TOTAL -->
-
-                    <div class="order-item-total">
-
-                        Rs.
-                        {{ "%.2f"|format(item_total) }}
-
-                    </div>
-
-                </div>
-
 
             {% else %}
 
 
-                <div class="empty-order">
+                <div class="empty-cart">
 
-                    <div class="empty-order-icon">
+                    <div class="empty-cart-icon">
                         🛒
                     </div>
 
@@ -1742,19 +2226,20 @@ a {
                     </h3>
 
                     <p>
-                        Add items from the menu.
+                        Add delicious dishes from the menu.
                     </p>
 
                 </div>
 
 
-            {% endfor %}
+            {% endif %}
 
         </div>
 
 
+
         <!-- =================================================
-             BILL
+             ORDER FOOTER
         ================================================== -->
 
         <div class="order-footer">
@@ -1767,7 +2252,20 @@ a {
                 </span>
 
                 <span>
-                    {{ ns.quantity }}
+
+                    {% set total_items = namespace(value=0) %}
+
+                    {% for item in cart.values() %}
+
+                        {% set total_items.value =
+                            total_items.value +
+                            (item.quantity|int)
+                        %}
+
+                    {% endfor %}
+
+                    {{ total_items.value }}
+
                 </span>
 
             </div>
@@ -1780,7 +2278,7 @@ a {
                 </span>
 
                 <span>
-                    Rs. {{ "%.2f"|format(ns.total) }}
+                    Rs. {{ "%.2f"|format(total|float) }}
                 </span>
 
             </div>
@@ -1794,12 +2292,12 @@ a {
 
                 <span class="total-price">
 
-                    Rs.
-                    {{ "%.2f"|format(ns.total) }}
+                    Rs. {{ "%.2f"|format(total|float) }}
 
                 </span>
 
             </div>
+
 
 
             <!-- PLACE ORDER -->
@@ -1809,16 +2307,31 @@ a {
                 method="POST">
 
 
-                {% if selected_table and cart %}
+                {% if selected_table or table or session.get('customer_table_id') %}
 
-                    <button
-                        type="submit"
-                        class="place-order enabled">
+                    {% if cart %}
 
-                        Place Order
-                        ➤
+                        <button
+                            type="submit"
+                            class="place-order enabled">
 
-                    </button>
+                            Place Order
+                            ➜
+
+                        </button>
+
+                    {% else %}
+
+                        <button
+                            type="button"
+                            class="place-order disabled"
+                            disabled>
+
+                            Add Items First
+
+                        </button>
+
+                    {% endif %}
 
                 {% else %}
 
@@ -1827,15 +2340,7 @@ a {
                         class="place-order disabled"
                         disabled>
 
-                        {% if not selected_table %}
-
-                            Table Not Detected
-
-                        {% else %}
-
-                            Cart is Empty
-
-                        {% endif %}
+                        Table Not Detected
 
                     </button>
 
@@ -1844,7 +2349,8 @@ a {
             </form>
 
 
-            <!-- CLEAR -->
+
+            <!-- CLEAR CART -->
 
             {% if cart %}
 
@@ -1854,9 +2360,9 @@ a {
 
                     <button
                         type="submit"
-                        class="clear-cart-link">
+                        class="clear-cart">
 
-                        Clear cart
+                        Clear entire order
 
                     </button>
 
@@ -1866,13 +2372,253 @@ a {
 
         </div>
 
-    </aside>
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ORDER HISTORY
+========================================================= -->
+
+<section
+    id="history"
+    class="history-section">
+
+
+    <div class="section-heading">
+
+        <div class="section-heading-left">
+
+            <h2>
+                Order History
+            </h2>
+
+            <p>
+                Your previous restaurant orders.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="history-card">
+
+        <div class="history-list">
+
+
+            {% if orders %}
+
+
+                {% for order in orders %}
+
+                    <div class="history-item">
+
+
+                        <div class="history-left">
+
+                            <div class="history-order-number">
+
+                                Order
+
+                                {% if order.id %}
+
+                                    #{{ order.id }}
+
+                                {% else %}
+
+                                    #{{ loop.index }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="history-meta">
+
+                                {% if order.table_name %}
+
+                                    {{ order.table_name }}
+
+                                {% elif order.table_id %}
+
+                                    Table {{ order.table_id }}
+
+                                {% else %}
+
+                                    Restaurant Order
+
+                                {% endif %}
+
+
+                                {% if order.created_at %}
+
+                                    • {{ order.created_at }}
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="history-right">
+
+                            <div class="history-amount">
+
+                                Rs.
+
+                                {{ order.total_amount
+                                   or order.total
+                                   or order.amount
+                                   or 0 }}
+
+                            </div>
+
+
+                            <div class="status-badge">
+
+                                {{ order.status or "Pending" }}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                {% endfor %}
+
+
+            {% else %}
+
+
+                <div class="empty-history">
+
+                    You haven't placed any orders yet.
+
+                </div>
+
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     HELP
+========================================================= -->
+
+<section
+    id="help"
+    class="help-section">
+
+
+    <div class="section-heading">
+
+        <div class="section-heading-left">
+
+            <h2>
+                Need Help?
+            </h2>
+
+            <p>
+                Everything you need to know about ordering.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="help-grid">
+
+
+        <div class="help-card">
+
+            <div class="help-card-icon">
+                📷
+            </div>
+
+            <h3>
+                Scan & Order
+            </h3>
+
+            <p>
+                Scan the QR code on your table.
+                Your table is automatically detected,
+                so there is no need to select it manually.
+            </p>
+
+        </div>
+
+
+        <div class="help-card">
+
+            <div class="help-card-icon">
+                🍽️
+            </div>
+
+            <h3>
+                Add Food
+            </h3>
+
+            <p>
+                Browse the menu and tap Add.
+                Your food name, quantity, price and
+                total will appear in your order.
+            </p>
+
+        </div>
+
+
+        <div class="help-card">
+
+            <div class="help-card-icon">
+                🔔
+            </div>
+
+            <h3>
+                Track Your Order
+            </h3>
+
+            <p>
+                After placing your order, restaurant
+                staff will receive it and begin preparing
+                your food.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+</div>
+
+</main>
 
 </div>
 
 
+
 <!-- =========================================================
-     JAVASCRIPT
+     MOBILE SIDEBAR JAVASCRIPT ONLY
+     
+     IMPORTANT:
+     There is NO AJAX here.
+     Cart buttons use normal Flask forms.
 ========================================================= -->
 
 <script>
@@ -1884,18 +2630,27 @@ const sidebar =
     document.getElementById("sidebar");
 
 
-if (mobileMenuButton) {
+/* =========================================================
+   MOBILE MENU
+========================================================= */
 
-    mobileMenuButton.addEventListener("click", function () {
+if (mobileMenuButton && sidebar) {
 
-        sidebar.classList.toggle("open");
+    mobileMenuButton.addEventListener(
+        "click",
+        function () {
 
-    });
+            sidebar.classList.toggle("open");
+
+        }
+    );
 
 }
 
 
-/* SIDEBAR NAVIGATION */
+/* =========================================================
+   SIDEBAR NAVIGATION
+========================================================= */
 
 const sidebarLinks =
     document.querySelectorAll(
@@ -1903,136 +2658,155 @@ const sidebarLinks =
     );
 
 
-sidebarLinks.forEach(function(link) {
+sidebarLinks.forEach(function (link) {
 
-    link.addEventListener("click", function(event) {
+    link.addEventListener(
+        "click",
+        function (event) {
 
-        const sectionId =
-            this.getAttribute("data-section");
+            const sectionId =
+                this.getAttribute("data-section");
 
-        const target =
-            document.getElementById(sectionId);
+            const target =
+                document.getElementById(sectionId);
+
+            if (!target) {
+                return;
+            }
+
+            event.preventDefault();
+
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
 
 
-        if (!target) {
-            return;
+            sidebarLinks.forEach(function (item) {
+
+                item.classList.remove("active");
+
+            });
+
+
+            this.classList.add("active");
+
+
+            if (sidebar) {
+
+                sidebar.classList.remove("open");
+
+            }
+
         }
-
-
-        event.preventDefault();
-
-
-        target.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-
-        sidebarLinks.forEach(function(item) {
-
-            item.classList.remove("active");
-
-        });
-
-
-        this.classList.add("active");
-
-
-        sidebar.classList.remove("open");
-
-    });
+    );
 
 });
 
 
-/* CLOSE MOBILE SIDEBAR */
+/* =========================================================
+   CLOSE MOBILE SIDEBAR
+========================================================= */
 
-document.addEventListener("click", function(event) {
+document.addEventListener(
+    "click",
+    function (event) {
 
-    if (
-        window.innerWidth <= 850 &&
-        sidebar.classList.contains("open")
-    ) {
+        if (
+            window.innerWidth <= 800 &&
+            sidebar &&
+            sidebar.classList.contains("open")
+        ) {
 
-        const insideSidebar =
-            sidebar.contains(event.target);
+            const clickedSidebar =
+                sidebar.contains(event.target);
 
-        const menuButton =
-            mobileMenuButton &&
-            mobileMenuButton.contains(event.target);
+            const clickedButton =
+                mobileMenuButton &&
+                mobileMenuButton.contains(event.target);
 
 
-        if (!insideSidebar && !menuButton) {
+            if (
+                !clickedSidebar &&
+                !clickedButton
+            ) {
 
-            sidebar.classList.remove("open");
+                sidebar.classList.remove("open");
+
+            }
 
         }
 
     }
+);
 
-});
 
-
-/* ACTIVE SECTION */
+/* =========================================================
+   ACTIVE SIDEBAR SECTION
+========================================================= */
 
 const sections = [
     "home",
     "menu",
     "cart",
+    "history",
     "help"
 ];
 
 
-window.addEventListener("scroll", function() {
+window.addEventListener(
+    "scroll",
+    function () {
 
-    const scrollPosition =
-        window.scrollY + 150;
+        const scrollPosition =
+            window.scrollY + 150;
 
-    let currentSection = "home";
-
-
-    sections.forEach(function(id) {
-
-        const section =
-            document.getElementById(id);
+        let currentSection = "home";
 
 
-        if (!section) {
-            return;
-        }
+        sections.forEach(function (id) {
+
+            const section =
+                document.getElementById(id);
+
+            if (!section) {
+                return;
+            }
 
 
-        if (
-            section.offsetTop <= scrollPosition
-        ) {
+            if (
+                section.offsetTop <=
+                scrollPosition
+            ) {
 
-            currentSection = id;
+                currentSection = id;
 
-        }
+            }
 
-    });
-
-
-    sidebarLinks.forEach(function(link) {
-
-        const id =
-            link.getAttribute("data-section");
+        });
 
 
-        if (id === currentSection) {
+        sidebarLinks.forEach(function (link) {
 
-            link.classList.add("active");
+            const id =
+                link.getAttribute("data-section");
 
-        } else {
 
-            link.classList.remove("active");
+            if (id === currentSection) {
 
-        }
+                link.classList.add("active");
 
-    });
+            } else {
 
-});
+                link.classList.remove("active");
+
+            }
+
+        });
+
+    }
+);
 
 </script>
 
-{% endblock %}
+{% endblock %}ss

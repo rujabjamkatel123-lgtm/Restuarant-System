@@ -1,3 +1,11 @@
+"""
+=============================================================
+Restaurant Menu Item Module
+=============================================================
+Manages restaurant menu items.
+=============================================================
+"""
+
 from app.modules.database import Database
 
 
@@ -22,7 +30,7 @@ class MenuItem:
         self.available = available
 
     # =========================================================
-    # GET ALL
+    # GET ALL MENU ITEMS
     # =========================================================
 
     def get_all(self):
@@ -31,17 +39,34 @@ class MenuItem:
 
         try:
 
-            menu_items = db.fetch_all("""
+            return db.fetch_all("""
                 SELECT *
                 FROM menu_items
                 ORDER BY id DESC
             """)
 
         finally:
-
             db.close()
 
-        return menu_items
+    # =========================================================
+    # GET AVAILABLE MENU ITEMS
+    # =========================================================
+
+    def get_available(self):
+
+        db = Database()
+
+        try:
+
+            return db.fetch_all("""
+                SELECT *
+                FROM menu_items
+                WHERE available = 1
+                ORDER BY id DESC
+            """)
+
+        finally:
+            db.close()
 
     # =========================================================
     # FIND BY ID
@@ -53,7 +78,7 @@ class MenuItem:
 
         try:
 
-            menu_item = db.fetch_one("""
+            return db.fetch_one("""
                 SELECT *
                 FROM menu_items
                 WHERE id = %s
@@ -62,10 +87,7 @@ class MenuItem:
             ))
 
         finally:
-
             db.close()
-
-        return menu_item
 
     # =========================================================
     # SAVE / INSERT
@@ -83,14 +105,12 @@ class MenuItem:
     ):
 
         name = (
-            name
-            if name is not None
+            name if name is not None
             else self.name
         )
 
         price = (
-            price
-            if price is not None
+            price if price is not None
             else self.price
         )
 
@@ -118,11 +138,8 @@ class MenuItem:
             else self.image
         )
 
-        available = (
-            available
-            if available is not None
-            else 1
-        )
+        if available is None:
+            available = 1
 
         db = Database()
 
@@ -161,7 +178,6 @@ class MenuItem:
             ))
 
         finally:
-
             db.close()
 
     # =========================================================
@@ -188,7 +204,6 @@ class MenuItem:
 
                 db.execute("""
                     UPDATE menu_items
-
                     SET
                         name = %s,
                         price = %s,
@@ -214,7 +229,6 @@ class MenuItem:
 
                 db.execute("""
                     UPDATE menu_items
-
                     SET
                         name = %s,
                         price = %s,
@@ -235,7 +249,6 @@ class MenuItem:
                 ))
 
         finally:
-
             db.close()
 
     # =========================================================
@@ -256,5 +269,24 @@ class MenuItem:
             ))
 
         finally:
+            db.close()
 
+    # =========================================================
+    # COUNT MENU ITEMS
+    # =========================================================
+
+    def count_all(self):
+
+        db = Database()
+
+        try:
+
+            result = db.fetch_one("""
+                SELECT COUNT(*) AS total
+                FROM menu_items
+            """)
+
+            return result["total"] if result else 0
+
+        finally:
             db.close()

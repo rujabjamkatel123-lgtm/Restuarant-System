@@ -13,158 +13,111 @@
 
   After successful login, the controller redirects the
   user to the correct dashboard according to their role.
+-------------------------------------------------------------
+  DESIGN CONCEPT — "Cinematic Front-of-House"
+  Modeled after fine-dining sites (Noma / EMP style editorial
+  restraint): a full-bleed cinematic hero photo, oversized
+  serif type, and a frosted glass reservation panel carrying
+  a gold crest mark. Bigger, glossier, more premium than a
+  boxed form.
+  Palette: espresso ink, warm gold, deep oxblood, cream.
+  Type: Fraunces (display) / Work Sans (body) / Space Mono
+  (small caps labels).
 =============================================================
 -->
 
 {% extends "base.html" %}
 
-{% block title %}
-Login - Restaurant
-
-<style>
-@media (max-width: 1023px) {
-    main {
-        min-height: auto !important;
-    }
-
-    main > div {
-        height: auto !important;
-        padding-top: 3rem;
-        padding-bottom: 2rem;
-    }
-
-    main > div > section:first-child {
-        position: relative !important;
-        left: auto !important;
-        top: auto !important;
-        transform: none !important;
-        margin-bottom: 3rem;
-    }
-
-    main > div > section:last-child {
-        position: relative !important;
-        right: auto !important;
-        bottom: auto !important;
-        width: 100% !important;
-    }
-}
-</style>
-
-{% endblock %}
+{% block title %}Login - Restaurant{% endblock %}
 
 {% block content %}
 
-<script src="https://cdn.tailwindcss.com"></script>
+<div class="venue">
 
-<div class="restaurant-login min-h-screen relative overflow-hidden bg-black">
-
-    <!-- Full-screen food background -->
+    <!-- Full-screen cinematic photo -->
     <img
         src="{{ url_for('static', filename='login.jpeg') }}"
         alt="Restaurant Food"
-        class="hero-bg absolute inset-0 w-full h-full object-cover"
+        class="venue__bg"
     >
 
-    <!-- Cinematic overlays -->
-    <div class="absolute inset-0 bg-black/55"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/70"></div>
+    <div class="venue__wash"></div>
+    <div class="venue__vignette"></div>
 
-    <!-- Floating decorative lights -->
-    <span class="food-particle particle-1"></span>
-    <span class="food-particle particle-2"></span>
-    <span class="food-particle particle-3"></span>
-    <span class="food-particle particle-4"></span>
+    <!-- Ambient gold embers -->
+    <span class="ember ember--1"></span>
+    <span class="ember ember--2"></span>
+    <span class="ember ember--3"></span>
+    <span class="ember ember--4"></span>
+    <span class="ember ember--5"></span>
 
     <!-- Top navigation -->
-    <header class="relative z-30 px-5 sm:px-8 lg:px-12 pt-5">
-        <div class="nav-glass flex items-center justify-between rounded-2xl px-5 sm:px-7 py-4">
-
-            <a href="#"
-               class="brand text-xl sm:text-2xl lg:text-3xl font-serif font-semibold italic text-white">
-                Rujab's Restaurant
+    <header class="venue__nav">
+        <div class="nav-bar">
+            <a href="#" class="brand">
+                <span class="brand__mark">R</span>
+                <span class="brand__word">Rujab's Restaurant</span>
             </a>
 
-            <nav class="hidden md:flex items-center gap-8 lg:gap-12 text-sm lg:text-base font-semibold">
+            <nav class="nav-links">
                 <a href="#about" class="nav-link">About Us</a>
                 <a href="#policy" class="nav-link">Policy</a>
                 <a href="#support" class="nav-link">Support</a>
             </nav>
-
         </div>
     </header>
 
-
     <!-- Main content -->
-    <main class="relative z-20 min-h-[calc(100vh-95px)] px-5 sm:px-8 lg:px-12 xl:px-16 pb-7">
+    <main class="venue__main">
 
-        <!-- Hero text block: separate translucent block -->
-        <section class="hero-card absolute left-5 sm:left-8 lg:left-12 xl:left-16
-                         top-1/2 -translate-y-1/2
-                         w-[min(92%,620px)] lg:w-[600px]
-                         rounded-3xl px-7 sm:px-10 lg:px-12 py-8 sm:py-10">
+        <!-- Hero copy -->
+        <section class="hero">
+            <span class="hero__rule"></span>
 
-            <div class="hero-line"></div>
+            <p class="eyebrow">Welcome to our restaurant</p>
 
-            <p class="text-sm sm:text-base uppercase tracking-[0.35em] text-orange-300 font-semibold mb-5">
-                Welcome to our restaurant
-            </p>
-
-            <h1 class="hero-title font-black uppercase text-white
-                       text-5xl sm:text-6xl lg:text-7xl xl:text-8xl
-                       leading-[0.88] tracking-tight">
+            <h1 class="hero__title">
                 Give Your
                 <br>
                 Taste A Bit
                 <br>
-                <span>Luxury</span>
+                <em>Luxury</em>
             </h1>
 
-            <p class="hero-description mt-7 max-w-xl text-gray-200 text-base sm:text-lg leading-relaxed">
+            <p class="hero__desc">
                 Fresh flavours, delicious meals and unforgettable moments.
                 Experience food made with passion.
             </p>
 
-            <div class="hero-badge mt-7 inline-flex items-center gap-3 text-sm text-white">
-                <span class="pulse-dot"></span>
-                Fresh • Delicious • Made With Love
-            </div>
-
+            <ul class="hero__meta">
+                <li>Fine Dining</li>
+                <li>Reservations Nightly</li>
+                <li>Est. Excellence</li>
+            </ul>
         </section>
 
+        <!-- Login card: frosted glass panel with a gold crest -->
+        <section class="panel-wrap">
+            <div class="panel">
 
-        <!-- Login card: FIXED at bottom-right -->
-        <section class="login-position absolute right-5 sm:right-8 lg:right-12 xl:right-16
-                         bottom-7 sm:bottom-8 lg:bottom-10
-                         w-[calc(100%-2.5rem)] sm:w-[500px] lg:w-[560px] xl:w-[610px]">
+                <span class="panel__crest" aria-hidden="true">R</span>
 
-            <div class="login-card rounded-3xl bg-[#252525]/95 border border-white/15
-                        shadow-[0_25px_80px_rgba(0,0,0,0.55)]
-                        backdrop-blur-xl px-7 sm:px-9 lg:px-11 py-7 sm:py-8 lg:py-9">
+                <p class="eyebrow eyebrow--panel">Reservation access</p>
+                <h2 class="panel__title">Welcome back<span class="panel__title-mark">.</span></h2>
+                <p class="panel__sub">Sign in to manage your table, orders and dashboard.</p>
 
-                <div class="flex items-center justify-between mb-7">
-                    <h2 class="text-4xl sm:text-5xl font-light text-white tracking-tight">
-                        Login <span class="login-arrow">›</span>
-                    </h2>
-
-                    <span class="status-light" title="Secure login"></span>
-                </div>
-
+                <span class="panel__divider" aria-hidden="true"></span>
 
                 <!-- Flash Messages -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
-                        <div class="space-y-2 mb-5">
+                        <div class="flash-stack">
                             {% for category, message in messages %}
-                                <div class="
-                                    px-4 py-3 rounded-xl text-sm
-                                    {% if category == 'success' %}
-                                        bg-green-100 text-green-700
-                                    {% elif category == 'danger' %}
-                                        bg-red-100 text-red-700
-                                    {% elif category == 'warning' %}
-                                        bg-yellow-100 text-yellow-700
-                                    {% else %}
-                                        bg-gray-100 text-gray-700
+                                <div class="flash
+                                    {% if category == 'success' %}flash--success
+                                    {% elif category == 'danger' %}flash--danger
+                                    {% elif category == 'warning' %}flash--warning
+                                    {% else %}flash--info
                                     {% endif %}
                                 ">
                                     {{ message }}
@@ -174,89 +127,77 @@ Login - Restaurant
                     {% endif %}
                 {% endwith %}
 
-
-                <form method="POST"
-                      action="{{ url_for('auth.login') }}"
-                      class="space-y-5">
+                <form method="POST" action="{{ url_for('auth.login') }}" class="panel-form" novalidate>
 
                     <!-- Email -->
-                    <div class="field-wrap">
+                    <div class="field">
+                        <label for="email" class="field__label">Email</label>
                         <input
                             type="email"
                             id="email"
                             name="email"
-                            placeholder="Email"
+                            placeholder="you@example.com"
                             value="{{ request.form.get('email', '') }}"
+                            autocomplete="email"
                             required
-                            class="login-input"
+                            class="field__input"
                         >
                     </div>
 
                     <!-- Password -->
-                    <div class="field-wrap">
-                        <div class="relative">
+                    <div class="field">
+                        <label for="password" class="field__label">Password</label>
+                        <div class="field__control">
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
-                                placeholder="Password"
+                                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                                autocomplete="current-password"
                                 required
-                                class="login-input pr-14"
+                                class="field__input"
                             >
-
                             <button
                                 type="button"
                                 onclick="togglePassword()"
                                 aria-label="Show or hide password"
-                                class="password-eye"
+                                class="field__eye"
                             >
-                                👁
+                                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+                                </svg>
                             </button>
                         </div>
                     </div>
 
-
-                    <div class="flex items-center justify-between gap-4 text-sm sm:text-base pt-1">
-
-                        <label class="remember-label flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                name="remember"
-                                class="w-4 h-4 accent-red-600"
-                            >
+                    <div class="row-between">
+                        <label class="remember">
+                            <input type="checkbox" name="remember" class="remember__box">
                             <span>Remember me</span>
                         </label>
 
-                        <a
-                            href="{{ url_for('auth.forgot_password') }}"
-                            class="reset-link"
-                        >
+                        <a href="{{ url_for('auth.forgot_password') }}" class="reset-link">
                             Reset my Password
                         </a>
-
                     </div>
 
-
-                    <!-- Actions -->
-                    <div class="flex items-center justify-between gap-5 pt-2">
-
-                        <button
-                            type="submit"
-                            class="login-btn"
-                        >
-                            LOGIN
+                    <div class="actions">
+                        <button type="submit" class="btn btn--primary">
+                            <span>Login</span>
                         </button>
 
-                        <a
-                            href="{{ url_for('auth.register') }}"
-                            class="register-btn"
-                        >
-                            REGISTER
+                        <a href="{{ url_for('auth.register') }}" class="btn btn--ghost">
+                            Register
                         </a>
-
                     </div>
 
                 </form>
+
+                <p class="panel__footer">
+                    <span class="status-light" title="Secure login" aria-hidden="true"></span>
+                    Encrypted &amp; secure entry
+                </p>
 
             </div>
         </section>
@@ -266,325 +207,608 @@ Login - Restaurant
 
 
 <style>
-    /* ================================
-       SIMPLE RESTAURANT ANIMATIONS
-       ================================ */
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Work+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
 
-    .restaurant-login {
+    /* ====================================================
+       TOKENS
+       ==================================================== */
+    .venue {
+        --ink: #14110d;
+        --ink-2: #1d1710;
+        --cream: #f5ecd8;
+        --gold: #cda86a;
+        --gold-bright: #f3dba6;
+        --gold-deep: #a9863f;
+        --wine: #6b1f24;
+        --wine-bright: #90292f;
+        --ash: #c9bea6;
+        --line: rgba(205, 168, 106, 0.32);
+
+        --font-display: 'Fraunces', serif;
+        --font-body: 'Work Sans', sans-serif;
+        --font-mono: 'Space Mono', monospace;
+
         isolation: isolate;
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+        background: var(--ink);
+        font-family: var(--font-body);
+
+        /* Break out of any max-width/padding container base.html wraps
+           this block in, so the layout always spans the full viewport. */
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
     }
 
-    .hero-bg {
-        animation: slowZoom 18s ease-in-out infinite alternate;
-        transform-origin: center;
+    .venue *, .venue *::before, .venue *::after {
+        box-sizing: border-box;
     }
 
-    .nav-glass {
-        background: rgba(10, 10, 10, 0.58);
-        border: 1px solid rgba(255, 255, 255, 0.10);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+    .venue :focus-visible {
+        outline: 2px solid var(--gold-bright);
+        outline-offset: 3px;
+        border-radius: 4px;
+    }
+
+    /* ====================================================
+       BACKDROP
+       ==================================================== */
+    .venue__bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        animation: slowZoom 24s ease-in-out infinite alternate;
+    }
+
+    .venue__wash {
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(60% 50% at 80% 55%, rgba(107, 31, 36, 0.22), transparent 70%),
+            linear-gradient(180deg, rgba(20, 17, 13, 0.7) 0%, rgba(20, 17, 13, 0.35) 34%, rgba(20, 17, 13, 0.92) 100%);
+    }
+
+    .venue__vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+        pointer-events: none;
+    }
+
+    .ember {
+        position: absolute;
+        z-index: 3;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--gold-bright);
+        box-shadow: 0 0 8px 2px rgba(243, 219, 166, 0.55);
+        pointer-events: none;
+        animation: drift 9s ease-in-out infinite;
+    }
+    .ember--1 { left: 10%; top: 28%; animation-delay: 0s; }
+    .ember--2 { left: 40%; top: 16%; animation-delay: 2.4s; }
+    .ember--3 { left: 63%; top: 60%; animation-delay: 4.8s; }
+    .ember--4 { left: 82%; top: 22%; animation-delay: 1.4s; }
+    .ember--5 { left: 92%; top: 70%; animation-delay: 3.6s; }
+
+    /* ====================================================
+       NAV
+       ==================================================== */
+    .venue__nav {
+        position: relative;
+        z-index: 30;
+        padding: 1.9rem clamp(1.5rem, 5vw, 4rem) 0;
+    }
+
+    .nav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1.3rem;
+        border-bottom: 1px solid var(--line);
     }
 
     .brand {
-        text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        text-decoration: none;
     }
 
-    .nav-link {
-        color: rgba(255,255,255,0.95);
-        text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        transition: color .25s ease, transform .25s ease;
-    }
-
-    .nav-link:hover {
-        color: #fdba74;
-        transform: translateY(-2px);
-    }
-
-    /* 90% blended/dark hero block */
-    .hero-card {
-        background: rgba(18, 18, 18, 0.72);
-        border: 1px solid rgba(255,255,255,0.11);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 25px 70px rgba(0,0,0,0.30);
-        animation: heroReveal .8s ease-out both;
-    }
-
-    .hero-line {
-        width: 58px;
-        height: 4px;
-        border-radius: 999px;
-        background: #f97316;
-        margin-bottom: 22px;
-        box-shadow: 0 0 18px rgba(249,115,22,0.45);
-    }
-
-    .hero-title {
-        text-shadow: 0 5px 25px rgba(0,0,0,0.7);
-        animation: titleReveal 1s .12s ease-out both;
-    }
-
-    .hero-title span {
-        color: #f3f4f6;
-    }
-
-    .hero-description {
-        animation: fadeUp .8s .35s ease-out both;
-    }
-
-    .hero-badge {
-        border: 1px solid rgba(255,255,255,0.12);
-        background: rgba(255,255,255,0.06);
-        border-radius: 999px;
-        padding: 9px 15px;
-        backdrop-filter: blur(8px);
-        animation: fadeUp .8s .5s ease-out both;
-    }
-
-    .pulse-dot,
-    .status-light {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        display: inline-block;
-        background: #22c55e;
-        box-shadow: 0 0 0 rgba(34,197,94,.7);
-        animation: pulse 2s infinite;
-    }
-
-    .status-light {
-        width: 10px;
-        height: 10px;
-    }
-
-    .login-card {
-        animation: loginReveal .85s .15s ease-out both;
-        transition: transform .3s ease, box-shadow .3s ease;
-    }
-
-    .login-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 30px 90px rgba(0,0,0,0.65);
-    }
-
-    .login-arrow {
-        display: inline-block;
-        transition: transform .25s ease;
-    }
-
-    .login-card:hover .login-arrow {
-        transform: translateX(5px);
-    }
-
-    .field-wrap {
-        animation: fadeUp .7s ease-out both;
-    }
-
-    .field-wrap:nth-child(2) {
-        animation-delay: .08s;
-    }
-
-    .login-input {
-        width: 100%;
-        height: 62px;
-        padding: 0 20px;
-        color: white;
-        font-size: 17px;
-        background: rgba(255,255,255,0.025);
-        border: 1.5px solid rgba(255,255,255,0.72);
-        border-radius: 13px;
-        outline: none;
-        transition: border-color .25s ease, background .25s ease,
-                    box-shadow .25s ease, transform .25s ease;
-    }
-
-    .login-input::placeholder {
-        color: rgba(255,255,255,0.48);
-    }
-
-    .login-input:focus {
-        border-color: #ffffff;
-        background: rgba(255,255,255,0.07);
-        box-shadow: 0 0 0 4px rgba(255,255,255,0.07);
-        transform: translateY(-1px);
-    }
-
-    .password-eye {
-        position: absolute;
-        right: 18px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: rgba(255,255,255,0.65);
-        font-size: 19px;
-        transition: color .2s ease, transform .2s ease;
-    }
-
-    .password-eye:hover {
-        color: white;
-        transform: translateY(-50%) scale(1.08);
-    }
-
-    .remember-label {
-        color: rgba(255,255,255,0.72);
-    }
-
-    .reset-link {
-        color: rgba(255,255,255,0.72);
-        text-decoration: underline;
-        text-underline-offset: 4px;
-        transition: color .2s ease;
-    }
-
-    .reset-link:hover {
-        color: white;
-    }
-
-    .login-btn,
-    .register-btn {
-        min-width: 120px;
-        height: 52px;
-        padding: 0 28px;
-        border-radius: 12px;
-        font-weight: 700;
-        transition: transform .25s ease, box-shadow .25s ease,
-                    background .25s ease, border-color .25s ease;
-    }
-
-    .login-btn {
-        color: white;
-        background: #dc2626;
-        box-shadow: 0 8px 25px rgba(220,38,38,0.25);
-    }
-
-    .login-btn:hover {
-        background: #ef4444;
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(220,38,38,0.35);
-    }
-
-    .register-btn {
+    .brand__mark {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        border: 1.5px solid rgba(255,255,255,0.78);
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 50%;
+        border: 1px solid var(--gold);
+        font-family: var(--font-display);
+        font-style: italic;
+        font-weight: 600;
+        font-size: 1.15rem;
+        color: var(--gold-bright);
+        background: rgba(205, 168, 106, 0.08);
     }
 
-    .register-btn:hover {
-        border-color: white;
-        background: rgba(255,255,255,0.08);
+    .brand__word {
+        font-family: var(--font-display);
+        font-style: italic;
+        font-weight: 600;
+        font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+        color: var(--cream);
+        text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-links {
+        display: none;
+        gap: clamp(1.75rem, 3vw, 3rem);
+    }
+
+    @media (min-width: 768px) {
+        .nav-links { display: flex; }
+    }
+
+    .nav-link {
+        position: relative;
+        font-family: var(--font-mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ash);
+        text-decoration: none;
+        padding-bottom: 5px;
+        transition: color 0.25s ease;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        left: 0; right: 100%; bottom: 0;
+        height: 1px;
+        background: var(--gold-bright);
+        transition: right 0.3s ease;
+    }
+
+    .nav-link:hover { color: var(--cream); }
+    .nav-link:hover::after { right: 0; }
+
+    /* ====================================================
+       LAYOUT
+       ==================================================== */
+    .venue__main {
+        position: relative;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: 1.2fr 0.95fr;
+        align-items: center;
+        gap: clamp(2.5rem, 6vw, 6rem);
+        max-width: 1480px;
+        margin: 0 auto;
+        padding: clamp(3rem, 7vh, 5.5rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 7vh, 4.5rem);
+        min-height: calc(100vh - 100px);
+    }
+
+    @media (max-width: 940px) {
+        .venue__main {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+    }
+
+    /* ====================================================
+       HERO
+       ==================================================== */
+    .eyebrow {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: var(--gold-bright);
+        margin: 0 0 1.3rem;
+    }
+
+    .eyebrow--panel {
+        color: var(--gold-deep);
+        margin-bottom: 0.6rem;
+    }
+
+    .hero__rule {
+        display: block;
+        width: 64px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--gold);
+        box-shadow: 0 0 18px rgba(205, 168, 106, 0.5);
+        margin-bottom: 1.8rem;
+        animation: growLine 0.9s ease-out both;
+    }
+
+    .hero__title {
+        font-family: var(--font-display);
+        font-weight: 300;
+        text-transform: uppercase;
+        color: var(--cream);
+        font-size: clamp(3.4rem, 7.4vw, 7.2rem);
+        line-height: 0.9;
+        letter-spacing: -0.01em;
+        margin: 0;
+        text-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+        animation: fadeUp 0.9s 0.1s ease-out both;
+    }
+
+    .hero__title em {
+        font-style: italic;
+        font-weight: 500;
+        background: linear-gradient(100deg, var(--gold-bright), var(--gold) 60%, var(--gold-bright));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .hero__desc {
+        max-width: 32rem;
+        margin: 2rem 0 0;
+        color: rgba(245, 236, 216, 0.84);
+        font-size: clamp(1rem, 1.25vw, 1.15rem);
+        line-height: 1.7;
+        animation: fadeUp 0.9s 0.28s ease-out both;
+    }
+
+    .hero__meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.9rem;
+        list-style: none;
+        margin: 2.2rem 0 0;
+        padding: 0;
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--cream);
+        animation: fadeUp 0.9s 0.42s ease-out both;
+    }
+
+    .hero__meta li { display: flex; align-items: center; gap: 0.9rem; }
+
+    .hero__meta li:not(:last-child)::after {
+        content: '';
+        width: 4px; height: 4px;
+        margin-left: 0.9rem;
+        border-radius: 50%;
+        background: var(--gold);
+    }
+
+    /* ====================================================
+       GLASS PANEL
+       ==================================================== */
+    .panel-wrap {
+        display: flex;
+        justify-content: center;
+    }
+
+    .panel {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        padding: clamp(2.4rem, 4vw, 3.4rem) clamp(2.1rem, 4vw, 3rem);
+        border-radius: 26px;
+        background: rgba(20, 17, 13, 0.5);
+        border: 1px solid rgba(205, 168, 106, 0.28);
+        backdrop-filter: blur(22px) saturate(140%);
+        -webkit-backdrop-filter: blur(22px) saturate(140%);
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        animation: panelReveal 0.85s 0.15s cubic-bezier(.2,.8,.2,1) both;
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .panel:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 48px 110px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .panel__crest {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.6rem;
+        height: 3.6rem;
+        margin-bottom: 1.6rem;
+        border-radius: 50%;
+        border: 1px solid var(--gold);
+        background: radial-gradient(circle at 30% 30%, rgba(243, 219, 166, 0.18), rgba(205, 168, 106, 0.05));
+        font-family: var(--font-display);
+        font-style: italic;
+        font-weight: 600;
+        font-size: 1.6rem;
+        color: var(--gold-bright);
+        box-shadow: 0 0 24px rgba(205, 168, 106, 0.25);
+    }
+
+    .panel__title {
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: clamp(2.2rem, 3.4vw, 2.6rem);
+        color: var(--cream);
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    .panel__title-mark { color: var(--gold-bright); }
+
+    .panel__sub {
+        margin: 0.6rem 0 0;
+        color: rgba(245, 236, 216, 0.68);
+        font-size: 0.96rem;
+        line-height: 1.5;
+    }
+
+    .panel__divider {
+        display: block;
+        height: 1px;
+        margin: 1.8rem 0;
+        background: linear-gradient(90deg, rgba(205, 168, 106, 0.5), rgba(205, 168, 106, 0.05));
+    }
+
+    .panel__footer {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin: 1.7rem 0 0;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        color: var(--ash);
+    }
+
+    .status-light {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #7fae6e;
+        box-shadow: 0 0 0 rgba(127, 174, 110, 0.65);
+        animation: pulse 2.2s infinite;
+    }
+
+    /* ====================================================
+       FLASH MESSAGES
+       ==================================================== */
+    .flash-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        margin-bottom: 1.3rem;
+    }
+
+    .flash {
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border-left: 3px solid transparent;
+        font-size: 0.87rem;
+        line-height: 1.4;
+        color: var(--cream);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .flash--success { border-color: #7fae6e; }
+    .flash--danger  { border-color: #d97a7e; }
+    .flash--warning { border-color: var(--gold); }
+    .flash--info    { border-color: var(--ash); }
+
+    /* ====================================================
+       FORM
+       ==================================================== */
+    .panel-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.3rem;
+    }
+
+    .field__label {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gold-deep);
+        margin-bottom: 0.55rem;
+    }
+
+    .field__control { position: relative; }
+
+    .field__input {
+        width: 100%;
+        height: 3.4rem;
+        padding: 0 1.15rem;
+        font-family: var(--font-body);
+        font-size: 1rem;
+        color: var(--cream);
+        background: rgba(255, 255, 255, 0.055);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 13px;
+        outline: none;
+        transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .field__input::placeholder { color: rgba(245, 236, 216, 0.35); }
+
+    .field__input:focus {
+        border-color: var(--gold);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 4px rgba(205, 168, 106, 0.12);
+    }
+
+    .field__control .field__input { padding-right: 3.1rem; }
+
+    .field__eye {
+        position: absolute;
+        right: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        padding: 0.3rem;
+        color: rgba(245, 236, 216, 0.55);
+        cursor: pointer;
+        display: flex;
+        transition: color 0.2s ease;
+    }
+
+    .field__eye:hover { color: var(--gold-bright); }
+
+    .row-between {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .remember {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-size: 0.88rem;
+        color: rgba(245, 236, 216, 0.78);
+        cursor: pointer;
+    }
+
+    .remember__box {
+        width: 17px;
+        height: 17px;
+        accent-color: var(--gold);
+    }
+
+    .reset-link {
+        font-size: 0.88rem;
+        color: rgba(245, 236, 216, 0.78);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: color 0.2s ease;
+    }
+
+    .reset-link:hover { color: var(--gold-bright); }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.4rem;
+    }
+
+    .btn {
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        min-width: 0;
+        height: 3.4rem;
+        padding: 0 1.7rem;
+        border-radius: 12px;
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 0.96rem;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .btn--primary {
+        color: var(--ink);
+        background: linear-gradient(120deg, var(--gold-bright), var(--gold) 65%, var(--gold-deep));
+        border: none;
+        box-shadow: 0 14px 32px rgba(205, 168, 106, 0.32);
+    }
+
+    .btn--primary span { position: relative; z-index: 1; }
+
+    .btn--primary::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+        transform: translateX(-120%);
+        transition: transform 0.6s ease;
+    }
+
+    .btn--primary:hover::before { transform: translateX(120%); }
+
+    .btn--primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 38px rgba(205, 168, 106, 0.4);
+    }
+
+    .btn--ghost {
+        color: var(--cream);
+        background: transparent;
+        border: 1.5px solid rgba(245, 236, 216, 0.3);
+    }
+
+    .btn--ghost:hover {
+        border-color: var(--gold-bright);
+        background: rgba(205, 168, 106, 0.08);
         transform: translateY(-2px);
     }
 
-    .food-particle {
-        position: absolute;
-        z-index: 5;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.55);
-        filter: blur(.5px);
-        pointer-events: none;
-        animation: floatParticle 7s ease-in-out infinite;
-    }
-
-    .particle-1 { left: 12%; top: 34%; animation-delay: 0s; }
-    .particle-2 { left: 42%; top: 20%; animation-delay: 2s; }
-    .particle-3 { left: 74%; top: 32%; animation-delay: 4s; }
-    .particle-4 { left: 88%; top: 68%; animation-delay: 1s; }
-
+    /* ====================================================
+       MOTION
+       ==================================================== */
     @keyframes slowZoom {
         from { transform: scale(1); }
-        to { transform: scale(1.06); }
+        to { transform: scale(1.07); }
     }
 
-    @keyframes heroReveal {
-        from { opacity: 0; transform: translateY(calc(-50% + 25px)); }
-        to { opacity: 1; transform: translateY(-50%); }
+    @keyframes drift {
+        0%, 100% { transform: translateY(0) translateX(0); opacity: 0.25; }
+        50% { transform: translateY(-22px) translateX(9px); opacity: 0.95; }
     }
 
-    @keyframes loginReveal {
-        from { opacity: 0; transform: translateY(35px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes titleReveal {
-        from { opacity: 0; transform: translateX(-25px); }
-        to { opacity: 1; transform: translateX(0); }
+    @keyframes growLine {
+        from { width: 0; opacity: 0; }
+        to { width: 64px; opacity: 1; }
     }
 
     @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(12px); }
+        from { opacity: 0; transform: translateY(16px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes panelReveal {
+        from { opacity: 0; transform: translateY(32px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(34,197,94,.65); }
-        70% { box-shadow: 0 0 0 9px rgba(34,197,94,0); }
-        100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
-    }
-
-    @keyframes floatParticle {
-        0%, 100% { transform: translateY(0) translateX(0); opacity: .3; }
-        50% { transform: translateY(-22px) translateX(10px); opacity: .9; }
-    }
-
-    /* Tablet/mobile */
-    @media (max-width: 1023px) {
-        .hero-card {
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            transform: none !important;
-            width: 100% !important;
-            margin-top: 8vh;
-        }
-
-        .login-position {
-            position: relative !important;
-            right: auto !important;
-            bottom: auto !important;
-            width: 100% !important;
-            margin: 25px auto 15px;
-        }
-
-        main {
-            min-height: auto !important;
-        }
-    }
-
-    @media (max-width: 640px) {
-        .hero-title {
-            font-size: 3.2rem;
-        }
-
-        .hero-card {
-            padding: 25px 22px;
-        }
-
-        .login-card {
-            padding: 25px 20px;
-        }
-
-        .login-input {
-            height: 58px;
-        }
-
-        .login-btn,
-        .register-btn {
-            min-width: 105px;
-            padding: 0 20px;
-        }
+        0% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+        70% { box-shadow: 0 0 0 8px transparent; opacity: 0.7; }
+        100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
+        .venue *, .venue *::before, .venue *::after {
             animation-duration: 0.01ms !important;
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
         }
+    }
+
+    /* ====================================================
+       SMALL SCREENS
+       ==================================================== */
+    @media (max-width: 480px) {
+        .hero__title { font-size: 3rem; }
+        .panel { padding: 2rem 1.6rem; }
+        .actions { flex-direction: column; }
+        .btn { width: 100%; }
     }
 </style>
 
@@ -592,13 +816,8 @@ Login - Restaurant
 <script>
 function togglePassword() {
     const password = document.getElementById("password");
-
-    if (password.type === "password") {
-        password.type = "text";
-    } else {
-        password.type = "password";
-    }
+    password.type = password.type === "password" ? "text" : "password";
 }
 </script>
 
-{% endblock %}  
+{% endblock %}

@@ -38,7 +38,7 @@ import os
 
 from werkzeug.utils import secure_filename
 from flask import current_app
-    
+
 
 class AuthController(BaseController):
 
@@ -748,30 +748,16 @@ class AuthController(BaseController):
             cart_total=cart_total
         )
 
-    # =========================================================
+   # =========================================================
     # CUSTOMER VIEW CART
     # =========================================================
 
     def view_cart(self):
-
-        cart = session.get(
-            "cart",
-            {}
-        )
-
-        cart_total = self.calculate_cart_total(
-            cart
-        )
-
-        tables = self.get_tables()
-
-        return render_template(
-            "customer/cart.html",
-            cart=cart,
-            cart_total=cart_total,
-            tables=tables,
-            user_name=session.get("user_name")
-        )
+        """
+        Redirect cart view to the customer dashboard since 
+        cart management is integrated directly there.
+        """
+        return redirect(url_for("customer.dashboard"))
 
     # =========================================================
     # ADD ITEM TO CART
@@ -1134,24 +1120,68 @@ class AuthController(BaseController):
 
     def receptionist_dashboard(self):
 
+        db = Database()
+
+        pending_res = db.fetch_one(
+            "SELECT COUNT(*) AS count FROM orders WHERE status = 'pending'"
+        )
+        pending_count = pending_res["count"] if pending_res else 0
+
+        preparing_res = db.fetch_one(
+            "SELECT COUNT(*) AS count FROM orders WHERE status = 'preparing'"
+        )
+        preparing_count = preparing_res["count"] if preparing_res else 0
+
+        ready_res = db.fetch_one(
+            "SELECT COUNT(*) AS count FROM orders WHERE status = 'ready'"
+        )
+        ready_count = ready_res["count"] if ready_res else 0
+
+        db.close()
+
         orders = self.get_incoming_orders()
 
         return render_template(
             "receptionist/dashboard.html",
-            orders=orders
+            orders=orders,
+            pending_count=pending_count,
+            preparing_count=preparing_count,
+            ready_count=ready_count
         )
 
-    # =========================================================
+  # =========================================================
     # RECEPTIONIST HOME
     # =========================================================
 
     def receptionist_home(self):
 
+        db = Database()
+
+        pending_res = db.fetch_one(
+            "SELECT COUNT(*) AS count FROM orders WHERE status = 'pending'"
+        )
+        pending_count = pending_res["count"] if pending_res else 0
+
+        preparing_res = db.fetch_one(
+            "SELECT COUNT(*) AS count FROM orders WHERE status = 'preparing'"
+        )
+        preparing_count = preparing_res["count"] if preparing_res else 0
+
+        ready_res = db.fetch_one(
+            "SELECT COUNT(*) AS count FROM orders WHERE status = 'ready'"
+        )
+        ready_count = ready_res["count"] if ready_res else 0
+
+        db.close()
+
         orders = self.get_incoming_orders()
 
         return render_template(
-            "receptionist/home.html",
-            orders=orders
+            "receptionist/dashboard.html",
+            orders=orders,
+            pending_count=pending_count,
+            preparing_count=preparing_count,
+            ready_count=ready_count
         )
 
     # =========================================================

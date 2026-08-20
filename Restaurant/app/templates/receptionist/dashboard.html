@@ -1,400 +1,1179 @@
-<!--
-=============================================================
-  Receptionist Dashboard
-=============================================================
-  This is the main dashboard for the receptionist.
-
-  Receptionist can:
-    - View incoming orders
-    - See table number
-    - See ordered food items
-    - See quantity
-    - See order total
-    - Update order status
-    - Mark order as Preparing
-    - Mark order as Ready
-    - Mark order as Served
-=============================================================
--->
-
 {% extends "base.html" %}
 
 {% block title %}
 Receptionist Dashboard
 {% endblock %}
 
-
 {% block content %}
 
-<!-- Receptionist Navigation -->
-{% include "partials/receptionist_navbar.html" %}
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                restaurant: {
+                    navy: '#14213D',
+                    navy2: '#1B2A4A',
+                    blue: '#2F5D8C',
+                    sky: '#DCEAF7',
+                    orange: '#E67E45',
+                    orange2: '#F29B67',
+                    mint: '#4DB6A2',
+                    green: '#55B77A',
+                    red: '#E76F51',
+                    cream: '#F8FAFC',
+                    text: '#243B53',
+                    muted: '#718096',
+                    border: '#D7E2EE',
+                    background: '#F3F7FB'
+                }
+            }
+        }
+    }
+}
+</script>
+
+<style>
+body {
+    margin: 0;
+    background: #F3F7FB;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.15);
+    border-radius: 20px;
+}
+
+.marquee {
+    animation: marquee 25s linear infinite;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.card-hover {
+    transition: all .25s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+}
+
+.fade-up {
+    animation: fadeUp .5s ease forwards;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mobile-menu {
+    transform: translateX(-100%);
+    transition: transform .3s ease;
+}
+
+.mobile-menu.open {
+    transform: translateX(0);
+}
+
+.mobile-overlay {
+    display: none;
+}
+
+.mobile-overlay.open {
+    display: block;
+}
+</style>
 
 
-<div class="receptionist-dashboard">
+<!-- =========================================================
+     CALCULATE ORDER COUNTS
+========================================================= -->
+
+{% set ns = namespace(
+    pending=0,
+    preparing=0,
+    ready=0,
+    served=0,
+    total=0,
+    revenue=0
+) %}
+
+{% for order in orders %}
+
+    {% set ns.total = ns.total + 1 %}
+
+    {% if order.status == 'pending' %}
+        {% set ns.pending = ns.pending + 1 %}
+    {% elif order.status == 'preparing' %}
+        {% set ns.preparing = ns.preparing + 1 %}
+    {% elif order.status == 'ready' %}
+        {% set ns.ready = ns.ready + 1 %}
+    {% elif order.status == 'served' %}
+        {% set ns.served = ns.served + 1 %}
+    {% endif %}
+
+    {% if order.total %}
+        {% set ns.revenue = ns.revenue + order.total %}
+    {% endif %}
+
+{% endfor %}
+
+
+<div class="min-h-screen bg-restaurant-background">
+
 
     <!-- =====================================================
-         PAGE HEADER
+         MOBILE OVERLAY
     ====================================================== -->
 
-    <div class="dashboard-header">
-
-        <h1>Receptionist Dashboard</h1>
-
-        <p>
-            Manage incoming restaurant orders.
-        </p>
-
-    </div>
+    <div
+        id="mobileOverlay"
+        class="mobile-overlay fixed inset-0 z-[60] bg-black/50 lg:hidden"
+        onclick="closeMobileMenu()"
+    ></div>
 
 
     <!-- =====================================================
-         ORDER SUMMARY
+         MOBILE SIDEBAR
     ====================================================== -->
 
-    <div class="order-summary">
+    <aside
+        id="mobileMenu"
+        class="mobile-menu fixed left-0 top-0 z-[70] flex h-screen w-[270px] flex-col bg-restaurant-navy text-white shadow-2xl lg:hidden"
+    >
 
-        <div class="summary-card">
+        <div class="flex h-[82px] items-center justify-between border-b border-white/10 px-5">
 
-            <h3>
-                Pending Orders
-            </h3>
+            <div class="flex items-center">
 
-            <p>
-                {{ pending_count }}
-            </p>
+                <div
+                    class="flex h-11 w-11 items-center justify-center rounded-xl bg-restaurant-orange text-xl font-black"
+                >
+                    R
+                </div>
 
-        </div>
+                <div class="ml-3">
+                    <h1 class="text-lg font-bold">
+                        Rujab's
+                    </h1>
 
+                    <p class="text-[10px] uppercase tracking-widest text-white/40">
+                        Restaurant
+                    </p>
+                </div>
 
-        <div class="summary-card">
+            </div>
 
-            <h3>
-                Preparing
-            </h3>
-
-            <p>
-                {{ preparing_count }}
-            </p>
-
-        </div>
-
-
-        <div class="summary-card">
-
-            <h3>
-                Ready
-            </h3>
-
-            <p>
-                {{ ready_count }}
-            </p>
+            <button
+                type="button"
+                onclick="closeMobileMenu()"
+                class="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white"
+            >
+                ✕
+            </button>
 
         </div>
 
 
-        <div class="summary-card">
+        <nav class="flex-1 overflow-y-auto px-4 py-6">
 
-            <h3>
-                Served
-            </h3>
-
-            <p>
-                {{ served_count }}
+            <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+                Reception
             </p>
+
+            <a
+                href="{{ url_for('auth.receptionist_home') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl bg-restaurant-orange px-4 py-3 text-sm font-semibold text-white"
+            >
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('auth.order_management') }}"
+                class="mb-2 flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white"
+            >
+                <span class="flex items-center gap-3">
+                    <span>▤</span>
+                    Orders
+                </span>
+
+                {% if ns.pending > 0 %}
+                    <span class="rounded-full bg-restaurant-red px-2 py-0.5 text-[10px] font-bold">
+                        {{ ns.pending }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <p class="mb-3 mt-8 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+                Management
+            </p>
+
+            <a
+                href="{{ url_for('auth.manager_dashboard') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white"
+            >
+                <span>☷</span>
+                Menu Management
+            </a>
+
+            <a
+                href="#tables"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white"
+            >
+                <span>▦</span>
+                Tables
+            </a>
+
+            <a
+                href="#customers"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white"
+            >
+                <span>♙</span>
+                Customers
+            </a>
+
+        </nav>
+
+
+        <div class="border-t border-white/10 p-4">
+
+            <div class="mb-3 flex items-center gap-3 rounded-xl bg-white/5 p-3">
+
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-restaurant-orange font-bold">
+                    R
+                </div>
+
+                <div>
+                    <p class="text-sm font-semibold">
+                        Receptionist
+                    </p>
+
+                    <p class="text-xs text-white/40">
+                        Front Desk
+                    </p>
+                </div>
+
+            </div>
+
+            <a
+                href="{{ url_for('auth.logout') }}"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/50 hover:bg-red-500/10 hover:text-red-300"
+            >
+                ⇥
+                Logout
+            </a>
 
         </div>
 
-    </div>
+    </aside>
 
 
     <!-- =====================================================
-         INCOMING ORDERS
+         DESKTOP SIDEBAR
     ====================================================== -->
 
-    <section class="orders-section">
+    <aside
+        class="fixed left-0 top-0 z-50 hidden h-screen w-[250px] flex-col bg-restaurant-navy text-white shadow-2xl lg:flex"
+    >
 
-        <div class="section-header">
+        <!-- BRAND -->
 
-            <h2>
-                Incoming Orders
-            </h2>
+        <div class="flex h-[82px] items-center border-b border-white/10 px-6">
 
-            <p>
-                View and manage customer orders.
+            <div
+                class="flex h-11 w-11 items-center justify-center rounded-xl bg-restaurant-orange text-xl font-black shadow-lg"
+            >
+                R
+            </div>
+
+            <div class="ml-3">
+
+                <h1 class="text-lg font-bold">
+                    Rujab's
+                </h1>
+
+                <p class="text-[11px] uppercase tracking-widest text-white/50">
+                    Restaurant
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="sidebar-scroll flex-1 overflow-y-auto px-4 py-6">
+
+            <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+                Reception
             </p>
+
+
+            <!-- DASHBOARD -->
+
+            <a
+                href="{{ url_for('auth.receptionist_home') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl bg-restaurant-orange px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-900/20"
+            >
+
+                <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                     stroke-width="1.8" viewBox="0 0 24 24">
+
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+
+                </svg>
+
+                Dashboard
+
+            </a>
+
+
+            <!-- ORDERS -->
+
+            <a
+                href="{{ url_for('auth.order_management') }}"
+                class="mb-2 flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-white/65 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <span class="flex items-center gap-3">
+
+                    <svg class="h-5 w-5" fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         viewBox="0 0 24 24">
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 3h12v18H6z"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            d="M9 8h6M9 12h6M9 16h4"
+                        />
+
+                    </svg>
+
+                    Orders
+
+                </span>
+
+                {% if ns.pending > 0 %}
+
+                    <span class="rounded-full bg-restaurant-red px-2 py-0.5 text-[10px] font-bold">
+                        {{ ns.pending }}
+                    </span>
+
+                {% endif %}
+
+            </a>
+
+
+            <p class="mb-3 mt-8 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+                Management
+            </p>
+
+
+            <!-- MENU -->
+
+            <a
+                href="{{ url_for('auth.manager_dashboard') }}"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/65 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <svg class="h-5 w-5" fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     viewBox="0 0 24 24">
+
+                    <path
+                        stroke-linecap="round"
+                        d="M6 3v18M18 3v18"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M6 8h12M6 16h12"
+                    />
+
+                </svg>
+
+                Menu Management
+
+            </a>
+
+
+            <!-- TABLES -->
+
+            <a
+                href="#tables"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/65 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <svg class="h-5 w-5" fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     viewBox="0 0 24 24">
+
+                    <rect x="4" y="4" width="16" height="16" rx="2"/>
+                    <path d="M4 10h16M10 4v16"/>
+
+                </svg>
+
+                Tables
+
+            </a>
+
+
+            <!-- CUSTOMERS -->
+
+            <a
+                href="#customers"
+                class="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/65 transition hover:bg-white/10 hover:text-white"
+            >
+
+                <svg class="h-5 w-5" fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     viewBox="0 0 24 24">
+
+                    <circle cx="9" cy="8" r="3"/>
+
+                    <path
+                        stroke-linecap="round"
+                        d="M3 20c0-3 2.5-5 6-5s6 2 6 5"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        d="M16 5c2 0 4 1.5 4 4"
+                    />
+
+                </svg>
+
+                Customers
+
+            </a>
+
+        </nav>
+
+
+        <!-- USER -->
+
+        <div class="border-t border-white/10 p-4">
+
+            <div class="mb-3 flex items-center gap-3 rounded-xl bg-white/5 p-3">
+
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-restaurant-orange font-bold">
+                    R
+                </div>
+
+                <div class="min-w-0">
+
+                    <p class="truncate text-sm font-semibold">
+                        Receptionist
+                    </p>
+
+                    <p class="text-xs text-white/40">
+                        Front Desk
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('auth.logout') }}"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/50 transition hover:bg-red-500/10 hover:text-red-300"
+            >
+
+                <svg class="h-5 w-5" fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round" d="M10 17l5-5-5-5"/>
+                    <path stroke-linecap="round" d="M15 12H3"/>
+                    <path stroke-linecap="round" d="M21 19V5a2 2 0 00-2-2h-6"/>
+
+                </svg>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <div class="lg:ml-[250px]">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header
+            class="sticky top-0 z-40 border-b border-restaurant-border bg-white/90 backdrop-blur-xl"
+        >
+
+            <div class="flex h-[82px] items-center justify-between px-5 lg:px-8">
+
+                <div class="flex items-center gap-4">
+
+                    <!-- MOBILE MENU -->
+
+                    <button
+                        type="button"
+                        onclick="openMobileMenu()"
+                        class="flex h-10 w-10 items-center justify-center rounded-xl border border-restaurant-border bg-white text-restaurant-navy lg:hidden"
+                    >
+                        ☰
+                    </button>
+
+                    <div>
+
+                        <p class="text-xs font-semibold uppercase tracking-widest text-restaurant-orange">
+                            Reception
+                        </p>
+
+                        <h1 class="text-xl font-bold text-restaurant-navy sm:text-2xl">
+                            Dashboard Overview
+                        </h1>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hidden items-center gap-4 md:flex">
+
+                    <!-- SEARCH -->
+
+                    <div class="flex w-64 items-center gap-3 rounded-xl border border-restaurant-border bg-restaurant-background px-4 py-2.5">
+
+                        <svg
+                            class="h-5 w-5 text-slate-400"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="M20 20l-4-4"/>
+
+                        </svg>
+
+                        <input
+                            id="orderSearch"
+                            type="text"
+                            placeholder="Search orders..."
+                            class="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
+                            oninput="filterOrders()"
+                        >
+
+                    </div>
+
+
+                    <!-- NOTIFICATION -->
+
+                    <a
+                        href="{{ url_for('auth.order_management') }}"
+                        class="relative flex h-11 w-11 items-center justify-center rounded-xl border border-restaurant-border bg-white"
+                    >
+
+                        <svg
+                            class="h-5 w-5 text-restaurant-navy"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            viewBox="0 0 24 24"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                            />
+
+                            <path
+                                stroke-linecap="round"
+                                d="M10 21h4"
+                            />
+
+                        </svg>
+
+                        {% if ns.pending > 0 %}
+
+                            <span class="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-restaurant-red ring-2 ring-white"></span>
+
+                        {% endif %}
+
+                    </a>
+
+
+                    <!-- PROFILE -->
+
+                    <div class="flex items-center gap-3">
+
+                        <div class="flex h-11 w-11 items-center justify-center rounded-full bg-restaurant-navy font-bold text-white">
+                            R
+                        </div>
+
+                        <div class="hidden xl:block">
+
+                            <p class="text-sm font-bold text-restaurant-navy">
+                                Receptionist
+                            </p>
+
+                            <p class="text-xs text-slate-400">
+                                Front Desk
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             MARQUEE
+        ================================================== -->
+
+        <div class="overflow-hidden border-b border-restaurant-border bg-restaurant-navy py-2.5 text-white">
+
+            <div class="marquee whitespace-nowrap text-xs font-semibold uppercase tracking-[0.18em]">
+
+                <span class="mx-8 text-restaurant-orange2">●</span>
+
+                LIVE RESTAURANT SERVICE
+
+                <span class="mx-8 text-white/30">◆</span>
+
+                {{ ns.pending }} PENDING ORDERS
+
+                <span class="mx-8 text-white/30">◆</span>
+
+                {{ ns.preparing }} ORDERS BEING PREPARED
+
+                <span class="mx-8 text-white/30">◆</span>
+
+                {{ ns.ready }} ORDERS READY TO SERVE
+
+                <span class="mx-8 text-white/30">◆</span>
+
+                RECEPTION DESK ONLINE
+
+                <span class="mx-8 text-white/30">◆</span>
+
+                MONITOR CUSTOMER ORDERS
+
+            </div>
 
         </div>
 
 
         <!-- =================================================
-             ORDER LIST
+             CONTENT
         ================================================== -->
 
-        <div class="receptionist-orders">
-
-            {% for order in orders %}
-
-                <div class="receptionist-order-card">
+        <main class="p-5 lg:p-8">
 
 
-                    <!-- =====================================
-                         ORDER HEADER
-                    ====================================== -->
+            <!-- HERO -->
 
-                    <div class="order-header">
+            <section class="mb-7 overflow-hidden rounded-3xl bg-gradient-to-br from-restaurant-navy to-restaurant-blue p-7 text-white shadow-xl lg:p-9">
 
-                        <div>
+                <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
 
-                            <h2>
-                                Order #{{ order.id }}
-                            </h2>
+                    <div>
 
-                            <p>
-                                Table:
-                                <strong>
-                                    {{ order.table_name }}
-                                </strong>
-                            </p>
+                        <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5">
 
-                            <p>
-                                Ordered:
-                                {{ order.created_at }}
-                            </p>
+                            <span class="h-2 w-2 animate-pulse rounded-full bg-restaurant-green"></span>
+
+                            <span class="text-[10px] font-bold uppercase tracking-[0.2em]">
+                                Service Online
+                            </span>
 
                         </div>
 
+                        <h2 class="text-3xl font-bold lg:text-4xl">
+                            Good service starts here.
+                        </h2>
 
-                        <!-- Current Status -->
-
-                        <div class="order-status">
-
-                            {% if order.status == "pending" %}
-
-                                <span class="status pending">
-                                    Pending
-                                </span>
-
-                            {% elif order.status == "preparing" %}
-
-                                <span class="status preparing">
-                                    Preparing
-                                </span>
-
-                            {% elif order.status == "ready" %}
-
-                                <span class="status ready">
-                                    Ready
-                                </span>
-
-                            {% elif order.status == "served" %}
-
-                                <span class="status served">
-                                    Served
-                                </span>
-
-                            {% else %}
-
-                                <span class="status">
-                                    {{ order.status }}
-                                </span>
-
-                            {% endif %}
-
-                        </div>
+                        <p class="mt-3 max-w-2xl text-sm leading-6 text-white/65">
+                            Monitor incoming customer orders, coordinate with
+                            the kitchen and keep restaurant service moving.
+                        </p>
 
                     </div>
 
 
-                    <!-- =====================================
-                         ORDER ITEMS
-                    ====================================== -->
+                    <div class="hidden h-28 w-28 items-center justify-center rounded-3xl border border-white/10 bg-white/10 lg:flex">
 
-                    <div class="order-items">
+                        <svg
+                            class="h-14 w-14 text-restaurant-orange2"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.4"
+                            viewBox="0 0 24 24"
+                        >
 
-                        <h3>
-                            Ordered Items
-                        </h3>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14v16H5z"/>
+                            <path stroke-linecap="round" d="M8 8h8M8 12h8M8 16h5"/>
+                            <circle cx="17" cy="17" r="3"/>
 
-
-                        {% for item in order.items %}
-
-                            <div class="order-item">
-
-                                <div>
-                                    <strong>
-                                        {{ item.name }}
-                                    </strong>
-                                </div>
-
-
-                                <div>
-                                    Quantity:
-                                    {{ item.quantity }}
-                                </div>
-
-
-                                <div>
-                                    Rs.
-                                    {{ item.price_at_order }}
-                                </div>
-
-
-                                <div>
-                                    Rs.
-                                    {{
-                                        item.price_at_order
-                                        * item.quantity
-                                    }}
-                                </div>
-
-                            </div>
-
-                        {% endfor %}
-
-                    </div>
-
-
-                    <!-- =====================================
-                         ORDER TOTAL
-                    ====================================== -->
-
-                    <div class="order-total">
-
-                        <strong>
-                            Total:
-                        </strong>
-
-                        <strong>
-                            Rs. {{ order.total }}
-                        </strong>
-
-                    </div>
-
-
-                    <!-- =====================================
-                         ORDER STATUS ACTIONS
-                    ====================================== -->
-
-                    <div class="order-actions">
-
-                        {% if order.status == "pending" %}
-
-                            <!-- Mark Preparing -->
-
-                            <form
-                                action="{{ url_for(
-                                    'auth.update_order_status',
-                                    order_id=order.id
-                                ) }}"
-                                method="POST"
-                            >
-
-                                <input
-                                    type="hidden"
-                                    name="status"
-                                    value="preparing"
-                                >
-
-                                <button
-                                    type="submit"
-                                >
-                                    Mark Preparing
-                                </button>
-
-                            </form>
-
-
-                        {% elif order.status == "preparing" %}
-
-                            <!-- Mark Ready -->
-
-                            <form
-                                action="{{ url_for(
-                                    'auth.update_order_status',
-                                    order_id=order.id
-                                ) }}"
-                                method="POST"
-                            >
-
-                                <input
-                                    type="hidden"
-                                    name="status"
-                                    value="ready"
-                                >
-
-                                <button
-                                    type="submit"
-                                >
-                                    Mark Ready
-                                </button>
-
-                            </form>
-
-
-                        {% elif order.status == "ready" %}
-
-                            <!-- Mark Served -->
-
-                            <form
-                                action="{{ url_for(
-                                    'auth.update_order_status',
-                                    order_id=order.id
-                                ) }}"
-                                method="POST"
-                            >
-
-                                <input
-                                    type="hidden"
-                                    name="status"
-                                    value="served"
-                                >
-
-                                <button
-                                    type="submit"
-                                >
-                                    Mark Served
-                                </button>
-
-                            </form>
-
-
-                        {% elif order.status == "served" %}
-
-                            <p>
-                                Order completed.
-                            </p>
-
-                        {% endif %}
+                        </svg>
 
                     </div>
 
                 </div>
 
-            {% else %}
+            </section>
 
-                <!-- =========================================
-                     NO ORDERS
-                ========================================== -->
 
-                <div class="no-orders">
+            <!-- =================================================
+                 STATISTICS
+            ================================================== -->
 
-                    <h2>
-                        No Incoming Orders
-                    </h2>
+            <section class="mb-8 grid grid-cols-2 gap-4 xl:grid-cols-4">
 
-                    <p>
-                        There are currently no orders
-                        waiting for processing.
+
+                <div class="card-hover fade-up rounded-2xl border border-restaurant-border bg-white p-5 shadow-sm">
+
+                    <div class="flex items-center justify-between">
+
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Pending
+                        </span>
+
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-xl text-restaurant-orange">
+                            ⏱
+                        </div>
+
+                    </div>
+
+                    <p class="mt-4 text-3xl font-bold text-restaurant-navy">
+                        {{ ns.pending }}
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-400">
+                        Waiting for preparation
                     </p>
 
                 </div>
 
-            {% endfor %}
 
-        </div>
+                <div class="card-hover fade-up rounded-2xl border border-restaurant-border bg-white p-5 shadow-sm">
 
-    </section>
+                    <div class="flex items-center justify-between">
+
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Preparing
+                        </span>
+
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-xl text-restaurant-blue">
+                            🍳
+                        </div>
+
+                    </div>
+
+                    <p class="mt-4 text-3xl font-bold text-restaurant-navy">
+                        {{ ns.preparing }}
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-400">
+                        Kitchen is preparing
+                    </p>
+
+                </div>
+
+
+                <div class="card-hover fade-up rounded-2xl border border-restaurant-border bg-white p-5 shadow-sm">
+
+                    <div class="flex items-center justify-between">
+
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Ready
+                        </span>
+
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-xl text-restaurant-green">
+                            ✓
+                        </div>
+
+                    </div>
+
+                    <p class="mt-4 text-3xl font-bold text-restaurant-navy">
+                        {{ ns.ready }}
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-400">
+                        Waiting to be served
+                    </p>
+
+                </div>
+
+
+                <div class="card-hover fade-up rounded-2xl border border-restaurant-border bg-white p-5 shadow-sm">
+
+                    <div class="flex items-center justify-between">
+
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Active Orders
+                        </span>
+
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-500">
+                            #
+                        </div>
+
+                    </div>
+
+                    <p class="mt-4 text-3xl font-bold text-restaurant-navy">
+                        {{ ns.total }}
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-400">
+                        Orders in current queue
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ORDERS
+            ================================================== -->
+
+            <section>
+
+                <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+
+                    <div>
+
+                        <p class="text-xs font-bold uppercase tracking-widest text-restaurant-orange">
+                            Live Queue
+                        </p>
+
+                        <h2 class="mt-1 text-2xl font-bold text-restaurant-navy">
+                            Recent Orders
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-400">
+                            Orders requiring receptionist attention.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('auth.order_management') }}"
+                        class="rounded-xl bg-restaurant-navy px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-restaurant-blue"
+                    >
+                        View All Orders →
+                    </a>
+
+                </div>
+
+
+                <div id="ordersGrid" class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+
+                    {% for order in orders[:6] %}
+
+                        <div
+                            class="order-preview card-hover rounded-2xl border border-restaurant-border bg-white p-5 shadow-sm"
+                            data-search="{{ order.id }} {{ order.table_name }} {{ order.status }}"
+                        >
+
+                            <div class="flex items-center justify-between gap-3">
+
+                                <div class="flex items-center gap-4">
+
+                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-restaurant-navy text-sm font-bold text-white">
+                                        #{{ order.id }}
+                                    </div>
+
+                                    <div class="min-w-0">
+
+                                        <h3 class="font-bold text-restaurant-navy">
+                                            Table {{ order.table_name }}
+                                        </h3>
+
+                                        <p class="mt-1 text-xs text-slate-400">
+                                            {{ order.created_at }}
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                {% if order.status == 'pending' %}
+
+                                    <span class="shrink-0 rounded-full bg-orange-50 px-3 py-1 text-xs font-bold text-restaurant-orange">
+                                        Pending
+                                    </span>
+
+                                {% elif order.status == 'preparing' %}
+
+                                    <span class="shrink-0 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-restaurant-blue">
+                                        Preparing
+                                    </span>
+
+                                {% elif order.status == 'ready' %}
+
+                                    <span class="shrink-0 rounded-full bg-green-50 px-3 py-1 text-xs font-bold text-restaurant-green">
+                                        Ready
+                                    </span>
+
+                                {% elif order.status == 'served' %}
+
+                                    <span class="shrink-0 rounded-full bg-purple-50 px-3 py-1 text-xs font-bold text-purple-500">
+                                        Served
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">
+                                        {{ order.status|capitalize }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="mt-4 border-t border-slate-100 pt-4">
+
+                                <div class="flex items-center justify-between">
+
+                                    <p class="text-sm text-slate-500">
+                                        {{ order.items|length }} item(s)
+                                    </p>
+
+                                    <p class="font-bold text-restaurant-navy">
+                                        Rs. {{ order.total }}
+                                    </p>
+
+                                </div>
+
+
+                                {% if order.status != 'served' %}
+
+                                    <div class="mt-4">
+
+                                        <a
+                                            href="{{ url_for('auth.order_management') }}"
+                                            class="block rounded-xl border border-restaurant-border px-4 py-2.5 text-center text-sm font-semibold text-restaurant-navy transition hover:border-restaurant-orange hover:text-restaurant-orange"
+                                        >
+                                            Manage Order
+                                        </a>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="col-span-full rounded-2xl border border-dashed border-restaurant-border bg-white p-12 text-center">
+
+                            <div class="text-4xl">
+                                ✓
+                            </div>
+
+                            <h3 class="mt-4 font-bold text-restaurant-navy">
+                                No orders right now
+                            </h3>
+
+                            <p class="mt-1 text-sm text-slate-400">
+                                New customer orders will appear here.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 TABLE QUICK STATUS
+            ================================================== -->
+
+            <section id="tables" class="mt-8">
+
+                <div class="mb-5">
+
+                    <p class="text-xs font-bold uppercase tracking-widest text-restaurant-orange">
+                        Front Desk
+                    </p>
+
+                    <h2 class="mt-1 text-2xl font-bold text-restaurant-navy">
+                        Table Overview
+                    </h2>
+
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+
+                    {% for table_number in range(1, 6) %}
+
+                        <div class="rounded-2xl border border-restaurant-border bg-white p-5 shadow-sm">
+
+                            <div class="flex items-center justify-between">
+
+                                <span class="text-sm font-bold text-restaurant-navy">
+                                    Table {{ table_number }}
+                                </span>
+
+                                <span class="h-3 w-3 rounded-full bg-restaurant-green"></span>
+
+                            </div>
+
+                            <p class="mt-3 text-xs text-slate-400">
+                                Available
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CUSTOMERS QUICK PANEL
+            ================================================== -->
+
+            <section id="customers" class="mt-8">
+
+                <div class="rounded-2xl border border-restaurant-border bg-white p-6 shadow-sm">
+
+                    <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+
+                        <div>
+
+                            <p class="text-xs font-bold uppercase tracking-widest text-restaurant-orange">
+                                Customer Service
+                            </p>
+
+                            <h2 class="mt-1 text-xl font-bold text-restaurant-navy">
+                                Reception Desk Ready
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-400">
+                                Customer, table and order information can be handled from the reception workflow.
+                            </p>
+
+                        </div>
+
+                        <a
+                            href="{{ url_for('auth.order_management') }}"
+                            class="rounded-xl bg-restaurant-orange px-5 py-3 text-center text-sm font-bold text-white transition hover:bg-restaurant-orange2"
+                        >
+                            Open Order Desk
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="mt-10 border-t border-restaurant-border py-6 text-center">
+
+                <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                    Rujab's Restaurant
+                    <span class="mx-2">•</span>
+                    Reception Control Center
+                </p>
+
+            </footer>
+
+        </main>
+
+    </div>
 
 </div>
+
+
+<script>
+function openMobileMenu() {
+    document.getElementById('mobileMenu').classList.add('open');
+    document.getElementById('mobileOverlay').classList.add('open');
+}
+
+function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('mobileOverlay').classList.remove('open');
+}
+
+function filterOrders() {
+    const input = document.getElementById('orderSearch');
+    const value = input.value.toLowerCase().trim();
+
+    document.querySelectorAll('.order-preview').forEach(function(card) {
+        const text = card.dataset.search.toLowerCase();
+
+        if (!value || text.includes(value)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
 
 {% endblock %}

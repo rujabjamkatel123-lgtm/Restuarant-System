@@ -1,37 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}
-Customer Dashboard
-{% endblock %}
+{% block title %}Customer Dashboard{% endblock %}
 
 {% block content %}
 
-<script src="https://cdn.tailwindcss.com"></script>
-
-<script>
-tailwind.config = {
-    theme: {
-        extend: {
-            colors: {
-                slatebg: "#f1efe8",
-                slatepanel: "#ffffff",
-                slatepanelsoft: "#f7f5ef",
-                slateborder: "#ddd9cc",
-                sage: "#3f4f43",
-                sage2: "#52685a",
-                charcoal: "#232620",
-                muted: "#8b8a7e"
-            }
-        }
-    }
-}
-</script>
-
 <style>
-
 /* =========================================================
    GLOBAL
 ========================================================= */
+
+:root {
+    --forest: #304b3b;
+    --forest-dark: #243a2d;
+    --forest-light: #e8f0e8;
+    --sage: #8fa58e;
+
+    --cream: #f5f3ed;
+    --cream-dark: #ebe8de;
+
+    --white: #ffffff;
+    --text: #20251f;
+    --muted: #7b8078;
+
+    --border: #dddcd3;
+
+    --shadow: 0 10px 30px rgba(38, 48, 40, 0.08);
+    --radius: 16px;
+}
 
 * {
     box-sizing: border-box;
@@ -39,15 +34,14 @@ tailwind.config = {
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 75px;
+    scroll-padding-top: 80px;
 }
 
 body {
     margin: 0;
-    padding: 0;
-    background: #f1efe8;
-    color: #232620;
-    font-family: Georgia, "Times New Roman", serif;
+    background: var(--cream);
+    color: var(--text);
+    font-family: "DM Sans", Arial, sans-serif;
 }
 
 button,
@@ -57,7 +51,13 @@ a {
 
 .restaurant-app {
     min-height: 100vh;
-    background: #f1efe8;
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(143, 165, 142, 0.12),
+            transparent 28%
+        ),
+        var(--cream);
 }
 
 
@@ -70,27 +70,44 @@ a {
     top: 0;
     left: 0;
     right: 0;
-    height: 58px;
 
-    background: linear-gradient(
-        180deg,
-        #ffffff,
-        #f7f5ef
-    );
-
-    border-bottom: 1px solid #ddd9cc;
+    height: 70px;
 
     display: flex;
     align-items: center;
 
-    padding: 0 16px;
+    padding: 0 24px;
+
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid var(--border);
 
     z-index: 2000;
 }
 
+.mobile-menu-button {
+    display: none;
+
+    width: 42px;
+    height: 42px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--white);
+    color: var(--forest);
+
+    cursor: pointer;
+
+    font-size: 19px;
+}
+
+
+/* CENTER BRAND */
+
 .top-brand {
     position: absolute;
-
     left: 50%;
     top: 50%;
 
@@ -98,112 +115,76 @@ a {
 
     display: flex;
     align-items: center;
-    justify-content: center;
-
     gap: 10px;
 
     white-space: nowrap;
 }
 
 .brand-logo {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 50%;
+    border-radius: 12px;
 
-    border: 1px solid #3f4f43;
+    background: var(--forest);
+    color: white;
 
-    background: radial-gradient(
-        circle at 35% 30%,
-        #dbe6da,
-        #eef2ea 65%
-    );
-
-    color: #3f4f43;
     font-size: 20px;
 }
 
 .brand-name {
-    color: #232620;
+    font-family: Georgia, serif;
+
     font-size: 21px;
-    font-weight: 800;
+    font-weight: 700;
+
+    color: var(--text);
 }
 
 .brand-subtitle {
-    margin-top: 4px;
+    margin-top: 2px;
 
-    color: #8b8a7e;
+    color: var(--muted);
 
-    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
 
-    font-size: 7px;
-
-    letter-spacing: 2.5px;
-
+    letter-spacing: 2px;
     text-transform: uppercase;
 }
+
+
+/* TABLE INDICATOR */
 
 .top-table {
     margin-left: auto;
 
-    min-width: 70px;
-
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 7px;
 
-    gap: 5px;
+    padding: 9px 15px;
 
-    padding: 6px 11px;
+    border-radius: 10px;
 
-    border: 1px solid #c7c2b0;
+    background: var(--forest-light);
+    border: 1px solid #cbdacb;
 
-    border-radius: 8px;
-
-    background: #f7f5ef;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 9px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .top-table-label {
-    color: #8b8a7e;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    color: var(--muted);
 }
 
 .top-table-number {
-    color: #3f4f43;
+    color: var(--forest);
     font-weight: 800;
-}
-
-
-/* =========================================================
-   MOBILE BUTTON
-========================================================= */
-
-.mobile-menu-button {
-    display: none;
-
-    width: 38px;
-    height: 38px;
-
-    border: 1px solid #c7c2b0;
-
-    border-radius: 8px;
-
-    background: #f7f5ef;
-
-    color: #3f4f43;
-
-    cursor: pointer;
-
-    font-size: 18px;
 }
 
 
@@ -214,15 +195,15 @@ a {
 .sidebar {
     position: fixed;
 
-    top: 58px;
+    top: 70px;
     left: 0;
     bottom: 0;
 
     width: 235px;
 
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.97);
 
-    border-right: 1px solid #ddd9cc;
+    border-right: 1px solid var(--border);
 
     z-index: 1500;
 
@@ -231,39 +212,35 @@ a {
 }
 
 .sidebar-brand {
-    padding: 21px 16px 18px;
+    padding: 25px 20px 20px;
 
-    border-bottom: 1px solid #ddd9cc;
+    border-bottom: 1px solid var(--border);
 }
 
 .sidebar-brand h2 {
     margin: 0;
 
-    color: #232620;
+    font-family: Georgia, serif;
 
-    font-size: 20px;
-
-    font-weight: 800;
+    font-size: 21px;
 }
 
 .sidebar-brand p {
-    margin: 6px 0 0;
+    margin: 5px 0 0;
 
-    color: #8b8a7e;
+    color: var(--muted);
 
-    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
 
-    font-size: 9px;
-
-    letter-spacing: 1.7px;
-
+    letter-spacing: 1.5px;
     text-transform: uppercase;
 }
 
 .sidebar-nav {
     flex: 1;
 
-    padding: 13px 8px;
+    padding: 16px 10px;
 
     overflow-y: auto;
 }
@@ -278,36 +255,38 @@ a {
 
     width: 100%;
 
-    padding: 11px 13px;
+    padding: 12px 14px;
 
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 
-    border-radius: 9px;
+    border-radius: 10px;
 
     text-decoration: none;
 
-    color: #6b6a60;
+    color: #6f756d;
 
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 12px;
-
-    font-weight: 600;
-
-    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
 
     transition: 0.2s;
 }
 
 .sidebar-link:hover {
-    background: #f7f5ef;
-    color: #232620;
-    transform: translateX(2px);
+    background: var(--cream);
+    color: var(--text);
 }
 
 .sidebar-link.active {
-    background: #e3ead9;
-    color: #2c3a31;
+    background: var(--forest-light);
+    color: var(--forest);
+}
+
+.sidebar-icon {
+    width: 22px;
+
+    text-align: center;
+
+    font-size: 17px;
 }
 
 .sidebar-link.active::before {
@@ -316,63 +295,42 @@ a {
     position: absolute;
 
     left: 0;
-    top: 7px;
-    bottom: 7px;
+    top: 8px;
+    bottom: 8px;
 
     width: 3px;
 
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 5px 5px 0;
 
-    background: #3f4f43;
-}
-
-.sidebar-icon {
-    width: 22px;
-
-    text-align: center;
-
-    color: #a5a397;
-
-    font-size: 16px;
-
-    flex-shrink: 0;
-}
-
-.sidebar-link.active .sidebar-icon {
-    color: #3f4f43;
+    background: var(--forest);
 }
 
 .sidebar-bottom {
-    padding: 11px 8px;
+    padding: 12px 10px;
 
-    border-top: 1px solid #ddd9cc;
+    border-top: 1px solid var(--border);
 }
 
 
 /* =========================================================
-   MAIN CONTENT
+   MAIN
 ========================================================= */
 
 .main-content {
     margin-left: 235px;
+    margin-right: 340px;
 
-    margin-right: 300px;
-
-    padding-top: 58px;
+    padding-top: 70px;
 
     min-height: 100vh;
-
-    background: #f1efe8;
 }
 
 .content-inner {
-    width: 100%;
-
-    max-width: 1250px;
+    max-width: 1200px;
 
     margin: auto;
 
-    padding: 25px;
+    padding: 30px;
 }
 
 
@@ -381,208 +339,96 @@ a {
 ========================================================= */
 
 .welcome-card {
-    min-height: 250px;
-
-    padding: 32px;
-
-    border-radius: 18px;
-
-    border: 1px solid #ddd9cc;
-
-    background:
-        radial-gradient(
-            circle at 90% 15%,
-            rgba(63,79,67,0.08),
-            transparent 28%
-        ),
-        linear-gradient(
-            135deg,
-            #ffffff,
-            #f7f5ef
-        );
-
     position: relative;
 
     overflow: hidden;
+
+    padding: 42px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.98),
+            rgba(233,240,231,0.92)
+        );
+
+    border: 1px solid #d9e1d7;
+
+    box-shadow: var(--shadow);
+}
+
+.welcome-card::after {
+    content: "🌿";
+
+    position: absolute;
+
+    right: 45px;
+    bottom: 25px;
+
+    font-size: 90px;
+
+    opacity: 0.08;
 }
 
 .welcome-label {
-    color: #3f4f43;
+    color: var(--forest);
 
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 10px;
-
-    font-weight: 900;
+    font-size: 11px;
+    font-weight: 800;
 
     letter-spacing: 2px;
-
     text-transform: uppercase;
 }
 
 .welcome-card h1 {
-    margin: 16px 0 8px;
+    max-width: 650px;
 
-    color: #232620;
+    margin: 12px 0 12px;
 
-    font-size: clamp(38px, 4vw, 54px);
+    font-family: Georgia, serif;
 
-    line-height: 0.96;
+    font-size: clamp(30px, 4vw, 46px);
 
-    font-weight: 800;
+    line-height: 1.05;
 }
 
-.welcome-card h1 span {
-    display: block;
+.welcome-text {
+    max-width: 650px;
+
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.7;
 }
 
-.table-message {
-    margin-top: 15px;
 
-    color: #6b6a60;
+/* TABLE STATUS */
 
-    font-family: Arial, Helvetica, sans-serif;
+.table-status-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 22px;
+
+    padding: 11px 15px;
+
+    border-radius: 10px;
+
+    background: white;
+
+    border: 1px solid #d7e0d5;
 
     font-size: 13px;
 }
 
-.table-message strong {
-    color: #3f4f43;
-}
-
-.browse-button {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    margin-top: 23px;
-
-    padding: 12px 18px;
-
-    border-radius: 10px;
-
-    background: #3f4f43;
-
-    color: #f4f7f0;
-
-    text-decoration: none;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 12px;
-
-    font-weight: 900;
-}
-
-.browse-button:hover {
-    background: #52685a;
-}
-
-
-/* =========================================================
-   TABLE SECTION
-========================================================= */
-
-.table-section {
-    margin-top: 32px;
-
-    padding: 20px;
-
-    background: #ffffff;
-
-    border: 1px solid #ddd9cc;
-
-    border-radius: 15px;
-
-    scroll-margin-top: 75px;
-}
-
-.table-section-title {
-    color: #232620;
-
-    font-size: 20px;
-
-    font-weight: 800;
-}
-
-.table-section-subtitle {
-    margin-top: 4px;
-    margin-bottom: 16px;
-
-    color: #8b8a7e;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 10px;
-}
-
-.tables-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-
-    gap: 9px;
-}
-
-.table-form {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.table-button {
-    width: 100%;
-
-    border: 1px solid #ddd9cc;
-
-    background: #f7f5ef;
-
-    border-radius: 10px;
-
-    padding: 14px 8px;
-
-    cursor: pointer;
-
-    color: #4a4d45;
-
-    transition: 0.2s;
-}
-
-.table-button:hover {
-    border-color: #9db597;
-
-    background: #eef2ea;
-
-    transform: translateY(-2px);
-}
-
-.table-button.selected {
-    border-color: #3f4f43;
-
-    background: #e3ead9;
-}
-
-.table-icon {
-    font-size: 22px;
-    margin-bottom: 5px;
-}
-
-.table-name {
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.table-status {
-    margin-top: 4px;
-
-    color: #8b8a7e;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 8px;
+.table-status-card strong {
+    color: var(--forest);
 }
 
 
@@ -591,48 +437,84 @@ a {
 ========================================================= */
 
 .section-block {
-    margin-top: 32px;
+    margin-top: 35px;
 
-    scroll-margin-top: 75px;
+    scroll-margin-top: 90px;
 }
 
 .section-header {
     display: flex;
-
     align-items: center;
+    justify-content: space-between;
 
-    gap: 10px;
+    margin-bottom: 18px;
+}
 
-    margin-bottom: 15px;
+.section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .section-header h2 {
     margin: 0;
 
-    color: #232620;
+    font-family: Georgia, serif;
 
-    font-size: 23px;
-
-    font-weight: 800;
+    font-size: 27px;
 }
 
 .section-badge {
-    padding: 4px 8px;
-
-    border: 1px solid #cddbc8;
+    padding: 5px 11px;
 
     border-radius: 999px;
 
-    color: #3f4f43;
+    background: var(--forest-light);
 
-    font-family: Arial, Helvetica, sans-serif;
+    color: var(--forest);
 
-    font-size: 8px;
+    font-size: 10px;
+    font-weight: 800;
 
-    font-weight: 900;
+    letter-spacing: 0.5px;
 
     text-transform: uppercase;
 }
+
+
+/* CATEGORY */
+
+.category-block {
+    margin-bottom: 30px;
+}
+
+.category-title {
+    margin-bottom: 14px;
+
+    color: var(--forest);
+
+    font-family: Georgia, serif;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.category-title::after {
+    content: "";
+
+    display: block;
+
+    width: 45px;
+
+    height: 2px;
+
+    margin-top: 7px;
+
+    background: var(--sage);
+}
+
+
+/* MENU GRID */
 
 .menu-grid {
     display: grid;
@@ -640,48 +522,48 @@ a {
     grid-template-columns:
         repeat(3, minmax(0, 1fr));
 
-    gap: 14px;
+    gap: 18px;
 }
 
+
+/* FOOD CARD */
+
 .food-card {
-    background: #ffffff;
-
-    border: 1px solid #ddd9cc;
-
-    border-radius: 13px;
-
     overflow: hidden;
 
-    transition: 0.2s;
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+
+    transition: 0.25s;
 }
 
 .food-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
 
-    border-color: #9db597;
+    box-shadow: 0 15px 30px rgba(35, 48, 39, 0.10);
 
-    box-shadow:
-        0 14px 30px rgba(35,38,32,0.10);
+    border-color: #bdcdbb;
 }
 
 .food-image {
-    height: 145px;
-
-    position: relative;
-
-    overflow: hidden;
+    height: 155px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
+
+    overflow: hidden;
 
     background:
         linear-gradient(
             135deg,
-            #eef2ea,
-            #dde5d6
+            #eaf1e8,
+            #dce7da
         );
 }
 
@@ -690,256 +572,76 @@ a {
     height: 100%;
 
     object-fit: cover;
-
-    display: block;
 }
 
 .food-placeholder {
-    font-size: 50px;
-    opacity: 0.5;
-}
+    font-size: 48px;
 
-.popular-badge {
-    position: absolute;
-
-    left: 9px;
-    top: 9px;
-
-    padding: 5px 8px;
-
-    border-radius: 999px;
-
-    background: #3f4f43;
-
-    color: #f4f7f0;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 7px;
-
-    font-weight: 900;
+    opacity: 0.45;
 }
 
 .food-info {
-    padding: 13px;
+    padding: 16px;
 }
 
 .food-name {
-    color: #232620;
+    font-family: Georgia, serif;
 
-    font-size: 15px;
-
-    font-weight: 800;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .food-description {
-    margin-top: 6px;
+    min-height: 36px;
 
-    min-height: 42px;
+    margin-top: 7px;
 
-    color: #8b8a7e;
+    color: var(--muted);
 
-    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11.5px;
 
-    font-size: 10px;
-
-    line-height: 1.45;
+    line-height: 1.55;
 }
 
 .food-bottom {
     display: flex;
-
+    align-items: center;
     justify-content: space-between;
 
-    align-items: center;
+    gap: 10px;
 
-    gap: 8px;
-
-    margin-top: 11px;
+    margin-top: 16px;
 }
 
 .food-price {
-    color: #3f4f43;
+    color: var(--forest);
 
-    font-size: 14px;
-
+    font-size: 16px;
     font-weight: 800;
 }
 
 .add-button {
     border: none;
 
-    background: #3f4f43;
+    padding: 9px 14px;
 
-    color: #f4f7f0;
+    border-radius: 9px;
 
-    padding: 8px 12px;
+    background: var(--forest);
+    color: white;
 
-    border-radius: 8px;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 10px;
-
-    font-weight: 900;
+    font-size: 11px;
+    font-weight: 800;
 
     cursor: pointer;
+
+    transition: 0.2s;
 }
 
 .add-button:hover {
-    background: #52685a;
-}
+    background: var(--forest-dark);
 
-
-/* =========================================================
-   DASHBOARD SECTIONS
-========================================================= */
-
-.dashboard-section {
-    margin-top: 32px;
-
-    padding: 22px;
-
-    background: #ffffff;
-
-    border: 1px solid #ddd9cc;
-
-    border-radius: 15px;
-
-    scroll-margin-top: 75px;
-}
-
-.dashboard-section-header {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 15px;
-
-    margin-bottom: 17px;
-}
-
-.dashboard-section-header h2 {
-    margin: 0;
-
-    color: #232620;
-
-    font-size: 21px;
-
-    font-weight: 800;
-}
-
-.dashboard-section-header p {
-    margin: 5px 0 0;
-
-    color: #8b8a7e;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 10px;
-}
-
-.status-card,
-.profile-card {
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 19px;
-
-    background: #f7f5ef;
-
-    border: 1px solid #ddd9cc;
-
-    border-radius: 12px;
-}
-
-.status-icon,
-.profile-avatar {
-    width: 48px;
-    height: 48px;
-
-    flex-shrink: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 11px;
-
-    background: #e3ead9;
-
-    color: #3f4f43;
-
-    font-size: 22px;
-}
-
-.status-card h3,
-.profile-details h3 {
-    margin: 0;
-
-    color: #232620;
-
-    font-size: 15px;
-}
-
-.status-card p,
-.profile-details p {
-    margin: 5px 0 0;
-
-    color: #8b8a7e;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 9px;
-}
-
-.help-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 12px;
-}
-
-.help-card {
-    padding: 17px;
-
-    background: #f7f5ef;
-
-    border: 1px solid #ddd9cc;
-
-    border-radius: 12px;
-}
-
-.help-card span {
-    font-size: 22px;
-}
-
-.help-card h3 {
-    margin: 9px 0 0;
-
-    color: #232620;
-
-    font-size: 13px;
-}
-
-.help-card p {
-    margin: 5px 0 0;
-
-    color: #8b8a7e;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 9px;
-
-    line-height: 1.5;
+    transform: translateY(-1px);
 }
 
 
@@ -950,279 +652,367 @@ a {
 .order-panel {
     position: fixed;
 
-    top: 58px;
+    top: 70px;
     right: 0;
     bottom: 0;
 
-    width: 300px;
-
-    background: #ffffff;
-
-    border-left: 1px solid #ddd9cc;
-
-    z-index: 1400;
+    width: 340px;
 
     display: flex;
-
     flex-direction: column;
+
+    background: white;
+
+    border-left: 1px solid var(--border);
+
+    z-index: 1400;
 }
 
-.order-header {
-    padding: 18px;
 
-    border-bottom: 1px solid #ddd9cc;
+/* ORDER HEADER */
+
+.order-header {
+    padding: 22px 20px 18px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.order-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .order-header h2 {
     margin: 0;
 
-    color: #232620;
+    font-family: Georgia, serif;
 
-    font-size: 18px;
+    font-size: 21px;
+}
 
+.order-count {
+    min-width: 27px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--forest);
+
+    color: white;
+
+    font-size: 11px;
     font-weight: 800;
 }
 
-.order-header p {
-    margin: 4px 0 0;
+.order-table {
+    margin-top: 6px;
 
-    color: #8b8a7e;
+    color: var(--muted);
 
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 9px;
+    font-size: 11px;
 }
 
-.selected-table {
-    margin: 13px 16px;
-
-    padding: 11px;
-
-    border-radius: 9px;
-
-    background: #eef2ea;
-
-    color: #4a4d45;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 9px;
+.order-table strong {
+    color: var(--forest);
 }
 
-.selected-table strong {
-    color: #3f4f43;
-}
+
+/* ORDER ITEMS */
 
 .order-items {
     flex: 1;
 
     overflow-y: auto;
 
-    padding: 0 16px;
+    padding: 5px 20px;
 }
 
 .order-item {
-    display: flex;
+    display: grid;
 
-    align-items: center;
+    grid-template-columns: 42px 1fr auto;
 
-    gap: 9px;
+    gap: 11px;
 
-    padding: 11px 0;
+    padding: 15px 0;
 
-    border-bottom: 1px solid #ece9de;
+    border-bottom: 1px solid #eeece5;
 }
 
 .order-food-icon {
-    width: 38px;
-    height: 38px;
-
-    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    border-radius: 8px;
+    border-radius: 10px;
 
-    background: #f1efe8;
+    background: var(--cream);
 
-    font-size: 17px;
+    font-size: 18px;
 }
 
 .order-item-info {
-    flex: 1;
-
     min-width: 0;
 }
 
 .order-item-name {
-    color: #232620;
+    color: var(--text);
 
-    font-size: 11px;
-
+    font-size: 13px;
     font-weight: 800;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
 }
 
 .order-item-details {
-    margin-top: 3px;
+    margin-top: 5px;
 
-    color: #8b8a7e;
+    color: var(--muted);
 
-    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10.5px;
 
-    font-size: 8px;
+    line-height: 1.5;
 }
 
-.remove-button {
-    border: none;
-
-    background: transparent;
-
-    color: #a5a397;
-
-    cursor: pointer;
-
-    font-size: 8px;
-}
-
-.remove-button:hover {
-    color: #3f4f43;
+.order-item-details span {
+    display: block;
 }
 
 .order-item-total {
-    color: #3f4f43;
+    align-self: center;
 
-    font-size: 10px;
+    color: var(--forest);
 
+    font-size: 13px;
     font-weight: 800;
 }
 
+.remove-button {
+    margin-top: 5px;
+
+    padding: 0;
+
+    border: none;
+
+    background: none;
+
+    color: #9b8f80;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+}
+
+.remove-button:hover {
+    color: #b35d4d;
+}
+
+
+/* EMPTY */
+
 .empty-order {
+    padding: 70px 20px;
+
     text-align: center;
 
-    padding: 65px 15px;
-
-    color: #8b8a7e;
+    color: var(--muted);
 }
 
 .empty-order-icon {
-    font-size: 45px;
+    margin-bottom: 10px;
 
-    opacity: 0.35;
+    font-size: 42px;
 
-    margin-bottom: 13px;
+    opacity: 0.4;
 }
 
 .empty-order h3 {
     margin: 0;
 
-    color: #6b6a60;
+    font-family: Georgia, serif;
 
-    font-size: 13px;
+    font-size: 17px;
+
+    color: #60665f;
 }
 
 .empty-order p {
-    margin-top: 6px;
+    margin-top: 7px;
 
-    color: #a5a397;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 9px;
+    font-size: 11px;
 }
 
+
+/* =========================================================
+   BILL
+========================================================= */
+
 .order-footer {
-    border-top: 1px solid #ddd9cc;
+    padding: 18px 20px;
 
-    padding: 15px 16px;
+    background: #faf9f5;
 
-    background: #f7f5ef;
+    border-top: 1px solid var(--border);
 }
 
 .bill-row {
     display: flex;
-
     justify-content: space-between;
 
-    color: #8b8a7e;
+    margin-bottom: 10px;
 
-    font-family: Arial, Helvetica, sans-serif;
+    color: var(--muted);
 
-    font-size: 10px;
-
-    margin-bottom: 11px;
+    font-size: 12px;
 }
 
 .bill-total {
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
 
-    padding-top: 11px;
+    padding-top: 13px;
 
-    border-top: 1px solid #ddd9cc;
+    border-top: 1px solid var(--border);
 
-    color: #232620;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 11px;
-
+    font-size: 13px;
     font-weight: 800;
 }
 
 .total-price {
-    color: #3f4f43;
+    color: var(--forest);
 
-    font-size: 17px;
+    font-size: 21px;
 }
 
 .place-order {
     width: 100%;
 
+    margin-top: 14px;
+
+    padding: 13px;
+
     border: none;
 
-    border-radius: 9px;
+    border-radius: 10px;
 
-    padding: 11px;
-
-    margin-top: 12px;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 10px;
-
-    font-weight: 900;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .place-order.enabled {
-    background: #3f4f43;
-
-    color: #f4f7f0;
+    background: var(--forest);
+    color: white;
 
     cursor: pointer;
 }
 
 .place-order.enabled:hover {
-    background: #52685a;
+    background: var(--forest-dark);
 }
 
 .place-order.disabled {
-    background: #e2e0d6;
+    background: #e6e5df;
 
-    color: #a5a397;
+    color: #a5a59c;
 
     cursor: not-allowed;
+}
+
+.clear-cart-link {
+    width: 100%;
+
+    margin-top: 9px;
+
+    border: none;
+
+    background: none;
+
+    color: #9b9e96;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   HELP
+========================================================= */
+
+.dashboard-section {
+    margin-top: 35px;
+
+    padding: 25px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    scroll-margin-top: 90px;
+}
+
+.dashboard-section h2 {
+    margin: 0;
+
+    font-family: Georgia, serif;
+
+    font-size: 22px;
+}
+
+.dashboard-section p {
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.help-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 14px;
+
+    margin-top: 18px;
+}
+
+.help-card {
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: var(--cream);
+
+    border: 1px solid var(--border);
+}
+
+.help-card span {
+    font-size: 23px;
+}
+
+.help-card h3 {
+    margin: 9px 0 0;
+
+    font-size: 14px;
+}
+
+.help-card p {
+    margin-bottom: 0;
+
+    line-height: 1.5;
 }
 
 
@@ -1238,23 +1028,18 @@ a {
 
     .main-content {
         margin-left: 210px;
-        margin-right: 270px;
+        margin-right: 310px;
     }
 
     .order-panel {
-        width: 270px;
+        width: 310px;
     }
 
     .menu-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
-    .tables-grid {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, 1fr);
     }
 }
+
 
 @media (max-width: 850px) {
 
@@ -1279,6 +1064,10 @@ a {
         margin-right: 0;
     }
 
+    .content-inner {
+        padding: 20px;
+    }
+
     .order-panel {
         position: relative;
 
@@ -1288,60 +1077,54 @@ a {
 
         width: 100%;
 
-        min-height: 500px;
+        min-height: 450px;
 
         border-left: none;
 
-        border-top: 1px solid #ddd9cc;
+        border-top: 1px solid var(--border);
     }
 
     .help-grid {
         grid-template-columns: 1fr;
     }
-
-    .content-inner {
-        padding: 20px;
-    }
 }
+
 
 @media (max-width: 600px) {
 
-    .brand-name {
-        font-size: 15px;
+    .top-brand {
+        left: 55%;
     }
 
-    .brand-subtitle,
+    .brand-name {
+        font-size: 16px;
+    }
+
+    .brand-subtitle {
+        display: none;
+    }
+
     .top-table {
         display: none;
     }
 
     .content-inner {
-        padding: 14px;
+        padding: 15px;
     }
 
     .welcome-card {
-        padding: 24px;
+        padding: 27px 22px;
     }
 
     .menu-grid {
         grid-template-columns: 1fr;
-    }
-
-    .tables-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
     }
 }
 
 </style>
 
 
-<!-- =========================================================
-     APPLICATION
-========================================================= -->
-
 <div class="restaurant-app">
-
 
     <!-- =====================================================
          TOP BAR
@@ -1350,10 +1133,9 @@ a {
     <header class="top-bar">
 
         <button
-            class="mobile-menu-button"
             id="mobileMenuButton"
-            type="button"
-        >
+            class="mobile-menu-button"
+            type="button">
             ☰
         </button>
 
@@ -1365,7 +1147,6 @@ a {
             </div>
 
             <div>
-
                 <div class="brand-name">
                     Himalayan Bites
                 </div>
@@ -1373,12 +1154,12 @@ a {
                 <div class="brand-subtitle">
                     Taste of the Himalayas
                 </div>
-
             </div>
 
         </div>
 
 
+        <!-- AUTOMATIC TABLE -->
         <div class="top-table">
 
             <span class="top-table-label">
@@ -1390,7 +1171,7 @@ a {
                 {% if selected_table %}
                     {{ selected_table.name }}
                 {% else %}
-                    --
+                    Table 1
                 {% endif %}
 
             </span>
@@ -1404,10 +1185,7 @@ a {
          SIDEBAR
     ====================================================== -->
 
-    <aside
-        id="sidebar"
-        class="sidebar"
-    >
+    <aside id="sidebar" class="sidebar">
 
         <div class="sidebar-brand">
 
@@ -1424,12 +1202,10 @@ a {
 
         <nav class="sidebar-nav">
 
-
             <a
                 href="#home"
                 class="sidebar-link active"
-                data-section="home"
-            >
+                data-section="home">
 
                 <span class="sidebar-icon">
                     ⌂
@@ -1445,8 +1221,7 @@ a {
             <a
                 href="#menu"
                 class="sidebar-link"
-                data-section="menu"
-            >
+                data-section="menu">
 
                 <span class="sidebar-icon">
                     ☰
@@ -1460,27 +1235,9 @@ a {
 
 
             <a
-                href="#categories"
-                class="sidebar-link"
-                data-section="categories"
-            >
-
-                <span class="sidebar-icon">
-                    ▦
-                </span>
-
-                <span>
-                    Categories
-                </span>
-
-            </a>
-
-
-            <a
                 href="#cart"
                 class="sidebar-link"
-                data-section="cart"
-            >
+                data-section="cart">
 
                 <span class="sidebar-icon">
                     🛒
@@ -1494,27 +1251,8 @@ a {
 
 
             <a
-                href="#order-status"
-                class="sidebar-link"
-                data-section="order-status"
-            >
-
-                <span class="sidebar-icon">
-                    ◷
-                </span>
-
-                <span>
-                    Order Status
-                </span>
-
-            </a>
-
-
-            <a
-                href="#order-history"
-                class="sidebar-link"
-                data-section="order-history"
-            >
+                href="{{ url_for('customer.orders') }}"
+                class="sidebar-link">
 
                 <span class="sidebar-icon">
                     ◴
@@ -1528,27 +1266,9 @@ a {
 
 
             <a
-                href="#profile"
-                class="sidebar-link"
-                data-section="profile"
-            >
-
-                <span class="sidebar-icon">
-                    ♙
-                </span>
-
-                <span>
-                    Profile
-                </span>
-
-            </a>
-
-
-            <a
                 href="#help"
                 class="sidebar-link"
-                data-section="help"
-            >
+                data-section="help">
 
                 <span class="sidebar-icon">
                     ?
@@ -1567,8 +1287,7 @@ a {
 
             <a
                 href="{{ url_for('auth.logout') }}"
-                class="sidebar-link"
-            >
+                class="sidebar-link">
 
                 <span class="sidebar-icon">
                     ↪
@@ -1586,7 +1305,7 @@ a {
 
 
     <!-- =====================================================
-         MAIN
+         MAIN CONTENT
     ====================================================== -->
 
     <main class="main-content">
@@ -1594,148 +1313,46 @@ a {
         <div class="content-inner">
 
 
-            <!-- =================================================
-                 HOME
-            ================================================== -->
+            <!-- HOME -->
 
             <section
                 id="home"
-                class="welcome-card"
-            >
+                class="welcome-card">
 
                 <div class="welcome-label">
-                    Welcome Back
+                    Welcome
                 </div>
 
+
                 <h1>
-
-                    Welcome to
-
-                    <span>
-                        Himalayan Bites
-                    </span>
-
+                    Welcome to Himalayan Bites
                 </h1>
 
 
-                <div class="table-message">
+                <p class="welcome-text">
+                    Enjoy freshly prepared Himalayan flavours
+                    from the comfort of your table.
+                    Browse the menu, choose your favourite dishes,
+                    and place your order directly from here.
+                </p>
+
+
+                <!-- AUTOMATIC TABLE INFORMATION -->
+
+                <div class="table-status-card">
 
                     🪑
 
-                    You're dining at
-
-                    {% if selected_table %}
-
-                        <strong>
-                            {{ selected_table.name }}
-                        </strong>
-
-                    {% else %}
-
-                        <strong>
-                            Select a Table
-                        </strong>
-
-                    {% endif %}
-
-                </div>
-
-
-                <a
-                    href="#menu"
-                    class="browse-button"
-                >
-
-                    Browse Full Menu
-
                     <span>
-                        ›
+                        You're ordering from
+                        <strong>
+                            {% if selected_table %}
+                                {{ selected_table.name }}
+                            {% else %}
+                                Table 1
+                            {% endif %}
+                        </strong>
                     </span>
-
-                </a>
-
-            </section>
-
-
-            <!-- =================================================
-                 TABLES
-            ================================================== -->
-
-            <section
-                id="tables"
-                class="table-section"
-            >
-
-                <div class="table-section-title">
-                    Choose Your Table
-                </div>
-
-                <div class="table-section-subtitle">
-                    Select where you would like to enjoy your meal.
-                </div>
-
-
-                <div class="tables-grid">
-
-                    {% for table in tables %}
-
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'customer.select_table',
-                                table_id=table.id
-                            ) }}"
-                            class="table-form"
-                        >
-
-                            <button
-                                type="submit"
-                                class="table-button
-                                {% if selected_table and selected_table.id == table.id %}
-                                    selected
-                                {% endif %}"
-                            >
-
-                                <div class="table-icon">
-                                    🪑
-                                </div>
-
-                                <div class="table-name">
-                                    {{ table.name }}
-                                </div>
-
-                                <div class="table-status">
-
-                                    {% if selected_table and selected_table.id == table.id %}
-
-                                        Selected
-
-                                    {% else %}
-
-                                        Available
-
-                                    {% endif %}
-
-                                </div>
-
-                            </button>
-
-                        </form>
-
-                    {% else %}
-
-                        <div
-                            style="
-                                grid-column:1/-1;
-                                text-align:center;
-                                padding:25px;
-                                color:#8b8a7e;
-                            "
-                        >
-                            No tables available.
-                        </div>
-
-                    {% endfor %}
 
                 </div>
 
@@ -1748,358 +1365,151 @@ a {
 
             <section
                 id="menu"
-                class="section-block"
-            >
+                class="section-block">
 
                 <div class="section-header">
 
-                    <h2>
-                        Popular Dishes
-                    </h2>
+                    <div class="section-header-left">
 
-                    <span class="section-badge">
-                        Crowd Favourites
-                    </span>
+                        <h2>
+                            Our Menu
+                        </h2>
+
+                        <span class="section-badge">
+                            Freshly Prepared
+                        </span>
+
+                    </div>
 
                 </div>
 
 
-                <div class="menu-grid">
+                {% set ns = namespace(current_category=None) %}
 
-                    {% for item in menu_items %}
 
-                        <article class="food-card">
+                {% for item in menu_items %}
 
-                            <div class="food-image">
 
-                                {% if item.image %}
+                    {% if item.category != ns.current_category %}
 
-                                    <img
-                                        src="{{ item.image }}"
-                                        alt="{{ item.name }}"
-                                    >
+                        {% if not loop.first %}
+                            </div>
+                            </div>
+                        {% endif %}
+
+
+                        <div class="category-block">
+
+                            <div class="category-title">
+                                {{ item.category or "Other" }}
+                            </div>
+
+                            <div class="menu-grid">
+
+                        {% set ns.current_category = item.category %}
+
+                    {% endif %}
+
+
+                    <!-- FOOD CARD -->
+
+                    <article class="food-card">
+
+                        <div class="food-image">
+
+                            {% if item.image %}
+
+                                <img
+                                    src="{{ item.image }}"
+                                    alt="{{ item.name }}">
+
+                            {% else %}
+
+                                <div class="food-placeholder">
+                                    🍽️
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="food-info">
+
+                            <div class="food-name">
+                                {{ item.name }}
+                            </div>
+
+
+                            <div class="food-description">
+
+                                {% if item.description %}
+
+                                    {{ item.description }}
 
                                 {% else %}
 
-                                    <div class="food-placeholder">
-                                        🍽️
-                                    </div>
+                                    Prepared fresh with
+                                    authentic Himalayan flavours.
 
                                 {% endif %}
 
-                                <span class="popular-badge">
-                                    POPULAR
-                                </span>
-
                             </div>
 
 
-                            <div class="food-info">
+                            <div class="food-bottom">
 
-                                <div class="food-name">
-                                    {{ item.name }}
-                                </div>
+                                <div class="food-price">
 
-
-                                <div class="food-description">
-
-                                    {% if item.description %}
-
-                                        {{ item.description }}
-
-                                    {% else %}
-
-                                        Delicious food prepared
-                                        with fresh ingredients
-                                        and authentic flavours.
-
-                                    {% endif %}
+                                    Rs.
+                                    {{ item.price }}
 
                                 </div>
 
 
-                                <div class="food-bottom">
-
-                                    <div class="food-price">
-                                        Rs. {{ item.price }}
-                                    </div>
-
-
-                                    <form
-                                        action="{{ url_for(
-                                            'auth.add_to_cart',
-                                            item_id=item.id
-                                        ) }}"
-                                        method="POST"
-                                    >
-
-                                        <button
-                                            type="submit"
-                                            class="add-button"
-                                        >
-                                            + Add
-                                        </button>
-
-                                    </form>
-
-                                </div>
+                                <form action="{{ url_for('customer.place_order') }}" method="POST">
+    
+                                        <!-- Your cart items, totals, etc. stay inside or above this form -->
+    
+                                    <button type="submit" class="btn btn-success">
+                                        Place Order
+                                    </button>
+                                </form> 
 
                             </div>
 
-                        </article>
+                        </div>
 
-                    {% else %}
+                    </article>
 
-                        <div
-                            style="
-                                grid-column:1/-1;
-                                text-align:center;
-                                padding:50px;
-                                color:#8b8a7e;
-                            "
-                        >
 
-                            <div style="font-size:45px;">
-                                🍽️
+                    {% if loop.last %}
+
                             </div>
-
-                            <h3>
-                                No dishes available
-                            </h3>
-
-                            <p>
-                                The menu is currently empty.
-                            </p>
-
                         </div>
 
-                    {% endfor %}
-
-                </div>
-
-            </section>
+                    {% endif %}
 
 
-            <!-- =================================================
-                 CATEGORIES
-            ================================================== -->
+                {% else %}
 
-            <section
-                id="categories"
-                class="dashboard-section"
-            >
+                    <div class="empty-order">
 
-                <div class="dashboard-section-header">
-
-                    <div>
-
-                        <h2>
-                            Categories
-                        </h2>
-
-                        <p>
-                            Browse available food categories.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="help-grid">
-
-                    {% for category in categories %}
-
-                        <div class="help-card">
-
-                            <span>
-                                🍽️
-                            </span>
-
-                            <h3>
-                                {{ category.name }}
-                            </h3>
-
-                            <p>
-                                Explore dishes from
-                                {{ category.name }}.
-                            </p>
-
+                        <div class="empty-order-icon">
+                            🍽️
                         </div>
-
-                    {% else %}
-
-                        <div class="help-card">
-
-                            <span>
-                                🍽️
-                            </span>
-
-                            <h3>
-                                No Categories
-                            </h3>
-
-                            <p>
-                                No food categories are currently available.
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 ORDER STATUS
-            ================================================== -->
-
-            <section
-                id="order-status"
-                class="dashboard-section"
-            >
-
-                <div class="dashboard-section-header">
-
-                    <div>
-
-                        <h2>
-                            Order Status
-                        </h2>
-
-                        <p>
-                            Track your current restaurant order.
-                        </p>
-
-                    </div>
-
-                    <span class="section-badge">
-                        LIVE
-                    </span>
-
-                </div>
-
-
-                <div class="status-card">
-
-                    <div class="status-icon">
-                        ◷
-                    </div>
-
-                    <div>
 
                         <h3>
-                            No active order
+                            No dishes available
                         </h3>
 
                         <p>
-                            Your order status will appear here
-                            after you place an order.
+                            Please check again later.
                         </p>
 
                     </div>
 
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 ORDER HISTORY
-            ================================================== -->
-
-            <section
-                id="order-history"
-                class="dashboard-section"
-            >
-
-                <div class="dashboard-section-header">
-
-                    <div>
-
-                        <h2>
-                            Order History
-                        </h2>
-
-                        <p>
-                            View your previous restaurant orders.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="status-card">
-
-                    <div class="status-icon">
-                        ◴
-                    </div>
-
-                    <div>
-
-                        <h3>
-                            No previous orders
-                        </h3>
-
-                        <p>
-                            Your completed orders will appear here.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 PROFILE
-            ================================================== -->
-
-            <section
-                id="profile"
-                class="dashboard-section"
-            >
-
-                <div class="dashboard-section-header">
-
-                    <div>
-
-                        <h2>
-                            Your Profile
-                        </h2>
-
-                        <p>
-                            Manage your customer information.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="profile-card">
-
-                    <div class="profile-avatar">
-                        👤
-                    </div>
-
-                    <div class="profile-details">
-
-                        <h3>
-                            Customer
-                        </h3>
-
-                        <p>
-                            Welcome to Himalayan Bites.
-                        </p>
-
-                    </div>
-
-                </div>
+                {% endfor %}
 
             </section>
 
@@ -2110,41 +1520,31 @@ a {
 
             <section
                 id="help"
-                class="dashboard-section"
-            >
+                class="dashboard-section">
 
-                <div class="dashboard-section-header">
+                <h2>
+                    Help & Support
+                </h2>
 
-                    <div>
-
-                        <h2>
-                            Help & Support
-                        </h2>
-
-                        <p>
-                            Need help with your order?
-                        </p>
-
-                    </div>
-
-                </div>
+                <p>
+                    Everything you need to know about ordering.
+                </p>
 
 
                 <div class="help-grid">
 
                     <div class="help-card">
 
-                        <span>
-                            🍽️
-                        </span>
+                        <span>📷</span>
 
                         <h3>
-                            Ordering Help
+                            Scan & Order
                         </h3>
 
                         <p>
-                            Select a table and add dishes
-                            from the menu.
+                            Scan the QR code on your table.
+                            Your table is automatically connected
+                            to your order.
                         </p>
 
                     </div>
@@ -2152,17 +1552,15 @@ a {
 
                     <div class="help-card">
 
-                        <span>
-                            🪑
-                        </span>
+                        <span>🍽️</span>
 
                         <h3>
-                            Table Help
+                            Add Food
                         </h3>
 
                         <p>
-                            Choose your available table
-                            before placing an order.
+                            Select any dish from the menu.
+                            It will appear in your current order.
                         </p>
 
                     </div>
@@ -2170,17 +1568,15 @@ a {
 
                     <div class="help-card">
 
-                        <span>
-                            💬
-                        </span>
+                        <span>🧾</span>
 
                         <h3>
-                            Contact Restaurant
+                            Place Order
                         </h3>
 
                         <p>
-                            Ask restaurant staff if you
-                            need further assistance.
+                            Review your items and total amount,
+                            then place your order.
                         </p>
 
                     </div>
@@ -2188,6 +1584,7 @@ a {
                 </div>
 
             </section>
+
 
         </div>
 
@@ -2200,61 +1597,72 @@ a {
 
     <aside
         id="cart"
-        class="order-panel"
-    >
+        class="order-panel">
+
+
+        <!-- ORDER HEADER -->
 
         <div class="order-header">
 
-            <h2>
-                Current Order
-            </h2>
+            <div class="order-header-top">
 
-            {% if selected_table %}
-
-                <p>
-                    {{ selected_table.name }}
-                </p>
-
-            {% else %}
-
-                <p>
-                    No table selected
-                </p>
-
-            {% endif %}
-
-        </div>
+                <h2>
+                    Your Order
+                </h2>
 
 
-        {% if selected_table %}
+                <div class="order-count">
 
-            <div class="selected-table">
+                    {{ cart|length }}
 
-                🪑 Table:
+                </div>
+
+            </div>
+
+
+            <div class="order-table">
+
+                Table:
 
                 <strong>
-                    {{ selected_table.name }}
+
+                    {% if selected_table %}
+                        {{ selected_table.name }}
+                    {% else %}
+                        Table 1
+                    {% endif %}
+
                 </strong>
 
             </div>
 
-        {% else %}
+        </div>
 
-            <div class="selected-table">
 
-                ⚠️ Please select a table before
-                placing your order.
-
-            </div>
-
-        {% endif %}
-
+        <!-- =================================================
+             ORDER ITEMS
+        ================================================== -->
 
         <div class="order-items">
 
-            {% for item in cart_items %}
+
+            {# Calculate total directly from cart #}
+
+            {% set ns = namespace(total=0, quantity=0) %}
+
+
+            {% for item in cart.values() %}
+
+                {% set unit_price = item.price|float %}
+                {% set item_quantity = item.quantity|int %}
+                {% set item_total = unit_price * item_quantity %}
+
+                {% set ns.total = ns.total + item_total %}
+                {% set ns.quantity = ns.quantity + item_quantity %}
+
 
                 <div class="order-item">
+
 
                     <div class="order-food-icon">
                         🍽️
@@ -2263,35 +1671,44 @@ a {
 
                     <div class="order-item-info">
 
+                        <!-- FOOD NAME -->
+
                         <div class="order-item-name">
                             {{ item.name }}
                         </div>
 
 
+                        <!-- SINGLE PRICE + QUANTITY -->
+
                         <div class="order-item-details">
 
-                            Rs. {{ item.price }}
+                            <span>
+                                Unit price:
+                                <strong>
+                                    Rs. {{ "%.2f"|format(unit_price) }}
+                                </strong>
+                            </span>
 
-                            ×
-
-                            {{ item.quantity }}
+                            <span>
+                                Quantity:
+                                <strong>
+                                    {{ item_quantity }}
+                                </strong>
+                            </span>
 
                         </div>
 
 
                         <form
-                            action="{{ url_for(
-                                'auth.remove_from_cart',
-                                item_id=item.id
-                            ) }}"
-                            method="POST"
-                        >
+                            action="{{ url_for('customer.remove_from_cart', item_id=item.id) }}"
+                            method="POST">
 
                             <button
                                 type="submit"
-                                class="remove-button"
-                            >
+                                class="remove-button">
+
                                 Remove
+
                             </button>
 
                         </form>
@@ -2299,17 +1716,20 @@ a {
                     </div>
 
 
+                    <!-- ITEM TOTAL -->
+
                     <div class="order-item-total">
 
                         Rs.
-
-                        {{ item.price * item.quantity }}
+                        {{ "%.2f"|format(item_total) }}
 
                     </div>
 
                 </div>
 
+
             {% else %}
+
 
                 <div class="empty-order">
 
@@ -2327,12 +1747,31 @@ a {
 
                 </div>
 
+
             {% endfor %}
 
         </div>
 
 
+        <!-- =================================================
+             BILL
+        ================================================== -->
+
         <div class="order-footer">
+
+
+            <div class="bill-row">
+
+                <span>
+                    Items
+                </span>
+
+                <span>
+                    {{ ns.quantity }}
+                </span>
+
+            </div>
+
 
             <div class="bill-row">
 
@@ -2341,7 +1780,7 @@ a {
                 </span>
 
                 <span>
-                    Rs. {{ cart_total }}
+                    Rs. {{ "%.2f"|format(ns.total) }}
                 </span>
 
             </div>
@@ -2354,24 +1793,31 @@ a {
                 </span>
 
                 <span class="total-price">
-                    Rs. {{ cart_total }}
+
+                    Rs.
+                    {{ "%.2f"|format(ns.total) }}
+
                 </span>
 
             </div>
 
 
-            <form
-                action="{{ url_for('auth.place_order') }}"
-                method="POST"
-            >
+            <!-- PLACE ORDER -->
 
-                {% if selected_table and cart_items %}
+            <form
+                action="{{ url_for('customer.place_order') }}"
+                method="POST">
+
+
+                {% if selected_table and cart %}
 
                     <button
                         type="submit"
-                        class="place-order enabled"
-                    >
-                        Place Order ➤
+                        class="place-order enabled">
+
+                        Place Order
+                        ➤
+
                     </button>
 
                 {% else %}
@@ -2379,13 +1825,16 @@ a {
                     <button
                         type="button"
                         class="place-order disabled"
-                        disabled
-                    >
+                        disabled>
 
                         {% if not selected_table %}
-                            Select Table First
+
+                            Table Not Detected
+
                         {% else %}
+
                             Cart is Empty
+
                         {% endif %}
 
                     </button>
@@ -2393,6 +1842,27 @@ a {
                 {% endif %}
 
             </form>
+
+
+            <!-- CLEAR -->
+
+            {% if cart %}
+
+                <form
+                    action="{{ url_for('customer.clear_cart') }}"
+                    method="POST">
+
+                    <button
+                        type="submit"
+                        class="clear-cart-link">
+
+                        Clear cart
+
+                    </button>
+
+                </form>
+
+            {% endif %}
 
         </div>
 
@@ -2414,27 +1884,18 @@ const sidebar =
     document.getElementById("sidebar");
 
 
-/* =========================================================
-   MOBILE MENU
-========================================================= */
-
 if (mobileMenuButton) {
 
-    mobileMenuButton.addEventListener(
-        "click",
-        function () {
+    mobileMenuButton.addEventListener("click", function () {
 
-            sidebar.classList.toggle("open");
+        sidebar.classList.toggle("open");
 
-        }
-    );
+    });
 
 }
 
 
-/* =========================================================
-   SIDEBAR LINKS
-========================================================= */
+/* SIDEBAR NAVIGATION */
 
 const sidebarLinks =
     document.querySelectorAll(
@@ -2444,242 +1905,133 @@ const sidebarLinks =
 
 sidebarLinks.forEach(function(link) {
 
-    link.addEventListener(
-        "click",
-        function(event) {
+    link.addEventListener("click", function(event) {
 
-            const sectionId =
-                this.getAttribute("data-section");
+        const sectionId =
+            this.getAttribute("data-section");
 
-
-            /* Current Order */
-
-            if (sectionId === "cart") {
-
-                event.preventDefault();
-
-                const orderPanel =
-                    document.getElementById("cart");
-
-                orderPanel.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-                sidebarLinks.forEach(function(item) {
-
-                    item.classList.remove("active");
-
-                });
-
-                this.classList.add("active");
-
-                sidebar.classList.remove("open");
-
-                return;
-            }
+        const target =
+            document.getElementById(sectionId);
 
 
-            const target =
-                document.getElementById(sectionId);
-
-
-            if (!target) {
-                return;
-            }
-
-
-            event.preventDefault();
-
-
-            target.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-
-            sidebarLinks.forEach(function(item) {
-
-                item.classList.remove("active");
-
-            });
-
-
-            this.classList.add("active");
-
-
-            sidebar.classList.remove("open");
-
+        if (!target) {
+            return;
         }
-    );
+
+
+        event.preventDefault();
+
+
+        target.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+        sidebarLinks.forEach(function(item) {
+
+            item.classList.remove("active");
+
+        });
+
+
+        this.classList.add("active");
+
+
+        sidebar.classList.remove("open");
+
+    });
 
 });
 
 
-/* =========================================================
-   BROWSE MENU
-========================================================= */
+/* CLOSE MOBILE SIDEBAR */
 
-const browseButton =
-    document.querySelector(".browse-button");
+document.addEventListener("click", function(event) {
 
+    if (
+        window.innerWidth <= 850 &&
+        sidebar.classList.contains("open")
+    ) {
 
-if (browseButton) {
+        const insideSidebar =
+            sidebar.contains(event.target);
 
-    browseButton.addEventListener(
-        "click",
-        function(event) {
-
-            const menu =
-                document.getElementById("menu");
-
-
-            if (!menu) {
-                return;
-            }
+        const menuButton =
+            mobileMenuButton &&
+            mobileMenuButton.contains(event.target);
 
 
-            event.preventDefault();
+        if (!insideSidebar && !menuButton) {
 
-
-            menu.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-
-            sidebarLinks.forEach(function(item) {
-
-                item.classList.remove("active");
-
-            });
-
-
-            const menuLink =
-                document.querySelector(
-                    '[data-section="menu"]'
-                );
-
-
-            if (menuLink) {
-
-                menuLink.classList.add("active");
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CLOSE MOBILE SIDEBAR
-========================================================= */
-
-document.addEventListener(
-    "click",
-    function(event) {
-
-        if (
-            window.innerWidth <= 850 &&
-            sidebar.classList.contains("open")
-        ) {
-
-            const clickedInsideSidebar =
-                sidebar.contains(event.target);
-
-            const clickedMenuButton =
-                mobileMenuButton &&
-                mobileMenuButton.contains(event.target);
-
-
-            if (
-                !clickedInsideSidebar &&
-                !clickedMenuButton
-            ) {
-
-                sidebar.classList.remove("open");
-
-            }
+            sidebar.classList.remove("open");
 
         }
 
     }
-);
+
+});
 
 
-/* =========================================================
-   ACTIVE SECTION
-========================================================= */
+/* ACTIVE SECTION */
 
 const sections = [
     "home",
     "menu",
-    "categories",
-    "order-status",
-    "order-history",
-    "profile",
+    "cart",
     "help"
 ];
 
 
-window.addEventListener(
-    "scroll",
-    function() {
+window.addEventListener("scroll", function() {
 
-        const scrollPosition =
-            window.scrollY + 150;
+    const scrollPosition =
+        window.scrollY + 150;
 
-
-        let currentSection = "home";
+    let currentSection = "home";
 
 
-        sections.forEach(function(id) {
+    sections.forEach(function(id) {
 
-            const section =
-                document.getElementById(id);
-
-
-            if (!section) {
-                return;
-            }
+        const section =
+            document.getElementById(id);
 
 
-            if (
-                section.offsetTop <=
-                scrollPosition
-            ) {
-
-                currentSection = id;
-
-            }
-
-        });
+        if (!section) {
+            return;
+        }
 
 
-        sidebarLinks.forEach(function(link) {
+        if (
+            section.offsetTop <= scrollPosition
+        ) {
 
-            const id =
-                link.getAttribute(
-                    "data-section"
-                );
+            currentSection = id;
+
+        }
+
+    });
 
 
-            if (id === currentSection) {
+    sidebarLinks.forEach(function(link) {
 
-                link.classList.add("active");
+        const id =
+            link.getAttribute("data-section");
 
-            } else {
 
-                link.classList.remove("active");
+        if (id === currentSection) {
 
-            }
+            link.classList.add("active");
 
-        });
+        } else {
 
-    }
-);
+            link.classList.remove("active");
+
+        }
+
+    });
+
+});
 
 </script>
 

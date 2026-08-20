@@ -6,7 +6,12 @@ from app.controllers.customer import CustomerController
 class CustomerRoutes:
 
     def __init__(self):
-        self.bp = Blueprint("customer", __name__)
+
+        self.bp = Blueprint(
+            "customer",
+            __name__
+        )
+
         self.controller = CustomerController()
 
     def register(self):
@@ -14,17 +19,31 @@ class CustomerRoutes:
         # =====================================================
         # CUSTOMER DASHBOARD
         # =====================================================
-        # IMPORTANT:
-        # NO login_required
-        #
-        # Customer enters through QR code.
-        # =====================================================
 
         self.bp.route(
             "/dashboard",
             methods=["GET"]
         )(
             self.controller.dashboard
+        )
+
+        # =====================================================
+        # QR CODE ENTRY
+        #
+        # NO LOGIN REQUIRED
+        #
+        # Example:
+        #
+        # /customer/qr/1
+        # /customer/qr/2
+        # /customer/qr/5
+        # =====================================================
+
+        self.bp.route(
+            "/qr/<int:table_id>",
+            methods=["GET"]
+        )(
+            self.controller.scan_qr
         )
 
         # =====================================================
@@ -50,7 +69,7 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # CART
+        # VIEW CART
         # =====================================================
 
         self.bp.route(
@@ -105,25 +124,6 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # QR TABLE ENTRY
-        #
-        # NO LOGIN REQUIRED
-        #
-        # Example:
-        #
-        # Table 1 -> /customer/qr/1
-        # Table 2 -> /customer/qr/2
-        # Table 5 -> /customer/qr/5
-        # =====================================================
-
-        self.bp.route(
-            "/qr/<int:table_id>",
-            methods=["GET"]
-        )(
-            self.controller.scan_qr
-        )
-
-        # =====================================================
         # ORDER HISTORY
         # =====================================================
 
@@ -143,6 +143,17 @@ class CustomerRoutes:
             methods=["GET"]
         )(
             self.controller.view_order
+        )
+
+        # =====================================================
+        # MOBILE
+        # =====================================================
+
+        self.bp.route(
+            "/mobile",
+            methods=["GET"]
+        )(
+            self.controller.mobile
         )
 
         return self.bp

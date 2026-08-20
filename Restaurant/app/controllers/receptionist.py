@@ -1,10 +1,10 @@
 """
 =============================================================
-  Receptionist Controller
+  Restaurant Receptionist Controller
 =============================================================
-  This controller handles all receptionist-related operations.
 
   Main responsibilities:
+
     - Display receptionist dashboard
     - Display incoming orders
     - View order details
@@ -12,14 +12,10 @@
     - Mark orders as preparing
     - Mark orders as ready
     - Mark orders as served
-    - Provide simple order notifications
+    - Cancel orders
+    - Clear restaurant tables
+    - Provide order notifications
 
-  OOP Concepts:
-    - Inheritance: ReceptionistController inherits BaseController
-    - Encapsulation: Database operations are handled through
-      the Database class.
-    - Separation of Responsibility: Controller handles the
-      application logic while models handle database operations.
 =============================================================
 """
 
@@ -31,413 +27,846 @@ from app.modules.database import Database
 
 class ReceptionistController(BaseController):
     """
-    Controller for the Receptionist Dashboard.
+    Controller for Receptionist operations.
     """
 
     # =========================================================
-    # Receptionist Dashboard
+    # RECEPTIONIST DASHBOARD
     # =========================================================
 
     def dashboard(self):
         """
-        Display the receptionist dashboard.
+        Display receptionist dashboard.
 
-        The dashboard shows:
-            - Total incoming orders
+        Shows:
+            - Pending orders
             - Preparing orders
             - Ready orders
             - Served orders
             - Recent orders
+            - Table information
         """
 
         db = Database()
 
-        # Get all orders with table information
-        orders = db.fetch_all("""
-            SELECT
-                o.id,
-                o.table_id,
-                t.name AS table_name,
-                o.status,
-                o.created_at
-            FROM orders o
-            LEFT JOIN restaurant_tables t
-                ON o.table_id = t.id
-            ORDER BY o.id DESC
-        """)
+        try:
 
-        # Count orders by status
-        incoming_count = db.fetch_one("""
-            SELECT COUNT(*) AS total
-            FROM orders
-            WHERE status = 'pending'
-        """)
+            # -------------------------------------------------
+            # Get all orders
+            # -------------------------------------------------
 
-        preparing_count = db.fetch_one("""
-            SELECT COUNT(*) AS total
-            FROM orders
-            WHERE status = 'preparing'
-        """)
+            orders = db.fetch_all("""
+                SELECT
+                    o.id,
+                    o.table_id,
+                    t.name AS table_name,
+                    o.status,
+                    o.created_at
+                FROM orders o
 
-        ready_count = db.fetch_one("""
-            SELECT COUNT(*) AS total
-            FROM orders
-            WHERE status = 'ready'
-        """)
+                LEFT JOIN restaurant_tables t
+                    ON o.table_id = t.id
 
-        served_count = db.fetch_one("""
-            SELECT COUNT(*) AS total
-            FROM orders
-            WHERE status = 'served'
-        """)
+                ORDER BY o.id DESC
+            """)
 
-        db.close()
+            # -------------------------------------------------
+            # Pending orders
+            # -------------------------------------------------
 
-        return render_template(
-            "receptionist/dashboard.html",
-            orders=orders,
-            incoming_count=incoming_count["total"],
-            preparing_count=preparing_count["total"],
-            ready_count=ready_count["total"],
-            served_count=served_count["total"]
-        )
+            incoming_count = db.fetch_one("""
+                SELECT COUNT(*) AS total
+                FROM orders
+                WHERE status = 'pending'
+            """)
+
+            # -------------------------------------------------
+            # Preparing orders
+            # -------------------------------------------------
+
+            preparing_count = db.fetch_one("""
+                SELECT COUNT(*) AS total
+                FROM orders
+                WHERE status = 'preparing'
+            """)
+
+            # -------------------------------------------------
+            # Ready orders
+            # -------------------------------------------------
+
+            ready_count = db.fetch_one("""
+                SELECT COUNT(*) AS total
+                FROM orders
+                WHERE status = 'ready'
+            """)
+
+            # -------------------------------------------------
+            # Served orders
+            # -------------------------------------------------
+
+            served_count = db.fetch_one("""
+                SELECT COUNT(*) AS total
+                FROM orders
+                WHERE status = 'served'
+            """)
+
+            # -------------------------------------------------
+            # Tables with current status
+            # -------------------------------------------------
+
+            tables = db.fetch_all("""
+                SELECT
+                    t.id,
+                    t.name,
+
+                    (
+                        SELECT o.id
+                        FROM orders o
+                        WHERE o.table_id = t.id
+                        AND o.status IN (
+                            'pending',
+                            'preparing',
+                            'ready',
+                            'served'
+                        )
+                        ORDER BY o.id DESC
+                        LIMIT 1
+                    ) AS current_order_id,
+
+                    (
+                        SELECT o.status
+                        FROM orders o
+                        WHERE o.table_id = t.id
+                        AND o.status IN (
+                            'pending',
+                            'preparing',
+                            'ready',
+                            'served'
+                        )
+                        ORDER BY o.id DESC
+                        LIMIT 1
+                    ) AS current_order_status
+
+                FROM restaurant_tables t
+                ORDER BY t.id ASC
+            """)
+
+            return render_template(
+                "receptionist/dashboard.html",
+
+                orders=orders,
+
+                incoming_count=incoming_count["total"],
+                preparing_count=preparing_count["total"],
+                ready_count=ready_count["total"],
+                served_count=served_count["total"],
+
+                tables=tables
+            )
+
+        finally:
+            db.close()
 
     # =========================================================
-    # Order Management
+    # ALL ORDERS
     # =========================================================
 
     def orders(self):
         """
-        Display all restaurant orders for the receptionist.
+        Display all restaurant orders.
         """
 
         db = Database()
 
-        orders = db.fetch_all("""
-            SELECT
-                o.id,
-                o.table_id,
-                t.name AS table_name,
-                o.status,
-                o.created_at
-            FROM orders o
-            LEFT JOIN restaurant_tables t
-                ON o.table_id = t.id
-            ORDER BY o.id DESC
-        """)
+        try:
 
-        db.close()
+            orders = db.fetch_all("""
+                SELECT
+                    o.id,
+                    o.table_id,
+                    t.name AS table_name,
+                    o.status,
+                    o.created_at
 
-        return render_template(
-            "receptionist/orders.html",
-            orders=orders
-        )
+                FROM orders o
+
+                LEFT JOIN restaurant_tables t
+                    ON o.table_id = t.id
+
+                ORDER BY o.id DESC
+            """)
+
+            return render_template(
+                "receptionist/orders.html",
+                orders=orders
+            )
+
+        finally:
+            db.close()
 
     # =========================================================
-    # Order Details
+    # ORDER DETAILS
     # =========================================================
 
     def order_details(self, order_id):
         """
-        Display the items belonging to a particular order.
+        Display items belonging to an order.
         """
 
         db = Database()
 
-        # Get order information
-        order = db.fetch_one("""
-            SELECT
-                o.id,
-                o.table_id,
-                t.name AS table_name,
-                o.status,
-                o.created_at
-            FROM orders o
-            LEFT JOIN restaurant_tables t
-                ON o.table_id = t.id
-            WHERE o.id = %s
-        """, (order_id,))
+        try:
 
-        if not order:
+            # -------------------------------------------------
+            # Get order
+            # -------------------------------------------------
+
+            order = db.fetch_one("""
+                SELECT
+                    o.id,
+                    o.table_id,
+                    t.name AS table_name,
+                    o.status,
+                    o.created_at
+
+                FROM orders o
+
+                LEFT JOIN restaurant_tables t
+                    ON o.table_id = t.id
+
+                WHERE o.id = %s
+            """, (order_id,))
+
+            if not order:
+
+                flash(
+                    "Order not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            # -------------------------------------------------
+            # Get order items
+            # -------------------------------------------------
+
+            items = db.fetch_all("""
+                SELECT
+                    oi.id,
+                    oi.item_id,
+                    m.name AS item_name,
+                    oi.quantity,
+                    oi.price_at_order,
+
+                    (
+                        oi.quantity * oi.price_at_order
+                    ) AS subtotal
+
+                FROM order_items oi
+
+                JOIN menu_items m
+                    ON oi.item_id = m.id
+
+                WHERE oi.order_id = %s
+
+                ORDER BY oi.id ASC
+            """, (order_id,))
+
+            # -------------------------------------------------
+            # Calculate total
+            # -------------------------------------------------
+
+            total = sum(
+                float(item["subtotal"])
+                for item in items
+            )
+
+            return render_template(
+                "receptionist/orders.html",
+                order=order,
+                items=items,
+                total=total
+            )
+
+        finally:
             db.close()
 
-            flash("Order not found.", "danger")
-            return redirect(url_for("receptionist.orders"))
-
-        # Get items in the order
-        items = db.fetch_all("""
-            SELECT
-                oi.id,
-                oi.item_id,
-                m.name AS item_name,
-                oi.quantity,
-                oi.price_at_order,
-                (oi.quantity * oi.price_at_order) AS subtotal
-            FROM order_items oi
-            JOIN menu_items m
-                ON oi.item_id = m.id
-            WHERE oi.order_id = %s
-            ORDER BY oi.id ASC
-        """, (order_id,))
-
-        db.close()
-
-        # Calculate total
-        total = sum(
-            item["subtotal"]
-            for item in items
-        )
-
-        return render_template(
-            "receptionist/orders.html",
-            order=order,
-            items=items,
-            total=total
-        )
-
     # =========================================================
-    # Mark Order as Preparing
+    # MARK ORDER AS PREPARING
     # =========================================================
 
     def mark_preparing(self, order_id):
         """
-        Change an order status from pending to preparing.
+        Change pending order to preparing.
         """
 
         db = Database()
 
-        order = db.fetch_one("""
-            SELECT id
-            FROM orders
-            WHERE id = %s
-        """, (order_id,))
+        try:
 
-        if not order:
+            order = db.fetch_one("""
+                SELECT
+                    id,
+                    status
+                FROM orders
+                WHERE id = %s
+            """, (order_id,))
+
+            if not order:
+
+                flash(
+                    "Order not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            if order["status"] != "pending":
+
+                flash(
+                    "Only pending orders can be marked as preparing.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            db.execute("""
+                UPDATE orders
+
+                SET status = 'preparing'
+
+                WHERE id = %s
+            """, (order_id,))
+
+            flash(
+                f"Order #{order_id} is now being prepared.",
+                "info"
+            )
+
+            return redirect(
+                url_for("receptionist.orders")
+            )
+
+        finally:
             db.close()
 
-            flash("Order not found.", "danger")
-            return redirect(url_for("receptionist.orders"))
-
-        db.execute("""
-            UPDATE orders
-            SET status = 'preparing'
-            WHERE id = %s
-        """, (order_id,))
-
-        db.close()
-
-        flash(
-            f"Order #{order_id} is now being prepared.",
-            "info"
-        )
-
-        return redirect(url_for("receptionist.orders"))
-
     # =========================================================
-    # Mark Order as Ready
+    # MARK ORDER AS READY
     # =========================================================
 
     def mark_ready(self, order_id):
         """
-        Change an order status to ready.
+        Change preparing order to ready.
         """
 
         db = Database()
 
-        order = db.fetch_one("""
-            SELECT id
-            FROM orders
-            WHERE id = %s
-        """, (order_id,))
+        try:
 
-        if not order:
+            order = db.fetch_one("""
+                SELECT
+                    id,
+                    status
+                FROM orders
+                WHERE id = %s
+            """, (order_id,))
+
+            if not order:
+
+                flash(
+                    "Order not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            if order["status"] != "preparing":
+
+                flash(
+                    "Only preparing orders can be marked as ready.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            db.execute("""
+                UPDATE orders
+
+                SET status = 'ready'
+
+                WHERE id = %s
+            """, (order_id,))
+
+            flash(
+                f"Order #{order_id} is ready.",
+                "success"
+            )
+
+            return redirect(
+                url_for("receptionist.orders")
+            )
+
+        finally:
             db.close()
 
-            flash("Order not found.", "danger")
-            return redirect(url_for("receptionist.orders"))
-
-        db.execute("""
-            UPDATE orders
-            SET status = 'ready'
-            WHERE id = %s
-        """, (order_id,))
-
-        db.close()
-
-        flash(
-            f"Order #{order_id} is ready.",
-            "success"
-        )
-
-        return redirect(url_for("receptionist.orders"))
-
     # =========================================================
-    # Mark Order as Served
+    # MARK ORDER AS SERVED
     # =========================================================
 
     def mark_served(self, order_id):
         """
-        Mark an order as served.
+        Mark ready order as served.
+
+        IMPORTANT:
+
+        The table is NOT cleared here.
+
+        After the order is served, the table remains occupied
+        until receptionist explicitly clicks "Clear Table".
         """
 
         db = Database()
 
-        order = db.fetch_one("""
-            SELECT id
-            FROM orders
-            WHERE id = %s
-        """, (order_id,))
+        try:
 
-        if not order:
+            order = db.fetch_one("""
+                SELECT
+                    id,
+                    table_id,
+                    status
+                FROM orders
+                WHERE id = %s
+            """, (order_id,))
+
+            if not order:
+
+                flash(
+                    "Order not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            if order["status"] != "ready":
+
+                flash(
+                    "Only ready orders can be marked as served.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            db.execute("""
+                UPDATE orders
+
+                SET status = 'served'
+
+                WHERE id = %s
+            """, (order_id,))
+
+            flash(
+                f"Order #{order_id} has been served. "
+                f"The table must now be cleared before another customer can use its QR code.",
+                "success"
+            )
+
+            return redirect(
+                url_for("receptionist.orders")
+            )
+
+        finally:
             db.close()
 
-            flash("Order not found.", "danger")
-            return redirect(url_for("receptionist.orders"))
+    # =========================================================
+    # CLEAR TABLE
+    # =========================================================
 
-        db.execute("""
-            UPDATE orders
-            SET status = 'served'
-            WHERE id = %s
-        """, (order_id,))
+    def clear_table(self, table_id):
+        """
+        Clear a restaurant table.
 
-        db.close()
+        A table can only be cleared after its current order
+        has been served.
 
-        flash(
-            f"Order #{order_id} has been served.",
-            "success"
-        )
+        When cleared:
 
-        return redirect(url_for("receptionist.orders"))
+            served -> cleared
+
+        The customer QR code will then become available again.
+        """
+
+        db = Database()
+
+        try:
+
+            # -------------------------------------------------
+            # Check table
+            # -------------------------------------------------
+
+            table = db.fetch_one("""
+                SELECT
+                    id,
+                    name
+                FROM restaurant_tables
+                WHERE id = %s
+            """, (table_id,))
+
+            if not table:
+
+                flash(
+                    "Table not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("receptionist.dashboard")
+                )
+
+            # -------------------------------------------------
+            # Find latest order for this table
+            # -------------------------------------------------
+
+            latest_order = db.fetch_one("""
+                SELECT
+                    id,
+                    status
+                FROM orders
+
+                WHERE table_id = %s
+
+                ORDER BY id DESC
+
+                LIMIT 1
+            """, (table_id,))
+
+            # -------------------------------------------------
+            # No previous order
+            # -------------------------------------------------
+
+            if not latest_order:
+
+                flash(
+                    f"{table['name']} is already clear.",
+                    "info"
+                )
+
+                return redirect(
+                    url_for("receptionist.dashboard")
+                )
+
+            # -------------------------------------------------
+            # Check order status
+            # -------------------------------------------------
+
+            status = latest_order["status"]
+
+            # -------------------------------------------------
+            # Cannot clear active order
+            # -------------------------------------------------
+
+            if status in (
+                "pending",
+                "preparing",
+                "ready"
+            ):
+
+                flash(
+                    f"{table['name']} cannot be cleared yet. "
+                    f"The current order is still {status}.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for("receptionist.dashboard")
+                )
+
+            # -------------------------------------------------
+            # Already cleared
+            # -------------------------------------------------
+
+            if status == "cleared":
+
+                flash(
+                    f"{table['name']} is already clear.",
+                    "info"
+                )
+
+                return redirect(
+                    url_for("receptionist.dashboard")
+                )
+
+            # -------------------------------------------------
+            # Cancelled order
+            # -------------------------------------------------
+
+            if status == "cancelled":
+
+                db.execute("""
+                    UPDATE orders
+
+                    SET status = 'cleared'
+
+                    WHERE id = %s
+                """, (latest_order["id"],))
+
+                flash(
+                    f"{table['name']} has been cleared.",
+                    "success"
+                )
+
+                return redirect(
+                    url_for("receptionist.dashboard")
+                )
+
+            # -------------------------------------------------
+            # Served order
+            # -------------------------------------------------
+
+            if status == "served":
+
+                db.execute("""
+                    UPDATE orders
+
+                    SET status = 'cleared'
+
+                    WHERE id = %s
+                """, (latest_order["id"],))
+
+                flash(
+                    f"{table['name']} is now clear. "
+                    f"The table QR code can be used again.",
+                    "success"
+                )
+
+                return redirect(
+                    url_for("receptionist.dashboard")
+                )
+
+            # -------------------------------------------------
+            # Unknown status
+            # -------------------------------------------------
+
+            flash(
+                f"Table cannot be cleared because its latest "
+                f"order has an unknown status: {status}.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("receptionist.dashboard")
+            )
+
+        finally:
+            db.close()
 
     # =========================================================
-    # Cancel Order
+    # CANCEL ORDER
     # =========================================================
 
     def cancel_order(self, order_id):
         """
         Cancel an order.
 
-        The order is not deleted from the database.
-        Its status is changed to 'cancelled' so that the
-        manager can still see it in the order history.
+        The order is not deleted.
+
+        It remains in the database so the manager can see
+        the order history.
         """
 
         db = Database()
 
-        order = db.fetch_one("""
-            SELECT id
-            FROM orders
-            WHERE id = %s
-        """, (order_id,))
+        try:
 
-        if not order:
+            order = db.fetch_one("""
+                SELECT
+                    id,
+                    status
+                FROM orders
+                WHERE id = %s
+            """, (order_id,))
+
+            if not order:
+
+                flash(
+                    "Order not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            if order["status"] in (
+                "served",
+                "cleared",
+                "cancelled"
+            ):
+
+                flash(
+                    "This order can no longer be cancelled.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for("receptionist.orders")
+                )
+
+            db.execute("""
+                UPDATE orders
+
+                SET status = 'cancelled'
+
+                WHERE id = %s
+            """, (order_id,))
+
+            flash(
+                f"Order #{order_id} has been cancelled.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("receptionist.orders")
+            )
+
+        finally:
             db.close()
 
-            flash("Order not found.", "danger")
-            return redirect(url_for("receptionist.orders"))
-
-        db.execute("""
-            UPDATE orders
-            SET status = 'cancelled'
-            WHERE id = %s
-        """, (order_id,))
-
-        db.close()
-
-        flash(
-            f"Order #{order_id} has been cancelled.",
-            "warning"
-        )
-
-        return redirect(url_for("receptionist.orders"))
-
     # =========================================================
-    # Order Notification
+    # NOTIFICATIONS
     # =========================================================
 
     def notifications(self):
         """
-        Get pending orders that can be displayed as
-        receptionist notifications.
-
-        This is a simple database-based notification system
-        for the MVP.
-
-        Later it can be replaced with:
-            - AJAX polling
-            - Fetch API
-            - WebSocket
-            - Flask-SocketIO
+        Return pending orders for receptionist notifications.
         """
 
         db = Database()
 
-        notifications = db.fetch_all("""
-            SELECT
-                o.id,
-                t.name AS table_name,
-                o.status,
-                o.created_at
-            FROM orders o
-            LEFT JOIN restaurant_tables t
-                ON o.table_id = t.id
-            WHERE o.status = 'pending'
-            ORDER BY o.id DESC
-        """)
+        try:
 
-        db.close()
+            notifications = db.fetch_all("""
+                SELECT
+                    o.id,
+                    o.table_id,
+                    t.name AS table_name,
+                    o.status,
+                    o.created_at
 
-        return {
-            "count": len(notifications),
-            "orders": notifications
-        }
+                FROM orders o
+
+                LEFT JOIN restaurant_tables t
+                    ON o.table_id = t.id
+
+                WHERE o.status = 'pending'
+
+                ORDER BY o.id DESC
+            """)
+
+            return {
+                "count": len(notifications),
+                "orders": notifications
+            }
+
+        finally:
+            db.close()
+
+    # =========================================================
+    # VIEW SINGLE ORDER
+    # =========================================================
+
     def view_order(self, order_id):
         """
-        Display details for a specific order for the receptionist.
+        Display complete information about a specific order.
         """
+
         db = Database()
 
-        # Fetch the order details along with table and customer info
-        order = db.fetch_one("""
-            SELECT
-                orders.id,
-                orders.created_at,
-                orders.status,
-                restaurant_tables.name AS table_name
-            FROM orders
-            LEFT JOIN restaurant_tables
-                ON orders.table_id = restaurant_tables.id
-            WHERE orders.id = %s
-        """, (order_id,))
+        try:
 
-        if not order:
-            db.close()
-            flash("Order not found.", "danger")
-            return redirect(url_for("receptionist.dashboard"))
+            # -------------------------------------------------
+            # Get order
+            # -------------------------------------------------
 
-        # Fetch all items belonging to this order
-        order["items"] = db.fetch_all("""
-            SELECT
-                order_items.quantity,
-                order_items.price_at_order,
-                menu_items.name
-            FROM order_items
-            INNER JOIN menu_items
-                ON order_items.item_id = menu_items.id
-            WHERE order_items.order_id = %s
-        """, (order_id,))
+            order = db.fetch_one("""
+                SELECT
+                    orders.id,
+                    orders.table_id,
+                    orders.created_at,
+                    orders.status,
 
-        # Calculate total price
-        order["total"] = 0
-        for item in order["items"]:
-            order["total"] += (
-                float(item["price_at_order"])
-                * int(item["quantity"])
+                    restaurant_tables.name AS table_name
+
+                FROM orders
+
+                LEFT JOIN restaurant_tables
+                    ON orders.table_id = restaurant_tables.id
+
+                WHERE orders.id = %s
+            """, (order_id,))
+
+            if not order:
+
+                flash(
+                    "Order not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("receptionist.dashboard")
+                )
+
+            # -------------------------------------------------
+            # Get order items
+            # -------------------------------------------------
+
+            order["items"] = db.fetch_all("""
+                SELECT
+                    order_items.quantity,
+                    order_items.price_at_order,
+
+                    menu_items.name
+
+                FROM order_items
+
+                INNER JOIN menu_items
+                    ON order_items.item_id = menu_items.id
+
+                WHERE order_items.order_id = %s
+
+                ORDER BY order_items.id ASC
+            """, (order_id,))
+
+            # -------------------------------------------------
+            # Calculate total
+            # -------------------------------------------------
+
+            order["total"] = 0
+
+            for item in order["items"]:
+
+                order["total"] += (
+                    float(item["price_at_order"])
+                    * int(item["quantity"])
+                )
+
+            return render_template(
+                "receptionist/view_order.html",
+                order=order
             )
 
-        db.close()
-
-        return render_template(
-            "receptionist/view_order.html",
-            order=order
-        )
+        finally:
+            db.close()

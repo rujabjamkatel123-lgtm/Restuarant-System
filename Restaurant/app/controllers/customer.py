@@ -283,6 +283,15 @@ class CustomerController:
                 return redirect(
                     url_for("customer.menu")
                 )
+            
+            session["user_id"] = None
+ 
+            session["table_id"] = table["id"]
+            session["table_name"] = table["name"]
+ 
+            flash(f'Welcome! You\'re seated at {table["name"]}.', "success")
+ 
+            return redirect(url_for("customer.dashboard"))
 
             # -------------------------------------------------
             # CHECK ACTIVE ORDER

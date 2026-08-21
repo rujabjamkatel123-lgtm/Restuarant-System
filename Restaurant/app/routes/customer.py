@@ -6,7 +6,6 @@ from app.controllers.customer import CustomerController
 class CustomerRoutes:
 
     def __init__(self):
-
         self.bp = Blueprint(
             "customer",
             __name__
@@ -18,7 +17,6 @@ class CustomerRoutes:
 
         # =====================================================
         # CUSTOMER DASHBOARD
-        #
         # NO LOGIN REQUIRED
         # =====================================================
 
@@ -31,7 +29,6 @@ class CustomerRoutes:
 
         # =====================================================
         # QR ENTRY
-        #
         # NO LOGIN REQUIRED
         # =====================================================
 
@@ -44,8 +41,6 @@ class CustomerRoutes:
 
         # =====================================================
         # MENU
-        #
-        # NO LOGIN REQUIRED
         # =====================================================
 
         self.bp.route(
@@ -66,24 +61,12 @@ class CustomerRoutes:
             self.controller.cart
         )
 
-        # =====================================================
-        # ADD TO CART
-        #
-        # IMPORTANT:
-        # NO login_required
-        # NO customer_required
-        # =====================================================
-
         self.bp.route(
             "/cart/add/<int:item_id>",
             methods=["POST"]
         )(
             self.controller.add_to_cart
         )
-
-        # =====================================================
-        # UPDATE CART
-        # =====================================================
 
         self.bp.route(
             "/cart/update/<int:item_id>",
@@ -92,20 +75,12 @@ class CustomerRoutes:
             self.controller.update_cart
         )
 
-        # =====================================================
-        # REMOVE CART ITEM
-        # =====================================================
-
         self.bp.route(
             "/cart/remove/<int:item_id>",
             methods=["POST"]
         )(
             self.controller.remove_from_cart
         )
-
-        # =====================================================
-        # CLEAR CART
-        # =====================================================
 
         self.bp.route(
             "/cart/clear",
@@ -116,8 +91,6 @@ class CustomerRoutes:
 
         # =====================================================
         # PLACE ORDER
-        #
-        # NO LOGIN REQUIRED
         # =====================================================
 
         self.bp.route(
@@ -128,7 +101,7 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # ORDER HISTORY
+        # ORDERS
         # =====================================================
 
         self.bp.route(
@@ -137,10 +110,6 @@ class CustomerRoutes:
         )(
             self.controller.orders
         )
-
-        # =====================================================
-        # SINGLE ORDER
-        # =====================================================
 
         self.bp.route(
             "/order/<int:order_id>",
@@ -160,8 +129,4 @@ class CustomerRoutes:
             self.controller.mobile
         )
 
-        # =====================================================
-        # RETURN BLUEPRINT
-        # =====================================================
-
-        return self.bp  
+        return self.bp

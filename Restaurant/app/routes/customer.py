@@ -20,8 +20,6 @@ class CustomerRoutes:
         # CUSTOMER DASHBOARD
         #
         # NO LOGIN REQUIRED
-        #
-        # Customer reaches this page through QR code.
         # =====================================================
 
         self.bp.route(
@@ -32,18 +30,9 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # QR CODE ENTRY
+        # QR ENTRY
         #
         # NO LOGIN REQUIRED
-        #
-        # Examples:
-        #
-        # /customer/qr/1
-        # /customer/qr/2
-        # /customer/qr/5
-        #
-        # This route identifies the customer's table and
-        # stores it in the session.
         # =====================================================
 
         self.bp.route(
@@ -67,22 +56,7 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # ADD ITEM TO CART
-        #
-        # NO LOGIN REQUIRED
-        # =====================================================
-
-        self.bp.route(
-            "/cart/add/<int:item_id>",
-            methods=["POST"]
-        )(
-            self.controller.add_to_cart
-        )
-
-        # =====================================================
-        # VIEW CART
-        #
-        # NO LOGIN REQUIRED
+        # CART
         # =====================================================
 
         self.bp.route(
@@ -93,9 +67,22 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # UPDATE CART ITEM QUANTITY
+        # ADD TO CART
         #
-        # NO LOGIN REQUIRED
+        # IMPORTANT:
+        # NO login_required
+        # NO customer_required
+        # =====================================================
+
+        self.bp.route(
+            "/cart/add/<int:item_id>",
+            methods=["POST"]
+        )(
+            self.controller.add_to_cart
+        )
+
+        # =====================================================
+        # UPDATE CART
         # =====================================================
 
         self.bp.route(
@@ -106,9 +93,7 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # REMOVE ITEM FROM CART
-        #
-        # NO LOGIN REQUIRED
+        # REMOVE CART ITEM
         # =====================================================
 
         self.bp.route(
@@ -120,8 +105,6 @@ class CustomerRoutes:
 
         # =====================================================
         # CLEAR CART
-        #
-        # NO LOGIN REQUIRED
         # =====================================================
 
         self.bp.route(
@@ -135,8 +118,6 @@ class CustomerRoutes:
         # PLACE ORDER
         #
         # NO LOGIN REQUIRED
-        #
-        # Table is obtained from the QR/session.
         # =====================================================
 
         self.bp.route(
@@ -147,9 +128,7 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # CUSTOMER ORDER HISTORY
-        #
-        # NO LOGIN REQUIRED
+        # ORDER HISTORY
         # =====================================================
 
         self.bp.route(
@@ -160,9 +139,7 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # VIEW SINGLE ORDER
-        #
-        # NO LOGIN REQUIRED
+        # SINGLE ORDER
         # =====================================================
 
         self.bp.route(
@@ -173,9 +150,7 @@ class CustomerRoutes:
         )
 
         # =====================================================
-        # MOBILE CUSTOMER DASHBOARD
-        #
-        # NO LOGIN REQUIRED
+        # MOBILE
         # =====================================================
 
         self.bp.route(
@@ -189,4 +164,4 @@ class CustomerRoutes:
         # RETURN BLUEPRINT
         # =====================================================
 
-        return self.bp
+        return self.bp  

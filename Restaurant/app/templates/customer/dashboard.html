@@ -78,9 +78,6 @@ a {
     z-index: 3000;
 }
 
-
-/* Mobile menu */
-
 .mobile-menu-button {
     display: none;
 
@@ -97,9 +94,6 @@ a {
 
     font-size: 20px;
 }
-
-
-/* Brand */
 
 .top-brand {
     display: flex;
@@ -157,7 +151,9 @@ a {
 }
 
 
-/* Table badge */
+/* =========================================================
+   TABLE BADGE
+========================================================= */
 
 .top-table {
     margin-left: auto;
@@ -278,6 +274,11 @@ a {
     font-weight: 700;
 
     transition: 0.2s;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
 }
 
 .sidebar-link:hover {
@@ -314,14 +315,6 @@ a {
     text-align: center;
 
     font-size: 16px;
-}
-
-.sidebar-bottom {
-    margin-top: auto;
-
-    padding: 12px 10px;
-
-    border-top: 1px solid #ece9df;
 }
 
 
@@ -610,7 +603,9 @@ a {
 }
 
 
-/* Food image */
+/* =========================================================
+   FOOD IMAGE
+========================================================= */
 
 .food-image {
     position: relative;
@@ -657,7 +652,9 @@ a {
 }
 
 
-/* Food info */
+/* =========================================================
+   FOOD INFO
+========================================================= */
 
 .food-info {
     padding: 16px;
@@ -705,6 +702,11 @@ a {
     font-weight: 800;
 }
 
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
 .add-button {
     display: inline-flex;
 
@@ -739,6 +741,10 @@ a {
 
 .add-button:active {
     transform: scale(.96);
+}
+
+.add-form {
+    margin: 0;
 }
 
 
@@ -814,7 +820,9 @@ a {
 }
 
 
-/* Cart items */
+/* =========================================================
+   CART ITEMS
+========================================================= */
 
 .cart-items {
     padding: 0 20px;
@@ -881,7 +889,9 @@ a {
 }
 
 
-/* Quantity */
+/* =========================================================
+   QUANTITY
+========================================================= */
 
 .quantity-control {
     display: flex;
@@ -947,7 +957,9 @@ a {
 }
 
 
-/* Cart total */
+/* =========================================================
+   CART RIGHT
+========================================================= */
 
 .cart-right {
     min-width: 80px;
@@ -986,7 +998,9 @@ a {
 }
 
 
-/* Empty cart */
+/* =========================================================
+   EMPTY CART
+========================================================= */
 
 .empty-cart {
     padding: 50px 20px;
@@ -1066,6 +1080,11 @@ a {
 
     font-size: 22px;
 }
+
+
+/* =========================================================
+   PLACE ORDER
+========================================================= */
 
 .place-order {
     width: 100%;
@@ -1584,6 +1603,8 @@ a {
     </div>
 
 
+    <!-- TABLE FROM QR SESSION -->
+
     <div class="top-table">
 
         <span class="top-table-icon">
@@ -1599,10 +1620,6 @@ a {
             {% if selected_table %}
 
                 {{ selected_table.name }}
-
-            {% elif table %}
-
-                {{ table.name }}
 
             {% elif session.get('table_name') %}
 
@@ -1688,6 +1705,11 @@ a {
 
             <span>
                 My Order
+
+                {% if cart %}
+                    ({{ cart|length }})
+                {% endif %}
+
             </span>
 
         </a>
@@ -1725,25 +1747,6 @@ a {
         </a>
 
     </nav>
-
-
-    <div class="sidebar-bottom">
-
-        <a
-            href="{{ url_for('auth.logout') }}"
-            class="sidebar-link">
-
-            <span class="sidebar-icon">
-                ↪
-            </span>
-
-            <span>
-                Logout
-            </span>
-
-        </a>
-
-    </div>
 
 </aside>
 
@@ -1795,10 +1798,6 @@ a {
             {% if selected_table %}
 
                 {{ selected_table.name }}
-
-            {% elif table %}
-
-                {{ table.name }}
 
             {% elif session.get('table_name') %}
 
@@ -1881,7 +1880,9 @@ a {
 
 
 
-        <!-- FOOD CARD -->
+        <!-- =================================================
+             FOOD CARD
+        ================================================= -->
 
         <article class="food-card">
 
@@ -1939,11 +1940,25 @@ a {
                     </div>
 
 
-                    <!-- NORMAL FORM
-                         PAGE REFRESH IS INTENTIONAL -->
+                    <!-- =================================================
+                         ADD TO CART
+
+                         IMPORTANT:
+                         This directly calls:
+
+                         customer.add_to_cart
+
+                         NO auth.login
+                         NO customer_required
+                         NO login_required
+                    ================================================= -->
 
                     <form
-                        action="{{ url_for('customer.add_to_cart', item_id=item.id) }}"
+                        class="add-form"
+                        action="{{ url_for(
+                            'customer.add_to_cart',
+                            item_id=item.id
+                        ) }}"
                         method="POST">
 
                         <button
@@ -2051,10 +2066,6 @@ a {
 
                     {{ selected_table.name }}
 
-                {% elif table %}
-
-                    {{ table.name }}
-
                 {% elif session.get('table_name') %}
 
                     {{ session.get('table_name') }}
@@ -2071,7 +2082,9 @@ a {
 
 
 
-        <!-- CART ITEMS -->
+        <!-- =================================================
+             CART ITEMS
+        ================================================= -->
 
         <div class="cart-items">
 
@@ -2100,7 +2113,9 @@ a {
 
                             <div class="cart-price-line">
 
-                                Rs. {{ item.price }}
+                                Rs. {{ "%.2f"|format(
+                                    item.price|float
+                                ) }}
 
                                 ×
 
@@ -2117,7 +2132,10 @@ a {
                                 <!-- DECREASE -->
 
                                 <form
-                                    action="{{ url_for('customer.update_cart', item_id=item.id) }}"
+                                    action="{{ url_for(
+                                        'customer.update_cart',
+                                        item_id=item.id
+                                    ) }}"
                                     method="POST">
 
                                     <input
@@ -2147,7 +2165,10 @@ a {
                                 <!-- INCREASE -->
 
                                 <form
-                                    action="{{ url_for('customer.update_cart', item_id=item.id) }}"
+                                    action="{{ url_for(
+                                        'customer.update_cart',
+                                        item_id=item.id
+                                    ) }}"
                                     method="POST">
 
                                     <input
@@ -2191,7 +2212,10 @@ a {
                             <!-- REMOVE -->
 
                             <form
-                                action="{{ url_for('customer.remove_from_cart', item_id=item.id) }}"
+                                action="{{ url_for(
+                                    'customer.remove_from_cart',
+                                    item_id=item.id
+                                ) }}"
                                 method="POST">
 
                                 <button
@@ -2300,40 +2324,35 @@ a {
 
 
 
-            <!-- PLACE ORDER -->
+            <!-- =================================================
+                 PLACE ORDER
+
+                 IMPORTANT:
+                 We check the REAL QR session variable:
+
+                     session.get('table_id')
+
+                 NOT:
+
+                     customer_table_id
+            ================================================== -->
 
             <form
                 action="{{ url_for('customer.place_order') }}"
                 method="POST">
 
+                {% if session.get('table_id') and cart %}
 
-                {% if selected_table or table or session.get('customer_table_id') %}
+                    <button
+                        type="submit"
+                        class="place-order enabled">
 
-                    {% if cart %}
+                        Place Order
+                        ➜
 
-                        <button
-                            type="submit"
-                            class="place-order enabled">
+                    </button>
 
-                            Place Order
-                            ➜
-
-                        </button>
-
-                    {% else %}
-
-                        <button
-                            type="button"
-                            class="place-order disabled"
-                            disabled>
-
-                            Add Items First
-
-                        </button>
-
-                    {% endif %}
-
-                {% else %}
+                {% elif not session.get('table_id') %}
 
                     <button
                         type="button"
@@ -2344,13 +2363,26 @@ a {
 
                     </button>
 
+                {% else %}
+
+                    <button
+                        type="button"
+                        class="place-order disabled"
+                        disabled>
+
+                        Add Items First
+
+                    </button>
+
                 {% endif %}
 
             </form>
 
 
 
-            <!-- CLEAR CART -->
+            <!-- =================================================
+                 CLEAR CART
+            ================================================== -->
 
             {% if cart %}
 
@@ -2614,14 +2646,21 @@ a {
 
 
 <!-- =========================================================
-     MOBILE SIDEBAR JAVASCRIPT ONLY
+     JAVASCRIPT
      
      IMPORTANT:
-     There is NO AJAX here.
-     Cart buttons use normal Flask forms.
+     No AJAX.
+     No fetch().
+     No login redirect.
+     
+     All cart actions use normal Flask POST forms.
 ========================================================= -->
 
 <script>
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
 
 const mobileMenuButton =
     document.getElementById("mobileMenuButton");
@@ -2629,10 +2668,6 @@ const mobileMenuButton =
 const sidebar =
     document.getElementById("sidebar");
 
-
-/* =========================================================
-   MOBILE MENU
-========================================================= */
 
 if (mobileMenuButton && sidebar) {
 
@@ -2809,4 +2844,4 @@ window.addEventListener(
 
 </script>
 
-{% endblock %}ss
+{% endblock %}

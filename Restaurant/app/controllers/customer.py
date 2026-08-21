@@ -10,7 +10,7 @@ CUSTOMER FLOW
             ↓
     /customer/qr/<table_id>
             ↓
-    Table ID stored in session
+    Table stored in Flask session
             ↓
     Customer Dashboard
             ↓
@@ -23,7 +23,8 @@ CUSTOMER FLOW
     Order stored in database
 
 IMPORTANT:
-    Customer QR ordering DOES NOT require login.
+
+    Customer QR ordering does NOT require login.
 =============================================================
 """
 
@@ -42,76 +43,119 @@ from app.modules.database import Database
 class CustomerController:
 
     # =========================================================
-    # GET TABLE ID
+    # TABLE ID
     # =========================================================
 
     def get_table_id(self):
-        """
-        Get the table ID from the session.
-
-        Customer does NOT need to log in.
-        The table is identified through the QR code.
-        """
 
         table_id = session.get("table_id")
 
-        if table_id:
+        if table_id is not None:
+
             try:
                 return int(table_id)
-            except (ValueError, TypeError):
+
+            except (
+                ValueError,
+                TypeError
+            ):
                 pass
 
-        # Backup: get table_id from form
-        form_table_id = request.form.get("table_id")
+        # Backup from form
+
+        form_table_id = request.form.get(
+            "table_id"
+        )
 
         if form_table_id:
+
             try:
-                table_id = int(form_table_id)
+
+                table_id = int(
+                    form_table_id
+                )
 
                 session["table_id"] = table_id
                 session.modified = True
 
                 return table_id
 
-            except (ValueError, TypeError):
+            except (
+                ValueError,
+                TypeError
+            ):
                 pass
 
         return None
 
     # =========================================================
-    # GET CART
+    # CART
     # =========================================================
 
     def get_cart(self):
 
-        cart = session.get("cart", {})
+        cart = session.get(
+            "cart",
+            {}
+        )
 
-        if not isinstance(cart, dict):
+        if not isinstance(
+            cart,
+            dict
+        ):
+
             cart = {}
 
         return cart
 
     # =========================================================
-    # CALCULATE CART TOTAL
+    # CART TOTAL
     # =========================================================
 
-    def calculate_cart_total(self, cart):
+    def calculate_cart_total(
+        self,
+        cart
+    ):
 
         total = 0.0
 
         for item in cart.values():
 
             try:
-                price = float(item.get("price", 0))
-            except (ValueError, TypeError):
+
+                price = float(
+                    item.get(
+                        "price",
+                        0
+                    )
+                )
+
+            except (
+                ValueError,
+                TypeError
+            ):
+
                 price = 0.0
 
             try:
-                quantity = int(item.get("quantity", 0))
-            except (ValueError, TypeError):
+
+                quantity = int(
+                    item.get(
+                        "quantity",
+                        0
+                    )
+                )
+
+            except (
+                ValueError,
+                TypeError
+            ):
+
                 quantity = 0
 
-            total += price * quantity
+            total += (
+                price * quantity
+            )
 
         return total
 
@@ -120,11 +164,6 @@ class CustomerController:
     # =========================================================
 
     def dashboard(self):
-        """
-        Main customer dashboard.
-
-        NO LOGIN REQUIRED.
-        """
 
         db = Database()
 
@@ -135,22 +174,24 @@ class CustomerController:
 
         try:
 
-            # -------------------------------------------------
-            # Get all restaurant tables
-            # -------------------------------------------------
+            # =================================================
+            # ALL TABLES
+            # =================================================
 
             tables = db.fetch_all("""
                 SELECT
                     id,
                     name,
                     status
+
                 FROM restaurant_tables
+
                 ORDER BY id
             """)
 
-            # -------------------------------------------------
-            # Get selected table from session
-            # -------------------------------------------------
+            # =================================================
+            # SELECTED TABLE
+            # =================================================
 
             table_id = self.get_table_id()
 
@@ -161,19 +202,34 @@ class CustomerController:
                         id,
                         name,
                         status
+
                     FROM restaurant_tables
+
                     WHERE id = %s
-                """, (table_id,))
+                """, (
+                    table_id,
+                ))
 
                 # -------------------------------------------------
-                # If table doesn't exist
+                # Invalid table
                 # -------------------------------------------------
 
                 if not selected_table:
 
-                    session.pop("table_id", None)
-                    session.pop("table_name", None)
-                    session.pop("cart", None)
+                    session.pop(
+                        "table_id",
+                        None
+                    )
+
+                    session.pop(
+                        "table_name",
+                        None
+                    )
+
+                    session.pop(
+                        "cart",
+                        None
+                    )
 
                     flash(
                         "This table does not exist.",
@@ -181,7 +237,9 @@ class CustomerController:
                     )
 
                     return redirect(
-                        url_for("customer.menu")
+                        url_for(
+                            "customer.menu"
+                        )
                     )
 
                 # -------------------------------------------------
@@ -198,9 +256,9 @@ class CustomerController:
 
                 session.modified = True
 
-                # -------------------------------------------------
-                # Get orders for this table
-                # -------------------------------------------------
+                # =================================================
+                # ORDER HISTORY
+                # =================================================
 
                 orders = db.fetch_all("""
                     SELECT
@@ -239,11 +297,13 @@ class CustomerController:
                         o.id DESC
 
                     LIMIT 20
-                """, (table_id,))
+                """, (
+                    table_id,
+                ))
 
-            # -------------------------------------------------
-            # Get available menu
-            # -------------------------------------------------
+            # =================================================
+            # MENU
+            # =================================================
 
             menu_items = db.fetch_all("""
                 SELECT
@@ -272,7 +332,7 @@ class CustomerController:
 
             print(
                 "CUSTOMER DASHBOARD ERROR:",
-                e
+                repr(e)
             )
 
             flash(
@@ -281,19 +341,22 @@ class CustomerController:
             )
 
         finally:
+
             db.close()
 
-        # -----------------------------------------------------
-        # Cart
-        # -----------------------------------------------------
+        # =====================================================
+        # CART
+        # =====================================================
 
         cart = self.get_cart()
 
-        total = self.calculate_cart_total(cart)
+        total = self.calculate_cart_total(
+            cart
+        )
 
-        # -----------------------------------------------------
-        # Render ONE dashboard
-        # -----------------------------------------------------
+        # =====================================================
+        # RENDER
+        # =====================================================
 
         return render_template(
             "customer/dashboard.html",
@@ -327,39 +390,34 @@ class CustomerController:
     # QR CODE
     # =========================================================
 
-    def scan_qr(self, table_id):
-        """
-        QR entry.
-
-        Example:
-
-            /customer/qr/1
-            /customer/qr/2
-            /customer/qr/4
-
-        NO LOGIN REQUIRED.
-        """
+    def scan_qr(
+        self,
+        table_id
+    ):
 
         db = Database()
 
+        table = None
+        active_order = None
+
         try:
 
-            # -------------------------------------------------
-            # Find table
-            # -------------------------------------------------
+            # =================================================
+            # FIND TABLE
+            # =================================================
 
             table = db.fetch_one("""
                 SELECT
                     id,
                     name,
                     status
-                FROM restaurant_tables
-                WHERE id = %s
-            """, (table_id,))
 
-            # -------------------------------------------------
-            # Invalid table
-            # -------------------------------------------------
+                FROM restaurant_tables
+
+                WHERE id = %s
+            """, (
+                table_id,
+            ))
 
             if not table:
 
@@ -369,12 +427,14 @@ class CustomerController:
                 )
 
                 return redirect(
-                    url_for("customer.menu")
+                    url_for(
+                        "customer.menu"
+                    )
                 )
 
-            # -------------------------------------------------
-            # Check active order
-            # -------------------------------------------------
+            # =================================================
+            # CHECK ACTIVE ORDER
+            # =================================================
 
             active_order = db.fetch_one("""
                 SELECT
@@ -394,13 +454,15 @@ class CustomerController:
                 ORDER BY id DESC
 
                 LIMIT 1
-            """, (table_id,))
+            """, (
+                table_id,
+            ))
 
         except Exception as e:
 
             print(
                 "QR SCAN ERROR:",
-                e
+                repr(e)
             )
 
             flash(
@@ -409,24 +471,31 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.menu")
+                url_for(
+                    "customer.menu"
+                )
             )
 
         finally:
+
             db.close()
 
         # =====================================================
-        # SAVE TABLE IN SESSION
+        # SAVE TABLE TO SESSION
         # =====================================================
 
-        session["table_id"] = int(table["id"])
+        session["table_id"] = int(
+            table["id"]
+        )
 
-        session["table_name"] = table["name"]
+        session["table_name"] = (
+            table["name"]
+        )
 
         session.modified = True
 
         # =====================================================
-        # TABLE HAS ACTIVE ORDER
+        # ACTIVE ORDER
         # =====================================================
 
         if active_order:
@@ -437,16 +506,18 @@ class CustomerController:
 
             flash(
                 f'{table["name"]} already has an active order. '
-                'Please wait until the current order is completed.',
+                "Please wait until it is completed.",
                 "warning"
             )
 
             return redirect(
-                url_for("customer.dashboard")
+                url_for(
+                    "customer.dashboard"
+                )
             )
 
         # =====================================================
-        # NEW CUSTOMER ORDER
+        # NEW CUSTOMER SESSION
         # =====================================================
 
         session["cart"] = {}
@@ -459,7 +530,9 @@ class CustomerController:
         )
 
         return redirect(
-            url_for("customer.dashboard")
+            url_for(
+                "customer.dashboard"
+            )
         )
 
     # =========================================================
@@ -467,11 +540,6 @@ class CustomerController:
     # =========================================================
 
     def menu(self):
-        """
-        Customer menu entry.
-
-        NO LOGIN REQUIRED.
-        """
 
         return self.dashboard()
 
@@ -487,13 +555,12 @@ class CustomerController:
     # ADD TO CART
     # =========================================================
 
-    def add_to_cart(self, item_id):
+    def add_to_cart(
+        self,
+        item_id
+    ):
 
         table_id = self.get_table_id()
-
-        # -----------------------------------------------------
-        # No QR table
-        # -----------------------------------------------------
 
         if not table_id:
 
@@ -503,16 +570,18 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.menu")
+                url_for(
+                    "customer.menu"
+                )
             )
 
         db = Database()
 
         try:
 
-            # -------------------------------------------------
-            # Verify table
-            # -------------------------------------------------
+            # =================================================
+            # VERIFY TABLE
+            # =================================================
 
             table = db.fetch_one("""
                 SELECT
@@ -523,13 +592,26 @@ class CustomerController:
                 FROM restaurant_tables
 
                 WHERE id = %s
-            """, (table_id,))
+            """, (
+                table_id,
+            ))
 
             if not table:
 
-                session.pop("table_id", None)
-                session.pop("table_name", None)
-                session.pop("cart", None)
+                session.pop(
+                    "table_id",
+                    None
+                )
+
+                session.pop(
+                    "table_name",
+                    None
+                )
+
+                session.pop(
+                    "cart",
+                    None
+                )
 
                 flash(
                     "This table does not exist.",
@@ -537,12 +619,14 @@ class CustomerController:
                 )
 
                 return redirect(
-                    url_for("customer.menu")
+                    url_for(
+                        "customer.menu"
+                    )
                 )
 
-            # -------------------------------------------------
-            # Check active order
-            # -------------------------------------------------
+            # =================================================
+            # CHECK ACTIVE ORDER
+            # =================================================
 
             active_order = db.fetch_one("""
                 SELECT
@@ -559,7 +643,9 @@ class CustomerController:
                 )
 
                 LIMIT 1
-            """, (table_id,))
+            """, (
+                table_id,
+            ))
 
             if active_order:
 
@@ -569,12 +655,14 @@ class CustomerController:
                 )
 
                 return redirect(
-                    url_for("customer.dashboard")
+                    url_for(
+                        "customer.dashboard"
+                    )
                 )
 
-            # -------------------------------------------------
-            # Get menu item
-            # -------------------------------------------------
+            # =================================================
+            # GET MENU ITEM
+            # =================================================
 
             item = db.fetch_one("""
                 SELECT
@@ -595,13 +683,15 @@ class CustomerController:
                 WHERE mi.id = %s
 
                 AND mi.available = 1
-            """, (item_id,))
+            """, (
+                item_id,
+            ))
 
         except Exception as e:
 
             print(
                 "ADD TO CART ERROR:",
-                e
+                repr(e)
             )
 
             flash(
@@ -610,15 +700,18 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.dashboard")
+                url_for(
+                    "customer.dashboard"
+                )
             )
 
         finally:
+
             db.close()
 
-        # -----------------------------------------------------
-        # Item unavailable
-        # -----------------------------------------------------
+        # =====================================================
+        # ITEM NOT FOUND
+        # =====================================================
 
         if not item:
 
@@ -628,52 +721,63 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.dashboard")
+                url_for(
+                    "customer.dashboard"
+                )
             )
 
-        # -----------------------------------------------------
-        # Get cart
-        # -----------------------------------------------------
+        # =====================================================
+        # CART
+        # =====================================================
 
         cart = self.get_cart()
 
-        item_key = str(item_id)
-
-        # -----------------------------------------------------
-        # Existing item
-        # -----------------------------------------------------
+        item_key = str(
+            item_id
+        )
 
         if item_key in cart:
 
-            cart[item_key]["quantity"] = (
-                int(
+            try:
+
+                current_quantity = int(
                     cart[item_key].get(
                         "quantity",
                         0
                     )
-                ) + 1
-            )
+                )
 
-        # -----------------------------------------------------
-        # New item
-        # -----------------------------------------------------
+            except (
+                ValueError,
+                TypeError
+            ):
+
+                current_quantity = 0
+
+            cart[item_key][
+                "quantity"
+            ] = current_quantity + 1
 
         else:
 
             cart[item_key] = {
 
-                "id": int(item["id"]),
+                "id": int(
+                    item["id"]
+                ),
 
                 "name": item["name"],
 
-                "price": float(item["price"]),
+                "price": float(
+                    item["price"]
+                ),
 
                 "quantity": 1
             }
 
-        # -----------------------------------------------------
-        # Save
-        # -----------------------------------------------------
+        # =====================================================
+        # SAVE SESSION
+        # =====================================================
 
         session["cart"] = cart
 
@@ -693,14 +797,19 @@ class CustomerController:
         )
 
         return redirect(
-            url_for("customer.dashboard")
+            url_for(
+                "customer.dashboard"
+            )
         )
 
     # =========================================================
     # UPDATE CART
     # =========================================================
 
-    def update_cart(self, item_id):
+    def update_cart(
+        self,
+        item_id
+    ):
 
         if not self.get_table_id():
 
@@ -710,12 +819,16 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.menu")
+                url_for(
+                    "customer.menu"
+                )
             )
 
         cart = self.get_cart()
 
-        item_key = str(item_id)
+        item_key = str(
+            item_id
+        )
 
         if item_key not in cart:
 
@@ -725,7 +838,9 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.dashboard")
+                url_for(
+                    "customer.dashboard"
+                )
             )
 
         try:
@@ -737,7 +852,10 @@ class CustomerController:
                 )
             )
 
-        except (ValueError, TypeError):
+        except (
+            ValueError,
+            TypeError
+        ):
 
             quantity = 1
 
@@ -747,29 +865,40 @@ class CustomerController:
 
         else:
 
-            cart[item_key]["quantity"] = quantity
+            cart[item_key][
+                "quantity"
+            ] = quantity
 
         session["cart"] = cart
 
         session.modified = True
 
         return redirect(
-            url_for("customer.dashboard")
+            url_for(
+                "customer.dashboard"
+            )
         )
 
     # =========================================================
     # REMOVE FROM CART
     # =========================================================
 
-    def remove_from_cart(self, item_id):
+    def remove_from_cart(
+        self,
+        item_id
+    ):
 
         cart = self.get_cart()
 
-        item_key = str(item_id)
+        item_key = str(
+            item_id
+        )
 
         if item_key in cart:
 
-            item_name = cart[item_key].get(
+            item_name = cart[
+                item_key
+            ].get(
                 "name",
                 "Item"
             )
@@ -786,7 +915,9 @@ class CustomerController:
             )
 
         return redirect(
-            url_for("customer.dashboard")
+            url_for(
+                "customer.dashboard"
+            )
         )
 
     # =========================================================
@@ -805,7 +936,9 @@ class CustomerController:
         )
 
         return redirect(
-            url_for("customer.dashboard")
+            url_for(
+                "customer.dashboard"
+            )
         )
 
     # =========================================================
@@ -818,9 +951,9 @@ class CustomerController:
 
         cart = self.get_cart()
 
-        # -----------------------------------------------------
-        # Table required
-        # -----------------------------------------------------
+        # =====================================================
+        # TABLE REQUIRED
+        # =====================================================
 
         if not table_id:
 
@@ -830,12 +963,14 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.menu")
+                url_for(
+                    "customer.menu"
+                )
             )
 
-        # -----------------------------------------------------
-        # Cart required
-        # -----------------------------------------------------
+        # =====================================================
+        # CART REQUIRED
+        # =====================================================
 
         if not cart:
 
@@ -845,16 +980,18 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.dashboard")
+                url_for(
+                    "customer.dashboard"
+                )
             )
 
         db = Database()
 
         try:
 
-            # -------------------------------------------------
-            # Verify table
-            # -------------------------------------------------
+            # =================================================
+            # VERIFY TABLE
+            # =================================================
 
             table = db.fetch_one("""
                 SELECT
@@ -864,7 +1001,9 @@ class CustomerController:
                 FROM restaurant_tables
 
                 WHERE id = %s
-            """, (table_id,))
+            """, (
+                table_id,
+            ))
 
             if not table:
 
@@ -872,9 +1011,9 @@ class CustomerController:
                     "Table does not exist."
                 )
 
-            # -------------------------------------------------
-            # Prevent duplicate active order
-            # -------------------------------------------------
+            # =================================================
+            # PREVENT DUPLICATE ORDER
+            # =================================================
 
             active_order = db.fetch_one("""
                 SELECT
@@ -891,7 +1030,9 @@ class CustomerController:
                 )
 
                 LIMIT 1
-            """, (table_id,))
+            """, (
+                table_id,
+            ))
 
             if active_order:
 
@@ -901,23 +1042,79 @@ class CustomerController:
                 )
 
                 return redirect(
-                    url_for("customer.dashboard")
+                    url_for(
+                        "customer.dashboard"
+                    )
                 )
 
-            # -------------------------------------------------
-            # Create order
-            # -------------------------------------------------
+            # =================================================
+            # CALCULATE TOTAL
+            # =================================================
+
+            order_total = 0.0
+
+            for item in cart.values():
+
+                try:
+
+                    quantity = int(
+                        item.get(
+                            "quantity",
+                            1
+                        )
+                    )
+
+                except (
+                    ValueError,
+                    TypeError
+                ):
+
+                    quantity = 1
+
+                try:
+
+                    price = float(
+                        item.get(
+                            "price",
+                            0
+                        )
+                    )
+
+                except (
+                    ValueError,
+                    TypeError
+                ):
+
+                    price = 0.0
+
+                if quantity > 0:
+
+                    order_total += (
+                        quantity * price
+                    )
+
+            if order_total <= 0:
+
+                raise Exception(
+                    "Order total is zero."
+                )
+
+            # =================================================
+            # CREATE ORDER
+            # =================================================
 
             db.execute("""
                 INSERT INTO orders
                 (
                     user_id,
                     table_id,
-                    status
+                    status,
+                    total_amount
                 )
 
                 VALUES
                 (
+                    %s,
                     %s,
                     %s,
                     %s
@@ -925,15 +1122,17 @@ class CustomerController:
             """, (
                 None,
                 table_id,
-                "pending"
+                "pending",
+                order_total
             ))
 
-            # -------------------------------------------------
-            # Get order ID
-            # -------------------------------------------------
+            # =================================================
+            # GET ORDER ID
+            # =================================================
 
             result = db.fetch_one("""
-                SELECT LAST_INSERT_ID() AS id
+                SELECT
+                    LAST_INSERT_ID() AS id
             """)
 
             if not result:
@@ -942,37 +1141,52 @@ class CustomerController:
                     "Unable to create order."
                 )
 
-            order_id = result["id"]
+            order_id = int(
+                result["id"]
+            )
 
-            # -------------------------------------------------
-            # Add items
-            # -------------------------------------------------
+            # =================================================
+            # INSERT ORDER ITEMS
+            # =================================================
 
             inserted_items = 0
 
             for item in cart.values():
 
                 try:
+
                     quantity = int(
                         item.get(
                             "quantity",
                             1
                         )
                     )
-                except (ValueError, TypeError):
+
+                except (
+                    ValueError,
+                    TypeError
+                ):
+
                     quantity = 1
 
                 try:
+
                     price = float(
                         item.get(
                             "price",
                             0
                         )
                     )
-                except (ValueError, TypeError):
-                    price = 0
+
+                except (
+                    ValueError,
+                    TypeError
+                ):
+
+                    price = 0.0
 
                 if quantity <= 0:
+
                     continue
 
                 db.execute("""
@@ -1006,9 +1220,9 @@ class CustomerController:
                     "No valid items."
                 )
 
-            # -------------------------------------------------
-            # Clear cart
-            # -------------------------------------------------
+            # =================================================
+            # CLEAR CART
+            # =================================================
 
             session["cart"] = {}
 
@@ -1028,14 +1242,16 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.dashboard")
+                url_for(
+                    "customer.dashboard"
+                )
             )
 
         except Exception as e:
 
             print(
                 "PLACE ORDER ERROR:",
-                e
+                repr(e)
             )
 
             flash(
@@ -1044,10 +1260,13 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.dashboard")
+                url_for(
+                    "customer.dashboard"
+                )
             )
 
         finally:
+
             db.close()
 
     # =========================================================
@@ -1066,7 +1285,9 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.menu")
+                url_for(
+                    "customer.menu"
+                )
             )
 
         db = Database()
@@ -1108,26 +1329,37 @@ class CustomerController:
 
                 ORDER BY
                     o.id DESC
-            """, (table_id,))
+
+            """, (
+                table_id,
+            ))
 
         except Exception as e:
 
             print(
                 "ORDERS ERROR:",
-                e
+                repr(e)
             )
 
             orders = []
 
         finally:
+
             db.close()
+
+        cart = self.get_cart()
 
         return render_template(
             "customer/dashboard.html",
 
             tables=[],
 
-            selected_table=None,
+            selected_table={
+                "id": table_id,
+                "name": session.get(
+                    "table_name"
+                )
+            },
 
             table_id=table_id,
 
@@ -1137,10 +1369,10 @@ class CustomerController:
 
             menu_items=[],
 
-            cart=self.get_cart(),
+            cart=cart,
 
             total=self.calculate_cart_total(
-                self.get_cart()
+                cart
             ),
 
             orders=orders
@@ -1150,7 +1382,10 @@ class CustomerController:
     # VIEW ORDER
     # =========================================================
 
-    def view_order(self, order_id):
+    def view_order(
+        self,
+        order_id
+    ):
 
         table_id = self.get_table_id()
 
@@ -1162,7 +1397,9 @@ class CustomerController:
             )
 
             return redirect(
-                url_for("customer.menu")
+                url_for(
+                    "customer.menu"
+                )
             )
 
         db = Database()
@@ -1183,6 +1420,7 @@ class CustomerController:
                     ON o.table_id = t.id
 
                 WHERE o.id = %s
+
                 AND o.table_id = %s
             """, (
                 order_id,
@@ -1197,7 +1435,9 @@ class CustomerController:
                 )
 
                 return redirect(
-                    url_for("customer.orders")
+                    url_for(
+                        "customer.orders"
+                    )
                 )
 
             order["items"] = db.fetch_all("""
@@ -1220,9 +1460,11 @@ class CustomerController:
                 WHERE oi.order_id = %s
 
                 ORDER BY oi.id ASC
-            """, (order_id,))
+            """, (
+                order_id,
+            ))
 
-            total = 0
+            total = 0.0
 
             for item in order["items"]:
 
@@ -1242,20 +1484,25 @@ class CustomerController:
 
             print(
                 "VIEW ORDER ERROR:",
-                e
+                repr(e)
             )
 
             flash(
-                "Unable to load order.",
+                "Unable to load this order.",
                 "danger"
             )
 
             return redirect(
-                url_for("customer.orders")
+                url_for(
+                    "customer.orders"
+                )
             )
 
         finally:
+
             db.close()
+
+        cart = self.get_cart()
 
         return render_template(
             "customer/dashboard.html",
@@ -1277,10 +1524,10 @@ class CustomerController:
 
             menu_items=[],
 
-            cart=self.get_cart(),
+            cart=cart,
 
             total=self.calculate_cart_total(
-                self.get_cart()
+                cart
             ),
 
             orders=[order],

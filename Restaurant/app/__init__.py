@@ -1,9 +1,4 @@
-from flask import (
-    Flask,
-    render_template,
-    redirect,
-    url_for
-)
+from flask import Flask, render_template, redirect, url_for, request
 
 from app.routes.auth import AuthRoutes
 from app.routes.customer import CustomerRoutes
@@ -16,7 +11,7 @@ import config
 def create_app():
 
     # =========================================================
-    # CREATE FLASK APPLICATION
+    # CREATE FLASK APP
     # =========================================================
 
     app = Flask(__name__)
@@ -31,28 +26,25 @@ def create_app():
     # SESSION SETTINGS
     # =========================================================
 
-    # Vercel is HTTPS in production.
-    # These settings make the customer QR session work safely.
-
     app.config["SESSION_COOKIE_HTTPONLY"] = True
-
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    app.config["SESSION_COOKIE_SECURE"] = False
 
-    app.config["SESSION_COOKIE_SECURE"] = True
+    # IMPORTANT:
+    #
+    # Local development:
+    #     http://127.0.0.1:5000
+    #     http://localhost:5000
+    #
+    # Vercel:
+    #     https://restuarantsystem.vercel.app
+    #
+    # Secure cookies are required on HTTPS but should not
+    # be forced during local HTTP development.
 
-    # =========================================================
-    # IMPORTANT
-    #
-    # DO NOT RUN:
-    #
-    #     Database.create_tables()
-    #
-    # HERE.
-    #
-    # Vercel creates/initializes the Flask application as a
-    # serverless function. Database initialization should not
-    # happen every time the function starts.
-    # =========================================================
+    app.config["SESSION_COOKIE_SECURE"] = (
+        request.is_secure
+    )
 
     # =========================================================
     # AUTH ROUTES
@@ -72,9 +64,7 @@ def create_app():
     def index():
 
         return redirect(
-            url_for(
-                "auth.login"
-            )
+            url_for("auth.login")
         )
 
     # =========================================================
@@ -115,7 +105,7 @@ def create_app():
     )
 
     # =========================================================
-    # 404
+    # 404 ERROR
     # =========================================================
 
     @app.errorhandler(404)
@@ -126,7 +116,7 @@ def create_app():
         ), 404
 
     # =========================================================
-    # 500
+    # 500 ERROR
     # =========================================================
 
     @app.errorhandler(500)
@@ -137,9 +127,11 @@ def create_app():
             repr(error)
         )
 
-        return render_template(
-            "notfound.html"
-        ), 500
+        return (
+            "Internal Server Error. "
+            "Please check the Vercel logs.",
+            500
+        )
 
     # =========================================================
     # RETURN APP

@@ -390,34 +390,30 @@ class CustomerController:
     # QR CODE
     # =========================================================
 
-    def scan_qr(
-        self,
-        table_id
-    ):
+    def scan_qr(self, table_id):
 
         db = Database()
 
-        table = None
-        active_order = None
-
         try:
 
-            # =================================================
+            # =====================================================
             # FIND TABLE
-            # =================================================
+            # =====================================================
 
             table = db.fetch_one("""
                 SELECT
                     id,
                     name,
                     status
-
                 FROM restaurant_tables
-
                 WHERE id = %s
             """, (
                 table_id,
             ))
+
+        # =====================================================
+        # TABLE DOES NOT EXIST
+        # =====================================================
 
             if not table:
 
@@ -427,46 +423,55 @@ class CustomerController:
                 )
 
                 return redirect(
-                    url_for(
-                        "customer.menu"
-                    )
+                    url_for("customer.menu")
                 )
 
-            # =================================================
-            # CHECK ACTIVE ORDER
-            # =================================================
+        # =====================================================
+        # SAVE TABLE IN SESSION
+        # =====================================================
 
-            active_order = db.fetch_one("""
-                SELECT
-                    id,
-                    status
+            session["table_id"] = int(
+                table["id"]
+            )
 
-                FROM orders
+            session["table_name"] = str(
+                table["name"]
+            )
 
-                WHERE table_id = %s
+        # Start with an empty cart
+            session["cart"] = {}
 
-                AND status IN (
-                    'pending',
-                    'preparing',
-                    'ready'
+            session.modified = True
+
+            print(
+                "QR SCAN SUCCESS:",
+                table["id"],
+                table["name"]
+            )
+
+        # =====================================================
+        # GO TO CUSTOMER DASHBOARD
+        # =====================================================
+
+            flash(
+                f'Welcome! You are ordering from {table["name"]}.',
+                "success"
+            )
+
+            return redirect(
+                url_for(
+                    "customer.dashboard"
                 )
-
-                ORDER BY id DESC
-
-                LIMIT 1
-            """, (
-                table_id,
-            ))
+            )
 
         except Exception as e:
-
             print(
                 "QR SCAN ERROR:",
                 repr(e)
             )
 
             flash(
-                "Unable to read the table QR code.",
+                "Unable to open this table.",
                 "danger"
             )
 
@@ -477,63 +482,7 @@ class CustomerController:
             )
 
         finally:
-
             db.close()
-
-        # =====================================================
-        # SAVE TABLE TO SESSION
-        # =====================================================
-
-        session["table_id"] = int(
-            table["id"]
-        )
-
-        session["table_name"] = (
-            table["name"]
-        )
-
-        session.modified = True
-
-        # =====================================================
-        # ACTIVE ORDER
-        # =====================================================
-
-        if active_order:
-
-            session["cart"] = {}
-
-            session.modified = True
-
-            flash(
-                f'{table["name"]} already has an active order. '
-                "Please wait until it is completed.",
-                "warning"
-            )
-
-            return redirect(
-                url_for(
-                    "customer.dashboard"
-                )
-            )
-
-        # =====================================================
-        # NEW CUSTOMER SESSION
-        # =====================================================
-
-        session["cart"] = {}
-
-        session.modified = True
-
-        flash(
-            f'Welcome! You are ordering from {table["name"]}.',
-            "success"
-        )
-
-        return redirect(
-            url_for(
-                "customer.dashboard"
-            )
-        )
 
     # =========================================================
     # MENU

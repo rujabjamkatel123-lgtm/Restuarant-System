@@ -6,6 +6,7 @@ from app.controllers.customer import CustomerController
 class CustomerRoutes:
 
     def __init__(self):
+
         self.bp = Blueprint(
             "customer",
             __name__

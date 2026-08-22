@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for
+import os
 
 from app.routes.auth import AuthRoutes
 from app.routes.customer import CustomerRoutes
@@ -28,22 +29,16 @@ def create_app():
 
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-    app.config["SESSION_COOKIE_SECURE"] = False
 
+    # Vercel uses HTTPS.
+    # Local development normally uses HTTP.
+    #
     # IMPORTANT:
-    #
-    # Local development:
-    #     http://127.0.0.1:5000
-    #     http://localhost:5000
-    #
-    # Vercel:
-    #     https://restuarantsystem.vercel.app
-    #
-    # Secure cookies are required on HTTPS but should not
-    # be forced during local HTTP development.
+    # Do NOT use request.is_secure here because create_app()
+    # runs before an HTTP request exists.
 
     app.config["SESSION_COOKIE_SECURE"] = (
-        request.is_secure
+        os.environ.get("VERCEL") == "1"
     )
 
     # =========================================================
@@ -57,7 +52,7 @@ def create_app():
     )
 
     # =========================================================
-    # ROOT
+    # ROOT ROUTE
     # =========================================================
 
     @app.route("/")
@@ -69,10 +64,6 @@ def create_app():
 
     # =========================================================
     # CUSTOMER ROUTES
-    #
-    # IMPORTANT:
-    #
-    # Customer QR ordering does NOT require login.
     # =========================================================
 
     customer_routes = CustomerRoutes()
@@ -129,9 +120,8 @@ def create_app():
 
         return (
             "Internal Server Error. "
-            "Please check the Vercel logs.",
-            500
-        )
+            "Please check the Vercel logs."
+        ), 500
 
     # =========================================================
     # RETURN APP

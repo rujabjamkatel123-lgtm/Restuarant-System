@@ -1,5 +1,9 @@
-from flask import Flask, render_template, redirect, url_for
-import os
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    url_for
+)
 
 from app.routes.auth import AuthRoutes
 from app.routes.customer import CustomerRoutes
@@ -12,7 +16,7 @@ import config
 def create_app():
 
     # =========================================================
-    # CREATE FLASK APP
+    # CREATE FLASK APPLICATION
     # =========================================================
 
     app = Flask(__name__)
@@ -28,18 +32,16 @@ def create_app():
     # =========================================================
 
     app.config["SESSION_COOKIE_HTTPONLY"] = True
+
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-    # Vercel uses HTTPS.
-    # Local development normally uses HTTP.
-    #
     # IMPORTANT:
-    # Do NOT use request.is_secure here because create_app()
-    # runs before an HTTP request exists.
-
-    app.config["SESSION_COOKIE_SECURE"] = (
-        os.environ.get("VERCEL") == "1"
-    )
+    # Do NOT use request.is_secure here.
+    #
+    # Vercel calls create_app() before an HTTP request exists.
+    #
+    # Vercel uses HTTPS, so this can safely be True.
+    app.config["SESSION_COOKIE_SECURE"] = True
 
     # =========================================================
     # AUTH ROUTES
@@ -52,7 +54,7 @@ def create_app():
     )
 
     # =========================================================
-    # ROOT ROUTE
+    # ROOT
     # =========================================================
 
     @app.route("/")
@@ -64,6 +66,8 @@ def create_app():
 
     # =========================================================
     # CUSTOMER ROUTES
+    #
+    # NO LOGIN REQUIRED
     # =========================================================
 
     customer_routes = CustomerRoutes()
@@ -118,13 +122,12 @@ def create_app():
             repr(error)
         )
 
-        return (
-            "Internal Server Error. "
-            "Please check the Vercel logs."
+        return render_template(
+            "notfound.html"
         ), 500
 
     # =========================================================
-    # RETURN APP
+    # RETURN APPLICATION
     # =========================================================
 
     return app
